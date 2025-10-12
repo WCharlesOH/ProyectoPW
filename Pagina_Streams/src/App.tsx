@@ -35,7 +35,7 @@ function Navbar() {
     >
       <h2 style={{ margin: 0 }}>
         <Link to="/" style={{ color: '#00b7ff', textDecoration: 'none' }}>
-          StreamZone
+          Streams
         </Link>
       </h2>
 
@@ -94,7 +94,7 @@ export default function App() {
           marginTop: '32px',
         }}
       >
-        © {new Date().getFullYear()} StreamZone — Proyecto PW
+        © {new Date().getFullYear()} — Proyecto PW
       </footer>
     </div>
   )
