@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 
-// Páginas
+
 import Home from './pages/Home'
 import Explorar from './pages/Explorar'
 import Perfil from './pages/Perfil'
