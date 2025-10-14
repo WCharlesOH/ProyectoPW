@@ -1,11 +1,19 @@
+// Navbar.jsx
 import { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
-import { useAuth } from "../components/AuthContext";  // <- asume que creaste esto
+import { useAuth } from "../components/AuthContext";
+import MonedasMenu from "./MonedasMenu";
+import UserMenu from "./Usuario_Desplegable";
 
-export default function Navbar() {
+type NavbarProps = {
+  monedas: any; // Replace 'any' with the actual type if known, e.g., number, string[], etc.
+  setMonedas: (value: any) => void; // Replace 'any' with the actual type if known
+};
+
+export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ Recibe props
   const { isLogged, logout } = useAuth();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [dropOpen, setDropOpen] = useState(false);
+  const [menuMonedasAbierto, setMenuMonedasAbierto] = useState(false);
 
   const linkStyle = ({ isActive }: { isActive: boolean }) => ({
     color: isActive ? "#00b7ff" : "#fff",
@@ -27,6 +35,7 @@ export default function Navbar() {
         zIndex: 10,
       }}
     >
+      {/* ---- IZQUIERDA ---- */}
       <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
         <h2 style={{ margin: 0 }}>
           <Link to="/" style={{ color: "#00b7ff", textDecoration: "none" }}>
@@ -95,12 +104,8 @@ export default function Navbar() {
         </nav>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
+      
+      <div style={{ display: "flex", alignItems: "center" }}>
         <img
           src="./src/assets/zoom-svgrepo-com.svg"
           alt="Buscar"
@@ -120,9 +125,8 @@ export default function Navbar() {
         />
       </div>
 
-      <div
-        style={{ display: "flex", alignItems: "center", gap: "20px", position: "relative" }}
-      >
+      {/* ---- DERECHA ---- */}
+      <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
         {!isLogged ? (
           <>
             <NavLink to="/login" style={linkStyle}>
@@ -134,161 +138,14 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <div
-              style={{
-                padding: "8px 12px",
-                border: "1px solid #333",
-                borderRadius: "4px",
-                backgroundColor: "#1f1f23",
-                color: "white",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              Monedas:{" "}
-              <span style={{ color: "#00b7ff", fontWeight: "bold", marginLeft: "4px" }}>
-                120
-              </span>
-            </div>
-
-            <div style={{ position: "relative" }}>
-              <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                }}
-              >
-                <img
-                  src="./src/assets/accessibility-svgrepo-com.svg"
-                  alt="Usuario"
-                  style={{ width: 28, height: 28, backgroundColor: "white" }}
-                />
-              </button>
-
-              {menuOpen && (
-                <div
-                  style={{
-                    position: "absolute",
-                    right: 0,
-                    marginTop: "8px",
-                    width: "220px",
-                    backgroundColor: "#1f1f23",
-                    borderRadius: "8px",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
-                    border: "1px solid #333",
-                    color: "white",
-                    zIndex: 20,
-                  }}
-                >
-                  <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-                    <li>
-                      <Link
-                        to="/perfil/usuario"
-                        style={{
-                          display: "block",
-                          padding: "8px 12px",
-                          textDecoration: "none",
-                          color: "white",
-                        }}
-                      >
-                        Canal
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/panel"
-                        style={{
-                          display: "block",
-                          padding: "8px 12px",
-                          textDecoration: "none",
-                          color: "white",
-                        }}
-                      >
-                        Panel de Control
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/suscripciones"
-                        style={{
-                          display: "block",
-                          padding: "8px 12px",
-                          textDecoration: "none",
-                          color: "white",
-                        }}
-                      >
-                        Suscripciones
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/ajustes"
-                        style={{
-                          display: "block",
-                          padding: "8px 12px",
-                          textDecoration: "none",
-                          color: "white",
-                        }}
-                      >
-                        Ajustes
-                      </Link>
-                    </li>
-                    <li>
-                      <button
-                        onClick={() => {
-                          logout();        // <--- usar logout del contexto
-                          setMenuOpen(false);
-                        }}
-                        style={{
-                          width: "100%",
-                          padding: "8px 12px",
-                          background: "none",
-                          border: "none",
-                          textAlign: "left",
-                          color: "red",
-                          cursor: "pointer",
-                        }}
-                      >
-                        Cerrar sesión
-                      </button>
-                    </li>
-                  </ul>
-                  <div style={{ borderTop: "1px solid #333", marginTop: "8px" }}>
-                    <button
-                      style={{
-                        display: "block",
-                        width: "100%",
-                        padding: "8px 12px",
-                        background: "none",
-                        border: "none",
-                        textAlign: "left",
-                        color: "white",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Cambiar idioma
-                    </button>
-                    <button
-                      style={{
-                        display: "block",
-                        width: "100%",
-                        padding: "8px 12px",
-                        background: "none",
-                        border: "none",
-                        textAlign: "left",
-                        color: "white",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Cambiar aspecto
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* 🔹 Menú de monedas con las props */}
+            <MonedasMenu
+              monedas={monedas}
+              setMonedas={setMonedas}
+              abierto={menuMonedasAbierto}
+              setAbierto={setMenuMonedasAbierto}
+            />
+            <UserMenu />
           </>
         )}
       </div>
