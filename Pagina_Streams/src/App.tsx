@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import { Link } from 'react-router-dom'
 
 
 import Home from './pages/Home'
@@ -12,6 +13,7 @@ import LiveStart from './pages/LiveStart'
 import Nosotros from './pages/Nosotros'
 import Terminos from './pages/Terminos'
 import NotFound from './pages/NotFound'
+import Perfil_viewer from './pages/Perfil_viewer'
 
 export default function App() {
   return (
@@ -22,7 +24,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/explorar" element={<Explorar />} />
-          <Route path="/perfil/:username" element={<Perfil />} />
+          <Route path="/perfils/:username" element={<Perfil />} />
+          <Route path="/perfilv/:username" element={<Perfil_viewer />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/live" element={<LiveStart />} />
