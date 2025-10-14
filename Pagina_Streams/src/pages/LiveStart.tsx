@@ -1,3 +1,3 @@
 export default function LiveStart() {
-  return <h2>Iniciar Transmisión</h2>
+  return <h2>Iniciar Transmisións</h2>
 }
