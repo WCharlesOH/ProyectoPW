@@ -1,13 +1,18 @@
+// Navbar.jsx
 import { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import MonedasMenu from "./MonedasMenu";
 import UserMenu from "./Usuario_Desplegable";
 
-export default function Navbar() {
+type NavbarProps = {
+  monedas: any; // Replace 'any' with the actual type if known, e.g., number, string[], etc.
+  setMonedas: (value: any) => void; // Replace 'any' with the actual type if known
+};
+
+export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ Recibe props
   const { isLogged, logout } = useAuth();
   const [dropOpen, setDropOpen] = useState(false);
-  const [monedas, setMonedas] = useState(120);
   const [menuMonedasAbierto, setMenuMonedasAbierto] = useState(false);
 
   const linkStyle = ({ isActive }: { isActive: boolean }) => ({
@@ -122,7 +127,7 @@ export default function Navbar() {
 
       {/* ---- DERECHA ---- */}
       <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-        {isLogged ? (
+        {!isLogged ? (
           <>
             <NavLink to="/login" style={linkStyle}>
               Login
@@ -133,7 +138,7 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            {/* 🔹 Aquí está el nuevo menú de monedas */}
+            {/* 🔹 Menú de monedas con las props */}
             <MonedasMenu
               monedas={monedas}
               setMonedas={setMonedas}

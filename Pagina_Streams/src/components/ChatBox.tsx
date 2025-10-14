@@ -1,25 +1,50 @@
 import { useState } from "react";
+import BotonMonedas from "./BotonMonedas";
+import BotonNivel from "./BotonNivel";
 
-interface Message {
-  id: number;
-  author: string;
-  text: string;
-  time: string;
+interface Mensaje {
+  autor: string;
+  nivel: number;
+  texto: string;
+  hora: string;
 }
 
-const MOCK_MESSAGES: Message[] = [
-  { id: 1, author: "UserA", text: "Hola, ¿cómo estás?", time: "12:00" },
-  { id: 2, author: "UserB", text: "Bien, gracias. ¿Y tú?", time: "12:01" },
-  { id: 3, author: "UserA", text: "Aquí trabajando en el proyecto.", time: "12:02" },
+const MENSAJES: Mensaje[] = [
+  { autor: "UserA", nivel: 12, texto: "Hola, ¿cómo estás?", hora: "12:00" },
+  { autor: "UserB", nivel: 8, texto: "Bien, gracias. ¿Y tú?", hora: "12:01" },
+  { autor: "UserA", nivel: 12, texto: "Aquí trabajando en el proyecto.", hora: "12:02" },
 ];
 
-export default function ChatBox() {
-  const [input, setInput] = useState("");
+interface ChatBoxProps {
+  monedas: number;
+  setMonedas: (monedas: number) => void;
+}
 
-  const handleSend = () => {
-    if (input.trim() === "") return;
-    console.log("Enviar mensaje:", input);
-    setInput("");
+export default function ChatBox({ monedas, setMonedas }: ChatBoxProps) {
+  const [mensajes, setMensajes] = useState(MENSAJES);
+  const [entrada, setEntrada] = useState("");
+  const [nivel, setNivel] = useState(5);
+  const [progreso, setProgreso] = useState(60);
+
+  const enviarMensaje = () => {
+    if (!entrada.trim()) return;
+    const nuevo: Mensaje = {
+      autor: "Tú",
+      nivel,
+      texto: entrada,
+      hora: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+    setMensajes([...mensajes, nuevo]);
+    setEntrada("");
+
+    setProgreso((p) => {
+      const nuevo = p + 3;
+      if (nuevo >= 100) {
+        setNivel((n) => n + 1);
+        return 0;
+      }
+      return nuevo;
+    });
   };
 
   return (
@@ -37,50 +62,29 @@ export default function ChatBox() {
         overflow: "hidden",
       }}
     >
-
-      <div
-        style={{
-          flex: 1,
-          padding: "12px",
-          overflowY: "auto",
-        }}
-      >
-        {MOCK_MESSAGES.map((msg) => (
-          <div
-            key={msg.id}
-            style={{
-              marginBottom: "12px",
-            }}
-          >
-            <div style={{ fontSize: "0.85rem", color: "#888" }}>
-              {msg.author} • {msg.time}
+      {/* Mensajes */}
+      <div style={{ flex: 1, padding: "12px", overflowY: "auto" }}>
+        {mensajes.map((msg, i) => (
+          <div key={i} style={{ marginBottom: "12px" }}>
+            <div style={{ fontSize: "0.85rem", color: "#b3b3b3" }}>
+              <strong>{msg.autor}</strong>{" "}
+              <span style={{ color: "#00b7ff", fontWeight: "bold" }}>Lv.{msg.nivel}</span> • {msg.hora}
             </div>
-            <div style={{ fontSize: "1rem" }}>{msg.text}</div>
+            <div style={{ fontSize: "1rem" }}>{msg.texto}</div>
           </div>
         ))}
       </div>
 
-     
-      <div
-        style={{
-          height: "1px",
-          backgroundColor: "#444",
-        }}
-      />
+      <div style={{ height: "1px", backgroundColor: "#444" }} />
 
-      {/* Entrada de mensaje */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          padding: "8px",
-        }}
-      >
+      {/* Input */}
+      <div style={{ display: "flex", alignItems: "center", padding: "8px" }}>
         <input
           type="text"
           placeholder="Escribe un mensaje..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+          value={entrada}
+          onChange={(e) => setEntrada(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && enviarMensaje()}
           style={{
             flex: 1,
             padding: "8px 12px",
@@ -92,7 +96,7 @@ export default function ChatBox() {
           }}
         />
         <button
-          onClick={handleSend}
+          onClick={enviarMensaje}
           style={{
             marginLeft: "8px",
             padding: "8px 12px",
@@ -105,6 +109,20 @@ export default function ChatBox() {
         >
           Enviar
         </button>
+      </div>
+
+      {/* Botones inferiores */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "8px 12px",
+          borderTop: "1px solid #333",
+        }}
+      >
+        <BotonMonedas monedas={monedas} setMonedas={setMonedas} />
+        <BotonNivel nivel={nivel} progreso={progreso} />
       </div>
     </div>
   );
