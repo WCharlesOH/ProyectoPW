@@ -18,10 +18,10 @@ import { AuthProvider } from "./components/AuthContext";
 export default function App() {
   return (
     <AuthProvider>
-    <div style={{ backgroundColor: '#18181b', minHeight: '100vh', color: 'white' }}>
+    <div style={{ backgroundColor: '#18181b', minHeight: '100vh', color: 'white', display:"flex",flexDirection:'column' }}>
       <Navbar />
       <Sidebar/>
-      <main style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <main style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto',flex:1 }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/explorar" element={<Explorar />} />
