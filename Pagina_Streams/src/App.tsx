@@ -12,12 +12,15 @@ import LiveStart from './pages/LiveStart'
 import Nosotros from './pages/Nosotros'
 import Terminos from './pages/Terminos'
 import NotFound from './pages/NotFound'
+import Sidebar from './components/Sidebar'
+import { AuthProvider } from "./components/AuthContext";
 
 export default function App() {
   return (
+    <AuthProvider>
     <div style={{ backgroundColor: '#18181b', minHeight: '100vh', color: 'white' }}>
       <Navbar />
-
+      <Sidebar/>
       <main style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -34,5 +37,6 @@ export default function App() {
 
       <Footer />
     </div>
+    </AuthProvider>
   )
 }
