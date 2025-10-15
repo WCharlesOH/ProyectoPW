@@ -98,6 +98,11 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
                 >
                   Términos
                 </Link>
+                <Link 
+                  to="/usuario">
+                usuario   
+                </Link>
+
               </div>
             )}
           </div>
