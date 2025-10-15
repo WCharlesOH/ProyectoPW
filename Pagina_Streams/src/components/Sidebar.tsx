@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Routes, Link, Route } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
-
 import Perfil from "../pages/Perfil";
-
 
 interface Seguido {
   id: string;
   name: string;
   avatarUrl: string;
+}
+
+interface SidebarProps {
+  onToggle?: (isOpen: boolean) => void;
 }
 
 const SEGUIDOS: Seguido[] = [
@@ -17,12 +19,17 @@ const SEGUIDOS: Seguido[] = [
   { id: "3", name: "CanalTres", avatarUrl: "#" },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onToggle }: SidebarProps) {
   const { isLogged } = useAuth();
   const [isOpen, setIsOpen] = useState(true);
 
   const toggleSidebar = () => {
-    setIsOpen((prev) => !prev);
+    const newState = !isOpen;
+    setIsOpen(newState);
+    // Notificar al componente padre sobre el cambio
+    if (onToggle) {
+      onToggle(newState);
+    }
   };
 
   const titulo = isLogged ? "Seguidos" : "Canales en vivo";
@@ -31,7 +38,7 @@ export default function Sidebar() {
     <div style={{ display: "flex" }}>
       <div
         style={{
-          width: isOpen ? 250 : 40,  // ancho cuando está cerrado
+          width: isOpen ? 250 : 40,
           transition: "width 0.3s",
           backgroundColor: "#0e0e10",
           color: "white",
@@ -79,7 +86,7 @@ export default function Sidebar() {
                     style={{ width: 40, height: 40, borderRadius: "50%" }}
                   />
                   <Link
-                    to={"/perfil/"}
+                    to={`/perfils/${s.name}`}
                     style={{
                       color: "white",
                       marginLeft: "10px",
@@ -92,9 +99,6 @@ export default function Sidebar() {
             </ul>
           </div>
         )}
-      </div>
-      <div style={{ flex: 1 }}>
-        {/* Aquí va tu contenido principal o rutas */}
       </div>
     </div>
   );
