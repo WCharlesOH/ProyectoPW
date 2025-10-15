@@ -2,18 +2,24 @@ import { useState, useRef, useEffect } from "react";
 import BotonMonedas from "./BotonMonedas";
 import BotonNivel from "./BotonNivel";
 import BotonRegalo from "./botonregalo";
+import { 
+  canalChat, 
+  emitirMensajeChat, 
+  emitirActividad,
+  obtenerTabId 
+} from "../datos/sincronizacion";
 
 interface Mensaje {
   autor: string;
   nivel: number;
   texto: string;
   hora: string;
+  origen?: string;
 }
 
-const MENSAJES: Mensaje[] = [
-  { autor: "UserA", nivel: 12, texto: "Hola, ¿cómo estás?", hora: "12:00" },
-  { autor: "UserB", nivel: 8, texto: "Bien, gracias. ¿Y tú?", hora: "12:01" },
-  { autor: "UserA", nivel: 12, texto: "Aquí trabajando en el proyecto.", hora: "12:02" },
+const MENSAJES_INICIALES: Mensaje[] = [
+  { autor: "UserA", nivel: 12, texto: "¡Bienvenidos al stream!", hora: "12:00" },
+  { autor: "UserB", nivel: 8, texto: "¿Qué vamos a jugar hoy?", hora: "12:01" },
 ];
 
 interface ChatBoxProps {
@@ -22,54 +28,70 @@ interface ChatBoxProps {
 }
 
 export default function ChatBox({ monedas, setMonedas }: ChatBoxProps) {
-  const [mensajes, setMensajes] = useState(MENSAJES);
+  const [mensajes, setMensajes] = useState<Mensaje[]>(MENSAJES_INICIALES);
   const [entrada, setEntrada] = useState("");
   const [nivel, setNivel] = useState(5);
   const [progreso, setProgreso] = useState(60);
-
-  // Ref para guardar el nivel anterior y evitar duplicados de mensaje
+  
   const nivelAnterior = useRef(nivel);
+  const idTab = useRef(obtenerTabId());
 
+  // 🔥 Escuchar mensajes de otras pestañas
+  useEffect(() => {
+    const manejarMensaje = (e: MessageEvent) => {
+      if (e.data?.tipo === "chat" && e.data.tabId !== idTab.current) {
+        setMensajes(prev => [...prev, e.data.mensaje]);
+      }
+    };
+
+    canalChat.addEventListener("message", manejarMensaje);
+    return () => canalChat.removeEventListener("message", manejarMensaje);
+  }, []);
+
+  // 🔥 Función mejorada para enviar mensajes
   const enviarMensaje = () => {
     if (!entrada.trim()) return;
 
-    const nuevo: Mensaje = {
+    const nuevoMensaje: Mensaje = {
       autor: "Tú",
       nivel,
       texto: entrada,
       hora: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      origen: idTab.current,
     };
 
-    setMensajes((prev) => [...prev, nuevo]);
-    setEntrada("");
+    // Actualizar localmente
+    setMensajes(prev => [...prev, nuevoMensaje]);
+    
+    // Sincronizar con otras pestañas
+    emitirMensajeChat(nuevoMensaje);
+    emitirActividad(`💬 Nuevo mensaje: "${entrada.substring(0, 30)}${entrada.length > 30 ? '...' : ''}"`, "chat");
 
-    // Aumentamos el progreso
-    setProgreso((p) => p + 100);
+    // Limpiar y progresar
+    setEntrada("");
+    setProgreso(p => p + 100);
   };
 
-  // Efecto que sube de nivel si progreso >= 100
+  // 🔥 Subir de nivel automáticamente
   useEffect(() => {
     if (progreso >= 100) {
-      setNivel((n) => n + 1);
-      setProgreso((p) => p - 100);
+      const nuevoNivel = nivel + 1;
+      setNivel(nuevoNivel);
+      setProgreso(p => p - 100);
+      
+      // Notificar sistema
+      const mensajeSistema: Mensaje = {
+        autor: "Sistema",
+        nivel: 1000,
+        texto: `🎉 ¡Has subido al nivel ${nuevoNivel}!`,
+        hora: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      
+      setMensajes(prev => [...prev, mensajeSistema]);
+      emitirActividad(`⬆️ Subió al nivel ${nuevoNivel}`, "sistema");
+      nivelAnterior.current = nuevoNivel;
     }
-  }, [progreso]);
-
-  // Efecto que envía mensaje del sistema solo cuando cambia el nivel
-  useEffect(() => {
-    if (nivel > nivelAnterior.current) {
-      setMensajes((prev) => [
-        ...prev,
-        {
-          autor: "Sistema",
-          nivel: 1000,
-          texto: `🎉 ¡Has subido al nivel ${nivel}!`,
-          hora: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        },
-      ]);
-      nivelAnterior.current = nivel; // actualizamos la referencia
-    }
-  }, [nivel]);
+  }, [progreso, nivel]);
 
   return (
     <div
@@ -86,7 +108,7 @@ export default function ChatBox({ monedas, setMonedas }: ChatBoxProps) {
         overflow: "hidden",
       }}
     >
-      {/* Mensajes */}
+      {/* Área de mensajes */}
       <div style={{ flex: 1, padding: "12px", overflowY: "auto" }}>
         {mensajes.map((msg, i) => (
           <div key={i} style={{ marginBottom: "12px" }}>
@@ -99,9 +121,10 @@ export default function ChatBox({ monedas, setMonedas }: ChatBoxProps) {
         ))}
       </div>
 
+      {/* Separador */}
       <div style={{ height: "1px", backgroundColor: "#444" }} />
 
-      {/* Input */}
+      {/* Input de mensaje */}
       <div style={{ display: "flex", alignItems: "center", padding: "8px" }}>
         <input
           type="text"

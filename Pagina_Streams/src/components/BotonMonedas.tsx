@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { emitirActividad } from "../datos/sincronizacion";
 
 interface BotonMonedasProps {
   monedas: number;
@@ -22,7 +23,16 @@ export default function BotonMonedas({ monedas, setMonedas }: BotonMonedasProps)
   const enviarMonedas = () => {
     if (cantidad <= 0) return;
     if (monedas < cantidad) return alert("No tienes suficientes monedas");
+    
     setMonedas(monedas - cantidad);
+    
+    // 🔥 EMITIR ACTIVIDAD para que aparezca en el dashboard
+    emitirActividad(
+      `💰 ${cantidad} monedas enviadas`,
+      "monedas",
+      { cantidad }
+    );
+
     alert(`Has enviado ${cantidad} monedas 💰`);
     setCantidad(0);
     setAbierto(false);
