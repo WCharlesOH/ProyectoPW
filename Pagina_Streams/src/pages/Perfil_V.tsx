@@ -37,7 +37,7 @@ export default function Perfil_V() {
         minHeight: "100vh",
       }}
     >
-      <h2 style={{ color: "#00b7ff" }}>Perfil del Viewer</h2>
+      <h2 style={{ color: "#00b7ff" }}>Perfil del Stremer</h2>
 
       <div
         style={{
