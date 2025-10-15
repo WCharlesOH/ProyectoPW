@@ -1,4 +1,5 @@
 import React from 'react';
+import PaginaStreamer from './PaginaStreamer'; // ajusta la ruta si está en otra carpeta
 
 type Stat = {
   label: string;
@@ -38,7 +39,14 @@ const DashboardStreamer: React.FC = () => {
   ];
 
   return (
+
+
+    
     <div style={{ padding: 20, color: 'white' }}>
+      <div style={{ marginTop: 40 }}>
+          <PaginaStreamer />
+      </div>
+
       <h1 style={{ margin: 0 }}>Dashboard del streamer</h1>
       <p style={{ marginTop: 6, opacity: 0.8 }}>Resumen de actividad y métricas clave</p>
 

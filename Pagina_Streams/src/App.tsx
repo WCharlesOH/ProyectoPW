@@ -14,7 +14,7 @@ import Nosotros from './pages/Nosotros'
 import Terminos from './pages/Terminos'
 import NotFound from './pages/NotFound'
 import Sidebar from './components/Sidebar'
-import Usuario from './pages/Usuario'
+
 import { AuthProvider } from "./components/AuthContext";
 
 import { useState } from 'react'
@@ -47,7 +47,7 @@ export default function App() {
           <Route path="/nosotros" element={<Nosotros />} />
           <Route path="/terminos" element={<Terminos />} />
           <Route path="/dashboard" element={<DashboardStreamer />} />
-          <Route path="/Usuario" element={<Usuario />} />
+         
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
