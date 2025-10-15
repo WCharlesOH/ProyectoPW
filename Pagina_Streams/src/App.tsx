@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import ChatBox from './components/ChatBox'
+
 
 import Home from './pages/Home'
 import Explorar from './pages/Explorar'
@@ -13,6 +13,7 @@ import Nosotros from './pages/Nosotros'
 import Terminos from './pages/Terminos'
 import NotFound from './pages/NotFound'
 import Sidebar from './components/Sidebar'
+import Usuario from './pages/Usuario'
 import { AuthProvider } from "./components/AuthContext";
 import { useState } from 'react'
 import Perfil_V from './pages/Perfil_V'
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="/live" element={<LiveStart />} />
           <Route path="/nosotros" element={<Nosotros />} />
           <Route path="/terminos" element={<Terminos />} />
+          <Route path="/Usuario" element={<Usuario />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

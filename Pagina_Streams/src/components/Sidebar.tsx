@@ -37,6 +37,7 @@ export default function Sidebar() {
           color: "white",
           height: "100vh",
           overflow: "hidden",
+          position: "fixed"
         }}
       >
         <div

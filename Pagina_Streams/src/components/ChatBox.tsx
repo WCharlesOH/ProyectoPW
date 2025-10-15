@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import BotonMonedas from "./BotonMonedas";
 import BotonNivel from "./BotonNivel";
 
@@ -26,26 +26,49 @@ export default function ChatBox({ monedas, setMonedas }: ChatBoxProps) {
   const [nivel, setNivel] = useState(5);
   const [progreso, setProgreso] = useState(60);
 
+  // Ref para guardar el nivel anterior y evitar duplicados de mensaje
+  const nivelAnterior = useRef(nivel);
+
   const enviarMensaje = () => {
     if (!entrada.trim()) return;
+
     const nuevo: Mensaje = {
       autor: "Tú",
       nivel,
       texto: entrada,
       hora: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
-    setMensajes([...mensajes, nuevo]);
+
+    setMensajes((prev) => [...prev, nuevo]);
     setEntrada("");
 
-    setProgreso((p) => {
-      const nuevo = p + 3;
-      if (nuevo >= 100) {
-        setNivel((n) => n + 1);
-        return 0;
-      }
-      return nuevo;
-    });
+    // Aumentamos el progreso
+    setProgreso((p) => p + 100);
   };
+
+  // Efecto que sube de nivel si progreso >= 100
+  useEffect(() => {
+    if (progreso >= 100) {
+      setNivel((n) => n + 1);
+      setProgreso((p) => p - 100);
+    }
+  }, [progreso]);
+
+  // Efecto que envía mensaje del sistema solo cuando cambia el nivel
+  useEffect(() => {
+    if (nivel > nivelAnterior.current) {
+      setMensajes((prev) => [
+        ...prev,
+        {
+          autor: "Sistema",
+          nivel: 1000,
+          texto: `🎉 ¡Has subido al nivel ${nivel}!`,
+          hora: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ]);
+      nivelAnterior.current = nivel; // actualizamos la referencia
+    }
+  }, [nivel]);
 
   return (
     <div
