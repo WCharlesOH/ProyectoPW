@@ -1,7 +1,11 @@
 import React from "react";
-import Mirkos from "../imagenes/Mirko.jpg";
+import Mirkos from "../imagenes/Andres.jpg";
 import Felipes from "../imagenes/Felipe.jpg";
+<<<<<<< Updated upstream
 import Franciscos from "../imagenes/fancisco.jpg";
+=======
+import Franciscos from "../imagenes/Fancisco.jpg";
+>>>>>>> Stashed changes
 import Wiliams from "../imagenes/William.jpg";
 import Andress from "../imagenes/Andres.jpg";
 
