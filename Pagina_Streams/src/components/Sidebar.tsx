@@ -86,7 +86,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
                     style={{ width: 40, height: 40, borderRadius: "50%" }}
                   />
                   <Link
-                    to={`/perfils/${s.name}`}
+                    to={`/perfil/${s.name}`}
                     style={{
                       color: "white",
                       marginLeft: "10px",

@@ -39,7 +39,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/explorar" element={<Explorar />} />
-          <Route path="/perfils/:username" element={<Perfil monedas={monedas} setMonedas={setMonedas} />} />
+          <Route path="/perfil/:username" element={<Perfil monedas={monedas} setMonedas={setMonedas} />} />
           <Route path="/perfilv/:username" element={<Perfil_V />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
