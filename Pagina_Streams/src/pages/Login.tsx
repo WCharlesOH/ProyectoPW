@@ -3,6 +3,7 @@ import "./StyleLogin.css"
 import { useAuth } from "../components/AuthContext";
 import { login } from "../components/PaseLogin";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [error, seterror] = useState<String>()
@@ -27,6 +28,7 @@ export default function Login() {
       seterror(result.error)
     }
   }
+
   return <div>
     <div className="login-container" style={{
     maxWidth: "400px",
@@ -115,6 +117,11 @@ export default function Login() {
   >
     Logear
   </button>
+
+    <p 
+  style={{marginTop:"10px", textAlign:"center"}}>No hay cuenta, es momento de {" "}
+    <Link to={"/registro"}>REGISTRARSE</Link>
+  </p>
 
   {error && (
     <p style={{ color: "red", marginTop: "15px", textAlign: "center", fontSize: "14px" }}>{error}</p>

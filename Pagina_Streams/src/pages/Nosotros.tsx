@@ -1,5 +1,5 @@
 import React from "react";
-import Mirkos from "../imagenes/Mirko.jpg";
+import Mirkos from "../imagenes/Andres.jpg";
 import Felipes from "../imagenes/Felipe.jpg";
 import Franciscos from "../imagenes/fancisco.jpg";
 import Wiliams from "../imagenes/William.jpg";
