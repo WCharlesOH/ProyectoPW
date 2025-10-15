@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import { Link } from 'react-router-dom'
 
 
 import Home from './pages/Home'
@@ -15,11 +16,13 @@ import NotFound from './pages/NotFound'
 import Sidebar from './components/Sidebar'
 import Usuario from './pages/Usuario'
 import { AuthProvider } from "./components/AuthContext";
+=======
 import { useState } from 'react'
 import Perfil_V from './pages/Perfil_V'
 
 
 
+>>>>>>main
 
 export default function App() {
   const [monedas, setMonedas] = useState(120);
@@ -34,8 +37,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/explorar" element={<Explorar />} />
-          <Route path="/perfils/:username" element={<Perfil monedas={monedas} setMonedas={setMonedas}/>} />
-          <Route path="/perfilv/:username" element={<Perfil_V />} />
+          <Route path="/perfils/:username" element={<Perfil />} />
+          <Route path="/perfilv/:username" element={<Perfil_viewer />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/live" element={<LiveStart />} />
