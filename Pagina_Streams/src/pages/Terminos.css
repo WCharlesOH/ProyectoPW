@@ -58,3 +58,38 @@
   padding: 0;
 }
 .t-block li { margin: 6px 0; }
+
+@media (max-width: 1024px) {
+  .container {
+    width: 95%;
+  }
+}
+
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+  }
+
+  h1, h2, h3 {
+    font-size: 90%;
+  }
+
+  button, input {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  h1, h2, h3 {
+    font-size: 85%;
+  }
+
+  button {
+    width: 100%;
+  }
+}

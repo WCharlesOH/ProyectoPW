@@ -48,7 +48,8 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
   const paddingLeft = sidebarAbierto ? "270px" : "60px";
   
   return (
-    <div style={{ 
+    <div 
+    style={{ 
       padding: "20px", 
       paddingLeft: paddingLeft,
       color: "#fff", 

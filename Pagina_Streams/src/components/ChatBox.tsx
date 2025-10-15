@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import BotonMonedas from "./BotonMonedas";
 import BotonNivel from "./BotonNivel";
+import BotonRegalo from "./botonregalo";
 
 interface Mensaje {
   autor: string;
@@ -145,6 +146,7 @@ export default function ChatBox({ monedas, setMonedas }: ChatBoxProps) {
         }}
       >
         <BotonMonedas monedas={monedas} setMonedas={setMonedas} />
+        <BotonRegalo monedas={monedas} setMonedas={setMonedas} />
         <BotonNivel nivel={nivel} progreso={progreso} />
       </div>
     </div>

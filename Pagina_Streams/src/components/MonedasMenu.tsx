@@ -68,7 +68,8 @@ export default function MonedasMenu({
   };
 
   return (
-    <div style={{ position: "relative", display: "inline-block" }} className="menu-monedas">
+    <div
+    style={{ position: "relative", display: "inline-block" }} className="menu-monedas">
       {/* Botón principal */}
       <button
         onClick={() => setAbierto(!abierto)}

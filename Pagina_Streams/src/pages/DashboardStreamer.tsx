@@ -42,7 +42,8 @@ const DashboardStreamer: React.FC = () => {
 
 
     
-    <div style={{ padding: 20, color: 'white' }}>
+    <div 
+    style={{ padding: 20, color: 'white' }}>
       <div style={{ marginTop: 40 }}>
           <PaginaStreamer />
       </div>

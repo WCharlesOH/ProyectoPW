@@ -24,7 +24,8 @@ export default function Explorar({ sidebarAbierto = true }: ExplorarProps) {
   const paddingLeft = sidebarAbierto ? "270px" : "60px";
   
   return (
-    <div style={{ padding: "20px", paddingLeft, color: "#fff", background: "#18181b", minHeight: "100vh", transition: "padding-left 0.3s ease" }}>
+    <div 
+    style={{ padding: "20px", paddingLeft, color: "#fff", background: "#18181b", minHeight: "100vh", transition: "padding-left 0.3s ease" }}>
       
       <section style={{ marginBottom: "30px" }}>
         <h1 style={{ color: "#fff", fontSize: "24px", fontWeight: "bold", marginBottom: "10px" }}>Explorar categorías</h1>
