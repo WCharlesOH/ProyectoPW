@@ -16,32 +16,50 @@ interface StreamerInfo {
   imagenUrl: string;
 }
 
-// Datos de ejemplo (puedes reemplazar por tu fetch/API)
 const STREAMERS: StreamerInfo[] = [
   {
-    username: "CanalUno",
+    username: "Vegeta",
     descripcion: "Streamer de juegos retro y charlas casuales.",
     categoria: "Retro Gaming",
     seguidores: 2500,
-    imagenUrl: "https://placehold.co/800x450?text=CanalUno+Live",
+    imagenUrl: "https://placehold.co/800x450?text=Vegeta+Live",
   },
   {
-    username: "CanalDos",
+    username: "Frok",
     descripcion: "Directos de arte y música en vivo 🎨🎵",
     categoria: "Arte y Música",
     seguidores: 1800,
-    imagenUrl: "https://placehold.co/800x450?text=CanalDos+En+Vivo",
+    imagenUrl: "https://placehold.co/800x450?text=Frok+En+Vivo",
   },
   {
-    username: "CanalTres",
+    username: "Zak",
     descripcion: "Torneos de shooters y contenido competitivo.",
     categoria: "Esports",
     seguidores: 5300,
-    imagenUrl: "https://placehold.co/800x450?text=CanalTres+Streaming",
+    imagenUrl: "https://placehold.co/800x450?text=Zak+Streaming",
+  },
+  {
+    username: "Staxx",
+    descripcion: "Creador de contenido de variedad y desafíos locos.",
+    categoria: "Variedad",
+    seguidores: 4200,
+    imagenUrl: "https://placehold.co/800x450?text=Staxx+Stream",
+  },
+  {
+    username: "AuronPlay",
+    descripcion: "Humor, juegos y charlas con la comunidad.",
+    categoria: "Entretenimiento",
+    seguidores: 9000,
+    imagenUrl: "https://placehold.co/800x450?text=AuronPlay+Directo",
+  },
+  {
+    username: "Grefg",
+    descripcion: "Streamings de gaming y retos competitivos.",
+    categoria: "Gaming",
+    seguidores: 10000,
+    imagenUrl: "https://placehold.co/800x450?text=Grefg+Live",
   },
 ];
-
-const SIDEBAR_WIDTH = 250; // ancho del Sidebar existente (ajústalo si cambias tu Sidebar)
 
 export default function Perfil({ monedas, setMonedas }: PerfilProps) {
   const { username } = useParams<{ username: string }>();
@@ -51,7 +69,14 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
 
   if (!streamer) {
     return (
-      <div style={{ color: "white", textAlign: "center", padding: "2rem", marginLeft: SIDEBAR_WIDTH }}>
+      <div
+        style={{
+          color: "white",
+          textAlign: "center",
+          padding: "2rem",
+          marginLeft: 250, // espacio del sidebar
+        }}
+      >
         <h2>Streamer no encontrado</h2>
       </div>
     );
@@ -61,23 +86,30 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
     <div
       style={{
         display: "flex",
-        height: "100vh",
+        minHeight: "calc(100vh - 60px)", // deja espacio al navbar superior
         backgroundColor: "#0e0e10",
         color: "white",
-        // deja espacio al Sidebar fijo existente
-        marginLeft: SIDEBAR_WIDTH,
+        marginLeft: 250, // 🔹 deja espacio fijo al sidebar
+        transition: "margin-left 0.3s ease",
+        padding: "20px",
       }}
     >
       {/* Contenido principal */}
-      <div style={{ flex: 1, padding: "20px", overflowY: "auto" }}>
+      <div style={{ flex: 1, paddingRight: "20px" }}>
+        {/* Imagen (simulación del stream) */}
         <div style={{ marginBottom: "20px" }}>
           <Player imagenUrl={streamer.imagenUrl} />
         </div>
 
+        {/* Información dinámica */}
         <h1>{streamer.username}</h1>
         <p style={{ color: "#ccc" }}>{streamer.descripcion}</p>
-        <p><strong>Categoría:</strong> {streamer.categoria}</p>
-        <p><strong>Seguidores:</strong> {streamer.seguidores}</p>
+        <p>
+          <strong>Categoría:</strong> {streamer.categoria}
+        </p>
+        <p>
+          <strong>Seguidores:</strong> {streamer.seguidores}
+        </p>
 
         {/* VODs */}
         <div style={{ marginTop: "30px" }}>
@@ -104,7 +136,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
         </div>
       </div>
 
-      {/* ChatBox a la derecha (mantiene monedas) */}
+      {/* ChatBox (mantiene monedas) */}
       <div
         style={{
           width: 380,
