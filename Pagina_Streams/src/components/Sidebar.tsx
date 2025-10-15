@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Routes, Link, Route } from "react-router-dom";
+import { useAuth } from "../components/AuthContext";
+
+import Perfil from "../pages/Perfil";
+
 
 interface Seguido {
   id: string;
@@ -14,22 +18,26 @@ const SEGUIDOS: Seguido[] = [
 ];
 
 export default function Sidebar() {
+  const { isLogged } = useAuth();
   const [isOpen, setIsOpen] = useState(true);
 
   const toggleSidebar = () => {
     setIsOpen((prev) => !prev);
   };
 
+  const titulo = isLogged ? "Seguidos" : "Canales en vivo";
+
   return (
     <div style={{ display: "flex" }}>
       <div
         style={{
-          width: isOpen ? 250 : 40,  // ancho pequeño cuando está cerrado
+          width: isOpen ? 250 : 40,  // ancho cuando está cerrado
           transition: "width 0.3s",
           backgroundColor: "#0e0e10",
           color: "white",
           height: "100vh",
           overflow: "hidden",
+          position: "fixed"
         }}
       >
         <div
@@ -43,7 +51,7 @@ export default function Sidebar() {
         >
           {isOpen ? (
             <>
-              <h3 style={{ margin: 0, color: "white", flex: 1 }}>Seguidos</h3>
+              <h3 style={{ margin: 0, color: "white", flex: 1 }}>{titulo}</h3>
               <span style={{ color: "white", marginLeft: "8px" }}>◀</span>
             </>
           ) : (
@@ -71,13 +79,12 @@ export default function Sidebar() {
                     style={{ width: 40, height: 40, borderRadius: "50%" }}
                   />
                   <Link
-                    to={`/canal/${s.id}`}
+                    to={"/perfil/"}
                     style={{
                       color: "white",
                       marginLeft: "10px",
                       textDecoration: "none",
-                    }}
-                  >
+                    }}>
                     {s.name}
                   </Link>
                 </li>

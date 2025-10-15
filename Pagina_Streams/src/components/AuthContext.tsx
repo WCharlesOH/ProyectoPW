@@ -1,11 +1,11 @@
 // src/auth/AuthContext.tsx
 
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useState, useEffect, type ReactNode } from "react";
 
 interface AuthContextType {
   isLogged: boolean;
-  user: any | null;
-  login: (userData: any) => void;
+  user: unknown | null;
+  login: (userData: unknown) => void;
   logout: () => void;
 }
 
@@ -16,7 +16,7 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<unknown | null>(null);
   const [isLogged, setIsLogged] = useState(false);
 
   // Al montar, puedes verificar si hay token en localStorage u otro medio
@@ -26,10 +26,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const parsed = JSON.parse(stored);
       setUser(parsed);
       setIsLogged(true);
+    } else {
+      // Usuario de prueba streamer
+      const testUser = { role: "streamer", nombre: "StreamerPrueba" };
+      setUser(testUser);
+      setIsLogged(true);
+      localStorage.setItem("user", JSON.stringify(testUser));
     }
   }, []);
 
-  function login(userData: any) {
+  function login(userData: unknown) {
     // Aquí haces la lógica real (llamada a API, etc.)
     setUser(userData);
     setIsLogged(true);
@@ -49,6 +55,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = React.useContext(AuthContext);
   if (context === undefined) {
