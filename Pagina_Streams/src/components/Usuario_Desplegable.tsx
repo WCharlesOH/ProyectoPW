@@ -56,6 +56,20 @@ export default function UserMenu() {
                 Canal
               </Link>
             </li>
+            {/* Nuevo botón/link hacia el dashboard del streamer */}
+            <li>
+              <Link
+                to="/dashboard"
+                style={{
+                  display: "block",
+                  padding: "8px 12px",
+                  textDecoration: "none",
+                  color: "white",
+                }}
+              >
+                Dashboard
+              </Link>
+            </li>
             <li>
               <Link
                 to="/panel"
