@@ -1,22 +1,40 @@
 import { useState } from "react";
-import { Routes, Link, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
-import Perfil from "../pages/Perfil";
 
-interface Seguido {
+import vegeta from "../imagenes/Mirko.jpg";
+import fork from "../imagenes/fork.jpg";
+import grefg from "../imagenes/grefg.jpg";
+const DEFAULT_AVATAR = vegeta;
+
+type Seguido = {
   id: string;
   name: string;
-  avatarUrl: string;
-}
+  avatarUrl?: string; 
+};
 
 interface SidebarProps {
   onToggle?: (isOpen: boolean) => void;
 }
 
+// Usa el valor del import 'vegeta' y arregla ids duplicados
 const SEGUIDOS: Seguido[] = [
-  { id: "1", name: "CanalUno", avatarUrl: "#" },
-  { id: "2", name: "CanalDos", avatarUrl: "#" },
-  { id: "3", name: "CanalTres", avatarUrl: "#" },
+  { id: "1",  name: "Vegeta",        avatarUrl: vegeta },
+  { id: "1",  name: "Frok",        avatarUrl: fork },
+  { id: "1",  name: "Zak",        avatarUrl: grefg },
+  { id: "1",  name: "Staxx",        avatarUrl: grefg },
+   { id: "1",  name: "Vegeta",        avatarUrl: vegeta },
+  { id: "1",  name: "Frok",        avatarUrl: fork },
+  { id: "1",  name: "AuronPlay",        avatarUrl: grefg },
+  { id: "1",  name: "Grefg",        avatarUrl: grefg },
+   { id: "1",  name: "Vegeta",        avatarUrl: vegeta },
+  { id: "1",  name: "Frok",        avatarUrl: fork },
+  { id: "1",  name: "Grefg",        avatarUrl: grefg },
+  { id: "1",  name: "Grefg",        avatarUrl: grefg },
+   { id: "1",  name: "Vegeta",        avatarUrl: vegeta },
+  { id: "1",  name: "Frok",        avatarUrl: fork },
+  { id: "1",  name: "Grefg",        avatarUrl: grefg },
+  { id: "1",  name: "Grefg",        avatarUrl: grefg },
 ];
 
 export default function Sidebar({ onToggle }: SidebarProps) {
@@ -26,10 +44,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
   const toggleSidebar = () => {
     const newState = !isOpen;
     setIsOpen(newState);
-    // Notificar al componente padre sobre el cambio
-    if (onToggle) {
-      onToggle(newState);
-    }
+    onToggle?.(newState);
   };
 
   const titulo = isLogged ? "Seguidos" : "Canales en vivo";
@@ -44,7 +59,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
           color: "white",
           height: "100vh",
           overflow: "hidden",
-          position: "fixed"
+          position: "fixed",
         }}
       >
         <div
@@ -62,9 +77,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
               <span style={{ color: "white", marginLeft: "8px" }}>◀</span>
             </>
           ) : (
-            <span style={{ color: "white", marginLeft: "auto", marginRight: "auto" }}>
-              ▶
-            </span>
+            <span style={{ color: "white", marginLeft: "auto", marginRight: "auto" }}>▶</span>
           )}
         </div>
 
@@ -73,7 +86,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
             <ul style={{ listStyle: "none", padding: 0, marginTop: "12px" }}>
               {SEGUIDOS.map((s) => (
                 <li
-                  key={s.id}
+                  key={s.id} //
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -81,17 +94,19 @@ export default function Sidebar({ onToggle }: SidebarProps) {
                   }}
                 >
                   <img
-                    src={s.avatarUrl}
+                    src={s.avatarUrl }   
                     alt={s.name}
-                    style={{ width: 40, height: 40, borderRadius: "50%" }}
+                    
+                    style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }}
                   />
                   <Link
-                    to={`/perfil/${s.name}`}
+                    to={'/perfils/${s.name}'}
                     style={{
                       color: "white",
                       marginLeft: "10px",
                       textDecoration: "none",
-                    }}>
+                    }}
+                  >
                     {s.name}
                   </Link>
                 </li>

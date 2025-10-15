@@ -75,8 +75,7 @@ export default function Registro() {
   return (
     <div className="reg-wrap">
       <header className="brand">
-        <span className="brand-icon">S</span>
-        <span className="brand-name">StreamHub</span>
+        <span className="brand-name">Streams</span>
       </header>
 
       <form className="reg-card" onSubmit={onSubmit}>
