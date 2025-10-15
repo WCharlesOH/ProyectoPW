@@ -5,10 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function UserMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
-  // Eliminamos el estado del modal del dashboard
-  const { logout, user } = useAuth();
-  const navigate = useNavigate();
-
+  const { logout } = useAuth();
+  const  navigate  = useNavigate()
 
   return (
     <div style={{ position: "relative" }}>
@@ -46,38 +44,17 @@ export default function UserMenu() {
         >
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
             <li>
-              {user?.role === "streamer" ? (
-                <button
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    padding: "8px 12px",
-                    background: "none",
-                    border: "none",
-                    textAlign: "left",
-                    color: "white",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => {
-                    setMenuOpen(false);
-                    navigate(`/perfilv/${user?.nombre || 'streamerprueba'}`);
-                  }}
-                >
-                  Canal
-                </button>
-              ) : (
-                <Link
-                  to="/perfil/usuario"
-                  style={{
-                    display: "block",
-                    padding: "8px 12px",
-                    textDecoration: "none",
-                    color: "white",
-                  }}
-                >
-                  Canal
-                </Link>
-              )}
+              <Link
+                to="/perfil/usuario"
+                style={{
+                  display: "block",
+                  padding: "8px 12px",
+                  textDecoration: "none",
+                  color: "white",
+                }}
+              >
+                Canal
+              </Link>
             </li>
             <li>
               <Link
@@ -172,8 +149,7 @@ export default function UserMenu() {
             </button>
           </div>
         </div>
-  )}
-  {/* Eliminado el modal del dashboard */}
+      )}
     </div>
   );
 }
