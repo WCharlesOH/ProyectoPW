@@ -60,7 +60,7 @@ export default function PaginaStreamer() {
         padding: "40px",
         color: "white",
         textAlign: "center",
-        backgroundColor: "#0e0e10",
+        
         minHeight: "100vh",
       }}
     >
