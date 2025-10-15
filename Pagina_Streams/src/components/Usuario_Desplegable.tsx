@@ -9,34 +9,6 @@ export default function UserMenu() {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
 
-  function DashboardStreamer() {
-    // Datos simulados, reemplaza con datos reales si tienes acceso a la API
-    const horasStream = 120;
-    const visualizacionesPorMes = {
-      "Enero": 300,
-      "Febrero": 450,
-      "Marzo": 500,
-      "Abril": 350,
-      "Mayo": 600,
-    };
-    const monedasGastadas = 15000;
-    return (
-      <div style={{background: "#23232b", border: "2px solid #333", borderRadius: "12px", padding: "2rem", position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 100}}>
-        <h3>Dashboard del Streamer</h3>
-        <p><strong>Horas transmitidas:</strong> {horasStream}</p>
-        <div>
-          <strong>Visualizaciones por mes:</strong>
-          <ul>
-            {Object.entries(visualizacionesPorMes).map(([mes, vistas]) => (
-              <li key={mes}>{mes}: {vistas} visualizaciones</li>
-            ))}
-          </ul>
-        </div>
-        <p><strong>Monedas gastadas por usuarios:</strong> {monedasGastadas}</p>
-        <button style={{marginTop: "1rem"}} onClick={() => setShowDashboard(false)}>Cerrar</button>
-      </div>
-    );
-  }
 
   return (
     <div style={{ position: "relative" }}>
