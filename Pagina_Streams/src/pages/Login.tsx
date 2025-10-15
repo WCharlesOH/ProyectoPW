@@ -98,6 +98,7 @@ export default function Login() {
 
   <button 
     onClick={() => handleLogin({ email, password })}
+    onKeyDown={(e) => e.key === "Enter" && handleLogin({ email, password })}
     style={{
       width: "100%",
       padding: "14px",
