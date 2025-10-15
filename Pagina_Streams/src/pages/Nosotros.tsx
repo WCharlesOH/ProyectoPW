@@ -1,44 +1,39 @@
 import React from "react";
-import Mirkos from "../imagenes/Mirko.jpg"
-import Franciscos from "../imagenes/fancisco.jpg"
-import Felipes from "../imagenes/Felipe.jpg"
-import Wiliams from "../imagenes/William.jpg"
-import Andress from "../imagenes/Andres.jpg"
+import Mirkos from "../imagenes/Mirko.jpg";
+import Felipes from "../imagenes/Felipe.jpg";
+import Franciscos from "../imagenes/Francisco.jpg";
+import Wiliams from "../imagenes/William.jpg";
+import Andress from "../imagenes/Andres.jpg";
 
 const integrantes = [
   {
     nombre: "Mirko",
     rol: "Mejor un 20",
-    descripcion:
-      "No sabe como acabo el trabajo",
+    descripcion: "No sabe cómo acabó el trabajo",
     imagen: Mirkos,
   },
   {
     nombre: "Felipe",
     rol: "Maestro maestro",
-    descripcion:
-      "Demasiada maestria",
+    descripcion: "Demasiada maestría",
     imagen: Felipes,
   },
   {
     nombre: "Francisco",
     rol: "Maestro ingeniero",
-    descripcion:
-      "Avance magistral",
+    descripcion: "Avance magistral",
     imagen: Franciscos,
   },
   {
     nombre: "William",
     rol: "Esfuerzo sobrehumano",
-    descripcion:
-      "Mucha sabiduria en una persona",
+    descripcion: "Mucha sabiduría en una persona",
     imagen: Wiliams,
   },
   {
     nombre: "Andres",
-    rol: "Chambeador debil",
-    descripcion:
-      "Para cuando chambea",
+    rol: "Chambeador débil",
+    descripcion: "¿Para cuándo chambea?",
     imagen: Andress,
   },
 ];
