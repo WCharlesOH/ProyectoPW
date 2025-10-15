@@ -65,9 +65,9 @@ export default function Nosotros() {
             <div className="card-img-container">
               <img src={persona.imagen} alt={persona.nombre} className="card-img" />
             </div>
-            <h3>{persona.nombre}</h3>
-            <p className="rol">{persona.rol}</p>
-            <div className="descripcion">{persona.descripcion}</div>
+            <h3 style={{color:"white"}}>{persona.nombre}</h3>
+            <p className="rol" style={{color:"white"}}>{persona.rol}</p>
+            <div className="descripcion" style={{color:"white"}}>{persona.descripcion}</div>
           </div>
         ))}
       </div>
