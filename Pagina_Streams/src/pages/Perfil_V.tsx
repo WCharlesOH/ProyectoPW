@@ -88,7 +88,7 @@ export default function Perfil_V() {
             padding: "10px 20px",
             borderRadius: "8px",
             textDecoration: "none",
-            color: "white",
+            color: "black",
             fontWeight: "bold",
             transition: "transform 0.3s",
           }}
