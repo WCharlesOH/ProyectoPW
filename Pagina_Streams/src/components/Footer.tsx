@@ -9,7 +9,7 @@ export default function Footer() {
         marginTop: '32px'
       }}
     >
-      © {new Date().getFullYear()} Stream — Proyecto PW
+      © {new Date().getFullYear()} Stream — Proyecto PW - Pronto todo acabara
     </footer>
   )
 }
