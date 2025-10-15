@@ -15,6 +15,10 @@ import NotFound from './pages/NotFound'
 import Sidebar from './components/Sidebar'
 import { AuthProvider } from "./components/AuthContext";
 import { useState } from 'react'
+import Perfil_V from './pages/Perfil_V'
+
+
+
 
 export default function App() {
   const [monedas, setMonedas] = useState(120);
@@ -29,7 +33,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/explorar" element={<Explorar />} />
-          <Route path="/perfil/" element={<Perfil monedas={monedas} setMonedas={setMonedas} />} />
+          <Route path="/perfils/:username" element={<Perfil />} />
+          <Route path="/perfilv/:username" element={<Perfil_V />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/live" element={<LiveStart />} />
