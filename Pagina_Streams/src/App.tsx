@@ -13,9 +13,11 @@ import Nosotros from './pages/Nosotros'
 import Terminos from './pages/Terminos'
 import NotFound from './pages/NotFound'
 import Sidebar from './components/Sidebar'
-import PaginaStreamer from './pages/PaginaStreamer'
+
 import { AuthProvider } from "./components/AuthContext";
 import { useState } from 'react'
+import Perfil_V from './pages/Perfil_V'
+import PaginaStreamer from './pages/PaginaStreamer'
 
 export default function App() {
   const [monedas, setMonedas] = useState(120);
@@ -30,13 +32,14 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/explorar" element={<Explorar />} />
-          <Route path="/perfil/" element={<Perfil monedas={monedas} setMonedas={setMonedas} />} />
+          <Route path="/perfils/:username" element={<Perfil monedas={monedas} setMonedas={setMonedas}/>} />
+          <Route path="/perfilv/:username" element={<Perfil_V />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/live" element={<LiveStart />} />
           <Route path="/nosotros" element={<Nosotros />} />
           <Route path="/terminos" element={<Terminos />} />
-          <Route path="/PaginaStreamer" element={<PaginaStreamer/>}></Route>
+          <Route path='/paginaStreamer' element={<PaginaStreamer/>}/>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

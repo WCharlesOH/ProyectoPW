@@ -10,7 +10,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
   return (
     <div style={{ display: "flex", width: "100%", height: "100%" }}>
       <div style={{ flex: 1, padding: "20px"}}>
-        <h2>Perfil del Streamer</h2>
+        <h2>Perfil del Viewer</h2>
       </div>
       <div style={{ marginTop: "20px", display: "flex", justifyContent: "right" }}>
         <ChatBox monedas={monedas} setMonedas={setMonedas} />

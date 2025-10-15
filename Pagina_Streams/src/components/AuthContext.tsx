@@ -26,6 +26,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const parsed = JSON.parse(stored);
       setUser(parsed);
       setIsLogged(true);
+    } else {
+      // Usuario de prueba streamer
+      const testUser = { role: "streamer", nombre: "StreamerPrueba" };
+      setUser(testUser);
+      setIsLogged(true);
+      localStorage.setItem("user", JSON.stringify(testUser));
     }
   }, []);
 

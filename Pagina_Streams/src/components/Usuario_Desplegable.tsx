@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function UserMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { logout } = useAuth();
+  const  navigate  = useNavigate()
 
   return (
     <div style={{ position: "relative" }}>
@@ -98,6 +100,7 @@ export default function UserMenu() {
                 onClick={() => {
                   logout();
                   setMenuOpen(false);
+                  navigate("/")
                 }}
                 style={{
                   width: "100%",

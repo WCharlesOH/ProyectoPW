@@ -48,11 +48,11 @@ const buttonStyle = {
   cursor: 'pointer',
 };
 
-const cardStyle = {
+const cardStyle : React.CSSProperties = {
   backgroundColor: 'white',
   borderRadius: '10px',
   padding: '20px',
-  textAlign: 'center',
+  textAlign: "center",
   width: '200px',
   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
 };

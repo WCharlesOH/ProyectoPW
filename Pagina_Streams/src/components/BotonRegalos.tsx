@@ -9,14 +9,14 @@ interface Props {
 const BotonRegalo: React.FC<Props> = ({ regalos }) => {
   return (
     <div>
-      <h3>🎉 Regalos disponibles</h3>
+      <h3>Regalos disponibles</h3>
       {regalos.length === 0 ? (
         <p>No hay regalos aún.</p>
       ) : (
         <ul>
           {regalos.map(regalo => (
             <li key={regalo.id}>
-              🎁 {regalo.nombre} - ${regalo.costo} - ⭐ {regalo.puntos}
+              {regalo.nombre} - ${regalo.costo} - {regalo.puntos}
             </li>
           ))}
         </ul>
