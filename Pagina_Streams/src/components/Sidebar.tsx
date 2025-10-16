@@ -50,7 +50,6 @@ export default function Sidebar({ onToggle }: SidebarProps) {
     color: "white",
     height: "calc(100vh - 60px)", // deja espacio para el navbar arriba
     overflow: "hidden",
-    position: "fixed",
     top: 60, // altura del navbar
     left: 0,
     zIndex: 100,

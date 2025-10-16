@@ -40,7 +40,7 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
       <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
         <h2 style={{ margin: 0 }}>
           <Link to="/" style={{ color: "#00b7ff", textDecoration: "none" }}>
-            Streams
+            Tinamo
           </Link>
         </h2>
         <nav style={{ display: "flex", gap: "18px" }}>
