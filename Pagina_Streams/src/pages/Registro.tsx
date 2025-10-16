@@ -11,6 +11,7 @@ type NewUser = Omit<User, "id" | "createdAt" | "coins" | "level" | "points" | "s
 export default function Registro() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [confirm, setconfirm] = useState(false)
 
   const [form, setForm] = useState<NewUser>({
     name: "",
@@ -31,6 +32,7 @@ export default function Registro() {
     if (!form.name.trim()) return "Ingresa tu nombre.";
     if (!/\S+@\S+\.\S+/.test(form.email)) return "Correo electrónico inválido.";
     if (form.password.length < 6) return "La contraseña debe tener al menos 6 caracteres.";
+    if (!confirm) return "Aceptar los terminos y condiciones"
     return "";
   };
 
@@ -144,6 +146,11 @@ export default function Registro() {
         <button className="reg-btn" type="submit" disabled={loading}>
           {loading ? "Creando cuenta..." : "Registrarse"}
         </button>
+        <p 
+        className="reg-foot">acepto los {" "}
+            <Link to={"/terminos"}>Terminos y condiciones</Link>
+            <button onClick={()=>setconfirm(!confirm)}> {confirm ? "No" : "yes"} </button>
+        </p>
 
         <div className="reg-foot">
           ¿Ya tienes cuenta? <Link to="/login">Inicia sesión aquí</Link>
