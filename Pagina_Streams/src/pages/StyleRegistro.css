@@ -1,152 +1,146 @@
-/* Contenedor general centrado */
+/* ====== Lienzo general (mismo mood del login) ====== */
+/* ====== Lienzo general (mismo mood del login) ====== */
 .reg-wrap {
-  /* Antes: min-height: 100dvh; padding: 40px 16px; */
-  min-height: calc(100dvh - 64px); /* descuenta la altura aproximada del Navbar */
-  padding: 12px 16px 32px;         /* menos padding arriba = sube el contenido */
-  display: grid;
-  place-items: start center;       /* arriba y centrado horizontal */
-  align-content: start;            /* asegura que todo quede pegado arriba */
-  background: #000000;
-  color: #fff8f8;
+  min-height: 100vh;
+  padding: 80px 16px 24px;      /* 👈 aumenta padding-top para subir la tarjeta */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #1f2024;          /* fondo oscuro */
+  color: #f5f5f5;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-/* Marca superior */
+
+/* ====== Marca superior (texto Streams pequeño) ====== */
 .brand {
-  /* Antes: margin-top: 24px; margin-bottom: 10px; */
-  margin-top: 0;                   /* quita espacio arriba del logo/título */
-  margin-bottom: 8px;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto 10px;
 }
-
-
-
 .brand-name {
   font-weight: 700;
   font-size: 18px;
+  color: #66b3ff;                  /* toque azul como el buscador */
 }
 
-/* Tarjeta del formulario */
+/* ====== Tarjeta ====== */
 .reg-card {
-  /* Antes: width: min(520px, 22vw); -> 22vw la vuelve muy angosta en monitores grandes */
-  width: min(520px, 92vw);         /* ancho estable y cómodo */
-  background: #080000;
-  border: 1px solid #e6e6e6;
-  border-radius: 10px;
-  padding: 22px 20px 18px;
-  box-shadow: 0 2px 0 rgba(230, 16, 158, 0.02);
-  margin-top: 8px;                 /* un toque más arriba */
+  width: min(520px, 92vw);
+  background: #191b1f;             /* panel oscuro */
+  border: 1px solid #282b31;
+  border-radius: 12px;
+  padding: 28px 24px 22px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.45);
 }
 
+/* Título/subtítulo */
 .reg-title {
-  margin: 0 0 6px;
-  font-size: 22px;
+  margin: 0 0 18px;
+  font-size: 32px;                 /* grande como en login */
+  font-weight: 700;
+  text-align: center;
+  color: #ffffff;
 }
 .reg-sub {
-  margin: 0 0 19px;
-  color: #ffffff;
+  margin: -6px 0 18px;
+  color: #bfc3cc;
   font-size: 14px;
+  text-align: center;
 }
 
+/* Mensaje de error */
 .reg-error {
-  background: #ffeeee;
-  color: #00eeff;
-  border: 1px solid #ffcdcd;
+  background: rgba(255, 76, 76, 0.1);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 76, 76, 0.35);
   border-radius: 8px;
   padding: 10px 12px;
   margin-bottom: 12px;
   font-size: 14px;
 }
 
+/* Labels */
 .reg-label {
   display: block;
-  margin: 8px 0 6px;
-  font-size: 14px;
+  margin: 10px 0 6px;
+  font-size: 13px;
+  color: #d6d8dd;
 }
 
+/* Inputs: look celeste como en el login */
 .reg-input {
   width: 100%;
-  height: 38px;
-  border: 1px solid #d7d7d7;
+  height: 40px;
   border-radius: 8px;
+  border: 1px solid #31343b;
   outline: none;
   padding: 0 12px;
-  background: #fff;
-  color: #111;
-  transition: border-color .15s ease;
+  background: #e9f1ff;            /* celestito */
+  color: #0e1420;
+  transition: box-shadow .15s ease, border-color .15s ease, background .15s ease;
 }
+.reg-input::placeholder { color: #5b6370; }
 .reg-input:focus {
-  border-color: #111;
+  border-color: #66b3ff;
+  box-shadow: 0 0 0 3px rgba(102, 179, 255, .25);
 }
 
 /* Radios */
 .reg-radio-row {
   display: flex;
   gap: 18px;
-  margin: 6px 0 14px;
+  margin: 8px 0 16px;
 }
 .reg-radio {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   user-select: none;
   font-size: 14px;
+  color: #d6d8dd;
+}
+.reg-radio input {
+  width: 16px;
+  height: 16px;
+  accent-color: #66b3ff;          /* azulito del tema */
 }
 
-/* Botón */
+/* Botón (gris como el login) */
 .reg-btn {
   width: 100%;
-  height: 40px;
+  height: 44px;
   border-radius: 8px;
   border: none;
-  background: #00e1ff;
-  color: #fff;
-  font-weight: 600;
+  background: #4a4d53;            /* gris */
+  color: #e9ecf1;
+  font-weight: 700;
+  letter-spacing: .2px;
   cursor: pointer;
-  transition: transform .05s ease-in-out, opacity .2s;
+  transition: background .2s ease, transform .05s ease-in-out, opacity .2s;
 }
-.reg-btn:hover { opacity: .92; }
-.reg-btn:active { transform: translateY(1px); }
-.reg-btn:disabled { opacity: .6; cursor: default; }
+.reg-btn:hover   { background: #5b5f66; }
+.reg-btn:active  { transform: translateY(1px); }
+.reg-btn:disabled{ opacity: .6; cursor: default; }
 
+/* Pie */
 .reg-foot {
-  margin-top: 12px;
+  margin-top: 14px;
   text-align: center;
   font-size: 14px;
+  color: #c9cdd6;
 }
-.reg-foot a { color: #1a73e8; text-decoration: none; }
+.reg-foot a {
+  color: #66b3ff;
+  text-decoration: none;
+}
 .reg-foot a:hover { text-decoration: underline; }
 
-@media (max-width: 1024px) {
-  .container {
-    width: 95%;
-  }
-}
-
+/* ====== Responsivo ====== */
 @media (max-width: 768px) {
-  .row {
-    flex-direction: column;
-  }
-
-  h1, h2, h3 {
-    font-size: 90%;
-  }
-
-  button, input {
-    font-size: 0.95rem;
-  }
+  .reg-card  { padding: 24px 18px 18px; }
+  .reg-title { font-size: 28px; }
 }
-
 @media (max-width: 480px) {
-  .container {
-    width: 100%;
-    padding: 0 1rem;
-  }
-
-  h1, h2, h3 {
-    font-size: 85%;
-  }
-
-  button {
-    width: 100%;
-  }
+  .reg-title { font-size: 24px; }
 }
