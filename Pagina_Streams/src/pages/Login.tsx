@@ -19,10 +19,10 @@ export default function Login() {
       seterror(`Hola, ${result.user.role} bienvenido!`)
       logincontext(result.user);
       if(result.user.role == "streamer"){
-        navigate(`/perfilv/${result.user.name}`)
+        navigate(`/`)
       }
       else{
-        navigate(`/perfils/${result.user.name}`)
+        navigate(`/`)
       }
     } else {
       seterror(result.error)

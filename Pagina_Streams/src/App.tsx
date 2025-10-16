@@ -20,6 +20,7 @@ import { AuthProvider } from "./components/AuthContext";
 import { useState } from 'react'
 import Perfil_V from './pages/Perfil_V'
 import GestionRegalos from './pages/GestionRegalos'
+import Logros from './pages/Logros'
 
 
 
@@ -44,11 +45,12 @@ export default function App() {
           <Route path="/perfilv/:username" element={<Perfil_V />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
-          <Route path="/live" element={<LiveStart />} />
           <Route path="/nosotros" element={<Nosotros />} />
           <Route path="/terminos" element={<Terminos />} />
           <Route path="/dashboard" element={<DashboardStreamer monedas={monedas} setMonedas={setMonedas} />} />
           <Route path="/gestion-regalos" element={<GestionRegalos />} />
+          <Route path="/Logros/:username" element={<Logros/>} />
+          <Route path="/live-start" element={<LiveStart/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

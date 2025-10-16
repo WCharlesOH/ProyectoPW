@@ -2,11 +2,18 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { type User } from "./PaseLogin";
+import Algo from "../assets/accessibility-svgrepo-com.svg"
+
 
 export default function UserMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { logout } = useAuth();
   const  navigate  = useNavigate()
+  const user = localStorage.getItem("user")
+  
+  const titi : User = user ? JSON.parse(user) : null
+
 
   return (
     <div style={{ position: "relative" }}>
@@ -20,7 +27,7 @@ export default function UserMenu() {
         }}
       >
         <img
-          src="./src/assets/accessibility-svgrepo-com.svg"
+          src = {Algo}
           alt="Usuario"
           style={{ width: 28, height: 28, backgroundColor: "white", borderRadius: "50%" }}
         />
@@ -45,7 +52,7 @@ export default function UserMenu() {
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
             <li>
               <Link
-                to="/perfil/usuario"
+                to= {`/perfilv/${titi.name}`}
                 style={{
                   display: "block",
                   padding: "8px 12px",

@@ -88,24 +88,27 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
 
   // 🔥 Función para iniciar/detener transmisión
   const toggleTransmision = () => {
-    if (isLive) {
-      // Detener transmisión
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      emitirActividad("🟥 Transmisión detenida", "stream", { duracion: tiempoTransmision });
-      emitirStream(false);
-      setTiempoTransmision(0);
-    } else {
-      // Iniciar transmisión
-      emitirActividad("🟢 Transmisión iniciada", "stream");
-      emitirStream(true, Date.now());
-      
-      timerRef.current = setInterval(() => {
-        setTiempoTransmision(prev => prev + 1);
-      }, 1000);
+  if (isLive) {
+    // Detener transmisión
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
+    emitirActividad("🟥 Transmisión detenida", "stream", { duracion: tiempoTransmision });
+    emitirStream(false);
+    setTiempoTransmision(0);
+  } else {
+    // Iniciar transmisión
+    emitirActividad("🟢 Transmisión iniciada", "stream");
+    emitirStream(true, Date.now());
+    
+    timerRef.current = setInterval(() => {
+      setTiempoTransmision(prev => prev + 1);
+    }, 1000);
+
+    // 🔥 Abrir nueva pestaña con LiveStart
+    window.open('/live-start', '_blank', 'width=800,height=600');
+  }
     setIsLive(!isLive);
   };
 

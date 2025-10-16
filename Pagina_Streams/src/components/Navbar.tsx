@@ -4,6 +4,7 @@ import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import MonedasMenu from "./MonedasMenu";
 import UserMenu from "./Usuario_Desplegable";
+import algo from "../assets/zoom-svgrepo-com.svg"
 
 type NavbarProps = {
   monedas: any; // Replace 'any' with the actual type if known, e.g., number, string[], etc.
@@ -100,7 +101,6 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
                 </Link>
                 <Link 
                   to="/usuario">
-                usuario   
                 </Link>
 
               </div>
@@ -112,7 +112,7 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
       
       <div style={{ display: "flex", alignItems: "center" }}>
         <img
-          src="./src/assets/zoom-svgrepo-com.svg"
+          src={algo}
           alt="Buscar"
           style={{ width: 20, height: 20, backgroundColor: "white" }}
         />
