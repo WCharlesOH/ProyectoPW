@@ -21,6 +21,7 @@ export default function MonedasMenu({
   const [cvv, setCvv] = useState("");
   const [procesando, setProcesando] = useState(false);
   const [error, setError] = useState("");
+  const [monedasPersonalizadas, setMonedasPersonalizadas] = useState<number>(0);
 
   const paquetes = [
     { monto: 100, precioUSD: 1.4, descuento: null },
@@ -64,12 +65,21 @@ export default function MonedasMenu({
       setMostrarPago(false);
       setMostrarRecibo(true);
       setMonedas(monedas + (compra?.monto ?? 0));
+      setMonedasPersonalizadas(0);
     }, 1500);
+  };
+
+  const comprarPersonalizado = () => {
+    if (monedasPersonalizadas <= 0) return;
+    const precioUSD = monedasPersonalizadas * 0.014; // ejemplo: 1 moneda = $0.014
+    comprar({ monto: monedasPersonalizadas, precioUSD });
   };
 
   return (
     <div
-    style={{ position: "relative", display: "inline-block" }} className="menu-monedas">
+      style={{ position: "relative", display: "inline-block" }}
+      className="menu-monedas"
+    >
       {/* Botón principal */}
       <button
         onClick={() => setAbierto(!abierto)}
@@ -107,6 +117,8 @@ export default function MonedasMenu({
           }}
         >
           <h3 style={{ margin: "0 0 8px", fontSize: "1.1rem" }}>Comprar Monedas</h3>
+
+          {/* Paquetes fijos */}
           {paquetes.map((p) => (
             <div
               key={p.monto}
@@ -141,6 +153,37 @@ export default function MonedasMenu({
               </button>
             </div>
           ))}
+
+          {/* Compra personalizada */}
+          <div style={{ marginTop: 12, display: "flex", gap: 6 }}>
+            <input
+              type="number"
+              placeholder="Cantidad de monedas"
+              value={monedasPersonalizadas > 0 ? monedasPersonalizadas : ""}
+              onChange={(e) => setMonedasPersonalizadas(Number(e.target.value))}
+              style={{
+                flex: 1,
+                padding: 6,
+                borderRadius: 6,
+                border: "1px solid #444",
+                backgroundColor: "#2a2a2e",
+                color: "white",
+              }}
+            />
+            <button
+              onClick={comprarPersonalizado}
+              style={{
+                backgroundColor: "#00b7ff",
+                border: "none",
+                borderRadius: 6,
+                color: "white",
+                padding: "6px 12px",
+                cursor: "pointer",
+              }}
+            >
+              Comprar
+            </button>
+          </div>
         </div>
       )}
 
@@ -149,7 +192,7 @@ export default function MonedasMenu({
         <div style={popupOverlay}>
           <div style={popupBox}>
             <h2 style={{ color: "#00b7ff" }}>
-              Pago de {compra.monto} Monedas (${compra.precioUSD})
+              Pago de {compra.monto} Monedas (${compra.precioUSD.toFixed(2)})
             </h2>
             {!procesando ? (
               <form onSubmit={confirmarPago}>
@@ -202,7 +245,7 @@ export default function MonedasMenu({
             <h2 style={{ color: "#00b7ff" }}>✅ Pago Exitoso</h2>
             <p><strong>Cliente:</strong> {nombre}</p>
             <p><strong>Monedas:</strong> {compra.monto}</p>
-            <p><strong>Total pagado:</strong> ${compra.precioUSD}</p>
+            <p><strong>Total pagado:</strong> ${compra.precioUSD.toFixed(2)}</p>
             <p>Gracias por tu compra 💙</p>
             <button
               onClick={() => {
