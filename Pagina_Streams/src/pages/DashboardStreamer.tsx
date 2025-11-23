@@ -27,7 +27,7 @@ interface DashboardStreamerProps {
   setMonedas: (monedas: number) => void;
 }
 
-const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas }) => {
+const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMonedas }) => {
   // 🔥 Estado del stream sincronizado
   const [isLive, setIsLive] = useState(false);
   const [tiempoTransmision, setTiempoTransmision] = useState(0);
@@ -96,6 +96,7 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas }) => {
     emitirActividad("🟥 Transmisión detenida", "stream", { duracion: tiempoTransmision });
     emitirStream(false);
     setTiempoTransmision(0);
+    setMonedas(monedas + 25);
   } else {
     // Iniciar transmisión
     emitirActividad("🟢 Transmisión iniciada", "stream");

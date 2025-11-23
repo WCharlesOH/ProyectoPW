@@ -7,7 +7,8 @@ export default function Perfil_V() {
   const navigate = useNavigate()
   const user = localStorage.getItem("user")
     
-  const titi : User = user ? JSON.parse(user) : null
+  const titi : User | null = user ? JSON.parse(user) : null
+  const nombre = titi?.name ?? "invitado"
   return (
     <div
       style={{
@@ -78,7 +79,7 @@ export default function Perfil_V() {
               cursor: "pointer",
               transition: "0.2s",
             }}
-            onClick={()=>navigate(`/Logros/${titi.name}`)}
+           onClick={()=>navigate(`/Logros/${nombre}`)}
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#00b7ff")}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#1f1f23")}
           >

@@ -45,7 +45,7 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
               <div className="navbar__more-menu">
                 <Link to="/nosotros">Nosotros</Link>
                 <Link to="/terminos">Términos</Link>
-                <Link to="/usuario" />
+                <Link to="/usuario">Centro de usuario</Link>
               </div>
             )}
           </div>
