@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import "./Home.css";
 
 interface Item {
   id: string;
@@ -46,47 +47,19 @@ const ITEMS_RECOMENDADOS: Item[] = [
 export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoProps) {
   // Ajustar el padding según si el sidebar está abierto o cerrado
   const paddingLeft = sidebarAbierto ? "270px" : "60px";
-  
+
   return (
-    <div 
-    style={{ 
-      padding: "20px", 
-      paddingLeft: paddingLeft,
-      color: "#fff", 
-      background: "#18181b", 
-      minHeight: "100vh",
-      transition: "padding-left 0.3s ease"
-    }}>
-      
+    <div className="home-page" style={{ paddingLeft }}>
+
       {/* Sección principal */}
-      <section style={{ display: "flex", gap: "20px", marginBottom: "30px" }}>
-        <div style={{ 
-          flex: 2, 
-          background: "#0e0e10", 
-          borderRadius: "8px", 
-          height: "300px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          border: "1px solid #333"
-        }}>
+      <section className="hero-grid">
+        <div className="hero-grid__featured">
           Contenido destacado
         </div>
-        
-        <div style={{ 
-          flex: 1, 
-          background: "#0e0e10", 
-          borderRadius: "8px", 
-          padding: "15px",
-          border: "1px solid #333"
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div style={{
-              width: "50px",
-              height: "50px",
-              borderRadius: "50%",
-              background: "#333"
-            }} />
+
+        <div className="hero-grid__card">
+          <div className="hero-grid__card-top">
+            <div className="hero-grid__avatar" />
             <div>
               <div style={{ color: "#00b7ff", fontWeight: "bold" }}>UsuarioPopular</div>
               <div style={{ color: "#aaa", fontSize: "14px" }}>Transmitiendo ahora</div>
@@ -102,65 +75,32 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
           Recomendados para ti
         </h2>
 
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-          gap: "15px"
-        }}>
+        <div className="recommendations">
           {ITEMS_RECOMENDADOS.map((item) => (
-            <div key={item.id} style={{
-              background: "#0e0e10",
-              borderRadius: "8px",
-              overflow: "hidden",
-              border: "1px solid #333"
-            }}>
+            <div key={item.id} className="recommendations__item">
               <Link to={`/canal/${item.id}`}>
-                <div style={{
-                  height: "140px",
-                  background: "#1f1f23",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#777"
-                }}>
+                <div className="recommendations__thumb">
                   Imagen
                 </div>
               </Link>
 
-              <div style={{ padding: "12px" }}>
-                <div style={{ display: "flex", gap: "10px" }}>
-                  <div style={{
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "50%",
-                    background: "#333"
-                  }} />
+              <div className="recommendations__body">
+                <div className="recommendations__meta">
+                  <div className="recommendations__author-avatar" />
                   <div style={{ flex: 1 }}>
-                    <Link to={`/canal/${item.id}`} style={{ 
-                      color: "#fff", 
-                      textDecoration: "none",
-                      fontWeight: "bold",
-                      display: "block",
-                      marginBottom: "5px"
-                    }}>
+                    <Link to={`/canal/${item.id}`} className="recommendations__title">
                       {item.titulo}
                     </Link>
-                    <div style={{ color: "#aaa", fontSize: "13px" }}>
+                    <div className="recommendations__channel">
                       {item.autor}
                     </div>
-                    <div style={{ color: "#aaa", fontSize: "12px" }}>
+                    <div className="recommendations__details">
                       {item.visitas} visitas · {item.categoria}
                     </div>
                     {item.etiquetas && (
-                      <div style={{ display: "flex", gap: "5px", marginTop: "5px" }}>
+                      <div className="recommendations__tags">
                         {item.etiquetas.map((etiqueta) => (
-                          <span key={etiqueta} style={{
-                            fontSize: "11px",
-                            color: "#ddd",
-                            background: "#333",
-                            padding: "2px 8px",
-                            borderRadius: "10px"
-                          }}>
+                          <span key={etiqueta} className="recommendations__tag">
                             {etiqueta}
                           </span>
                         ))}
@@ -173,7 +113,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
           ))}
         </div>
 
-        <div style={{ textAlign: "right", marginTop: "15px" }}>
+        <div className="home-page__footer">
           <Link to="/explorar" style={{ color: "#00b7ff", textDecoration: "none" }}>
             Ver más
           </Link>

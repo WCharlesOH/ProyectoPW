@@ -1,4 +1,3 @@
-import React from "react";
 
 // Datos de ejemplo
 interface Usuario {

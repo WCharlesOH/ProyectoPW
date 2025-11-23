@@ -1,0 +1,35 @@
+.app-shell {
+  background-color: #18181b;
+  min-height: 100vh;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.content-area {
+  padding: 20px;
+  flex: 1;
+  overflow: auto;
+}
+
+@media (max-width: 900px) {
+  .app-body {
+    flex-direction: column;
+  }
+
+  .content-area {
+    padding: 16px 12px 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .content-area {
+    padding: 12px 10px 20px;
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Ranking from "./Ranking";
 import vegeta from "../imagenes/Mirko.jpg";
 import fork from "../imagenes/fork.jpg";
