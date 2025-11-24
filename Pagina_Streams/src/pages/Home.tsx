@@ -71,9 +71,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
 
       {/* Sección recomendados */}
       <section>
-        <h2 style={{ color: "#fff", marginBottom: "15px" }}>
-          Recomendados para ti
-        </h2>
+        <h2 className="section-title">Recomendados para ti</h2>
 
         <div className="recommendations">
           {ITEMS_RECOMENDADOS.map((item) => (
