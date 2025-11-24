@@ -6,14 +6,6 @@
   transition: padding-left 0.3s ease;
 }
 
-.home-page--sidebar {
-  padding-left: 270px;
-}
-
-.home-page--compact {
-  padding-left: 60px;
-}
-
 .hero-grid {
   display: flex;
   gap: 20px;
@@ -45,27 +37,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.hero-grid__user-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.hero-grid__user-name {
-  color: #00b7ff;
-  font-weight: bold;
-}
-
-.hero-grid__user-status {
-  color: #aaa;
-  font-size: 14px;
-}
-
-.hero-grid__user-viewers {
-  color: #aaa;
-  font-size: 12px;
 }
 
 .hero-grid__avatar {
@@ -104,10 +75,6 @@
 .recommendations__meta {
   display: flex;
   gap: 10px;
-}
-
-.recommendations__info {
-  flex: 1;
 }
 
 .recommendations__author-avatar {
@@ -153,17 +120,6 @@
 .home-page__footer {
   text-align: right;
   margin-top: 15px;
-}
-
-.link-cta {
-  color: #00b7ff;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.section-title {
-  color: #fff;
-  margin-bottom: 15px;
 }
 
 @media (max-width: 768px) {

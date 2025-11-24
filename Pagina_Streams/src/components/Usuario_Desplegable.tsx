@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { type User } from "./PaseLogin";
 import Algo from "../assets/accessibility-svgrepo-com.svg"
 
@@ -11,8 +10,9 @@ export default function UserMenu() {
   const { logout } = useAuth();
   const  navigate  = useNavigate()
   const user = localStorage.getItem("user")
-  
-  const titi : User = user ? JSON.parse(user) : null
+
+  const titi: User | null = user ? JSON.parse(user) : null
+  const nombreUsuario = titi?.name ?? "invitado"
 
 
   return (
@@ -52,7 +52,7 @@ export default function UserMenu() {
           <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
             <li>
               <Link
-                to= {`/perfilv/${titi.name}`}
+                to= {`/perfilv/${nombreUsuario}`}
                 style={{
                   display: "block",
                   padding: "8px 12px",
