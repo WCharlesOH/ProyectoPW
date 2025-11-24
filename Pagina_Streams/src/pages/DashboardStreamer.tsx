@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { 
-  emitirActividad, 
-  emitirStream, 
-  canalActividad, 
+import {
+  emitirActividad,
+  emitirStream,
+  canalActividad,
   canalStream,
-  emitirRegalo 
 } from '../datos/sincronizacion';
 
 type Stat = {
@@ -25,10 +24,9 @@ const StatCard: React.FC<{ stat: Stat }> = ({ stat }) => {
 
 interface DashboardStreamerProps {
   monedas: number;
-  setMonedas: (monedas: number) => void;
 }
 
-const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMonedas }) => {
+const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas }) => {
   // 🔥 Estado del stream sincronizado
   const [isLive, setIsLive] = useState(false);
   const [tiempoTransmision, setTiempoTransmision] = useState(0);

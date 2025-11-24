@@ -1,15 +1,9 @@
+import "./Footer.css";
+
 export default function Footer() {
   return (
-    <footer
-      style={{
-        backgroundColor: '#0e0e10',
-        color: '#aaa',
-        textAlign: 'center',
-        padding: '12px',
-        marginTop: '32px'
-      }}
-    >
+    <footer className="footer">
       © {new Date().getFullYear()} Stream — Proyecto PW - Pronto todo acabara
     </footer>
-  )
+  );
 }
