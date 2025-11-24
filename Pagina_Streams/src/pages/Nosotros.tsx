@@ -1,3 +1,4 @@
+
 import Mirkos from "../imagenes/Mirko.jpg";
 import Felipes from "../imagenes/Felipe.jpg";
 import Franciscos from "../imagenes/fancisco.jpg";

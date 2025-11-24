@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import type { Regalo } from "../components/types";
 import BotonRegalo from "../components/BotonRegalos";
 
+const CANALES = {
+  "1": { nombre: "Transmisión en directo", descripcion: "Sesión abierta con interacción en vivo" },
+  "2": { nombre: "Jugando en línea", descripcion: "Partidas competitivas en comunidad" },
+  "3": { nombre: "Charla comunitaria", descripcion: "Conversaciones y anuncios" },
+};
+
 export default function PaginaStreamer() {
+  const { id } = useParams<{ id: string }>();
+  const canalSeleccionado = id && Object.prototype.hasOwnProperty.call(CANALES, id)
+    ? CANALES[id as keyof typeof CANALES]
+    : null;
+  const detalleCanal = canalSeleccionado ?? { nombre: "Canal en vivo", descripcion: "Sesión activa" };
   const [regalos, setRegalos] = useState<Regalo[]>([]);
   const [form, setForm] = useState<Regalo>({ id: 0, nombre: "", costo: 0, puntos: 0 });
   const [editando, setEditando] = useState<boolean>(false);
@@ -64,7 +76,8 @@ export default function PaginaStreamer() {
         minHeight: "100vh",
       }}
     >
-      <h2 style={{ color: "#00b7ff" }}>Gestión de Regalos</h2>
+      <h2 style={{ color: "#00b7ff" }}>{detalleCanal.nombre}</h2>
+      <p style={{ opacity: 0.8 }}>{detalleCanal.descripcion}</p>
 
       <div
         style={{

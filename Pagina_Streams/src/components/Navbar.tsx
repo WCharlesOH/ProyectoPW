@@ -4,8 +4,8 @@ import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import MonedasMenu from "./MonedasMenu";
 import UserMenu from "./Usuario_Desplegable";
-import algo from "../assets/zoom-svgrepo-com.svg";
-import "./Navbar.css";
+import algo from "../assets/zoom-svgrepo-com.svg"
+import "./Navbar.css"
 
 type NavbarProps = {
   monedas: any; // Replace 'any' with the actual type if known, e.g., number, string[], etc.
@@ -24,12 +24,7 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
           <Link to="/">Tinamo</Link>
         </h2>
         <nav className="navbar__links">
-          <NavLink
-            to="/explorar"
-            className={({ isActive }) =>
-              `navbar__link ${isActive ? "navbar__link--active" : ""}`
-            }
-          >
+          <NavLink to="/explorar" style={linkStyle}>
             Explorar
           </NavLink>
           <div
@@ -37,14 +32,14 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
             onMouseEnter={() => setDropOpen(true)}
             onMouseLeave={() => setDropOpen(false)}
           >
-            <button className={`navbar__more-toggle ${dropOpen ? "navbar__more-toggle--open" : ""}`}>
+            <button style={{ fontWeight: dropOpen ? "bold" : "normal" }}>
               Más
             </button>
             {dropOpen && (
               <div className="navbar__more-menu">
                 <Link to="/nosotros">Nosotros</Link>
                 <Link to="/terminos">Términos</Link>
-                <Link to="/usuario" />
+                <Link to="/usuario">Centro de usuario</Link>
               </div>
             )}
           </div>
@@ -66,20 +61,10 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
       <div className="navbar__actions">
         {!isLogged ? (
           <>
-            <NavLink
-              to="/login"
-              className={({ isActive }) =>
-                `navbar__button-link ${isActive ? "navbar__link--active" : ""}`
-              }
-            >
+            <NavLink to="/login" style={linkStyle} className="navbar__button-link">
               Login
             </NavLink>
-            <NavLink
-              to="/registro"
-              className={({ isActive }) =>
-                `navbar__button-link ${isActive ? "navbar__link--active" : ""}`
-              }
-            >
+            <NavLink to="/registro" style={linkStyle} className="navbar__button-link">
               Register
             </NavLink>
           </>

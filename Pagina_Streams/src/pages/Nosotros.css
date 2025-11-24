@@ -1,7 +1,7 @@
 .nosotros-page {
   background-color: #0e0e10;
   min-height: 100vh;
-  color: white;
+  color: rgb(0, 0, 0);
   padding: 40px 0;
   text-align: center;
 }
@@ -56,7 +56,7 @@
   margin: 0;
   font-style: italic;
   opacity: 0.9;
-  color: white;
+  color: rgb(255, 0, 0);
 }
 
 .descripcion {
@@ -67,7 +67,7 @@
   max-height: 0;
   overflow: hidden;
   transition: all 0.4s ease;
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 .card:hover {

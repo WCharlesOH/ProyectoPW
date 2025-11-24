@@ -45,20 +45,25 @@ const ITEMS_RECOMENDADOS: Item[] = [
 ];
 
 export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoProps) {
+  // Ajustar el padding según si el sidebar está abierto o cerrado
+  const paddingLeft = sidebarAbierto ? "270px" : "60px";
+
   return (
-    <div className={`home-page ${sidebarAbierto ? "home-page--sidebar" : "home-page--compact"}`}>
+    <div className="home-page" style={{ paddingLeft }}>
 
       {/* Sección principal */}
       <section className="hero-grid">
-        <div className="hero-grid__featured">Contenido destacado</div>
+        <div className="hero-grid__featured">
+          Contenido destacado
+        </div>
 
         <div className="hero-grid__card">
           <div className="hero-grid__card-top">
             <div className="hero-grid__avatar" />
-            <div className="hero-grid__user-copy">
-              <div className="hero-grid__user-name">UsuarioPopular</div>
-              <div className="hero-grid__user-status">Transmitiendo ahora</div>
-              <div className="hero-grid__user-viewers">150 espectadores</div>
+            <div>
+              <div style={{ color: "#00b7ff", fontWeight: "bold" }}>UsuarioPopular</div>
+              <div style={{ color: "#aaa", fontSize: "14px" }}>Transmitiendo ahora</div>
+              <div style={{ color: "#aaa", fontSize: "12px" }}>150 espectadores</div>
             </div>
           </div>
         </div>
@@ -80,7 +85,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
               <div className="recommendations__body">
                 <div className="recommendations__meta">
                   <div className="recommendations__author-avatar" />
-                  <div className="recommendations__info">
+                  <div style={{ flex: 1 }}>
                     <Link to={`/canal/${item.id}`} className="recommendations__title">
                       {item.titulo}
                     </Link>
@@ -107,7 +112,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
         </div>
 
         <div className="home-page__footer">
-          <Link to="/explorar" className="link-cta">
+          <Link to="/explorar" style={{ color: "#00b7ff", textDecoration: "none" }}>
             Ver más
           </Link>
         </div>

@@ -95,6 +95,7 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas }) => {
     emitirActividad("🟥 Transmisión detenida", "stream", { duracion: tiempoTransmision });
     emitirStream(false);
     setTiempoTransmision(0);
+    setMonedas(monedas + 25);
   } else {
     // Iniciar transmisión
     emitirActividad("🟢 Transmisión iniciada", "stream");

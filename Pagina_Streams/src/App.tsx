@@ -15,6 +15,11 @@ import Nosotros from './pages/Nosotros'
 import Terminos from './pages/Terminos'
 import NotFound from './pages/NotFound'
 import Sidebar from './components/Sidebar'
+import PanelControl from './pages/PanelControl'
+import Suscripciones from './pages/Suscripciones'
+import Ajustes from './pages/Ajustes'
+import Usuario from './pages/Usuario'
+import PaginaStreamer from './pages/PaginaStreamer'
 
 import { AuthProvider } from "./components/AuthContext";
 
@@ -48,7 +53,15 @@ export default function App() {
               <Route path="/registro" element={<Registro />} />
               <Route path="/nosotros" element={<Nosotros />} />
               <Route path="/terminos" element={<Terminos />} />
+
               <Route path="/dashboard" element={<DashboardStreamer monedas={monedas} />} />
+
+              <Route path="/dashboard" element={<DashboardStreamer monedas={monedas} setMonedas={setMonedas} />} />
+              <Route path="/panel" element={<PanelControl monedas={monedas} setMonedas={setMonedas} />} />
+              <Route path="/suscripciones" element={<Suscripciones />} />
+              <Route path="/ajustes" element={<Ajustes />} />
+              <Route path="/usuario" element={<Usuario />} />
+              <Route path="/canal/:id" element={<PaginaStreamer />} />
               <Route path="/gestion-regalos" element={<GestionRegalos />} />
               <Route path="/Logros/:username" element={<Logros />} />
               <Route path="/live-start" element={<LiveStart monedas={monedas} setMonedas={setMonedas} />} />
