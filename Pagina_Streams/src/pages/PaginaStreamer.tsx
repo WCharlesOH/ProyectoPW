@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import type { Regalo } from "../components/types";
 import BotonRegalo from "../components/BotonRegalos";
+import "./PaginaStreamer.css"; // ← IMPORTANTE
 
 const CANALES = {
   "1": { nombre: "Transmisión en directo", descripcion: "Sesión abierta con interacción en vivo" },
@@ -14,27 +15,23 @@ export default function PaginaStreamer() {
   const canalSeleccionado = id && Object.prototype.hasOwnProperty.call(CANALES, id)
     ? CANALES[id as keyof typeof CANALES]
     : null;
+
   const detalleCanal = canalSeleccionado ?? { nombre: "Canal en vivo", descripcion: "Sesión activa" };
+
   const [regalos, setRegalos] = useState<Regalo[]>([]);
   const [form, setForm] = useState<Regalo>({ id: 0, nombre: "", costo: 0, puntos: 0 });
-  const [editando, setEditando] = useState<boolean>(false);
+  const [editando, setEditando] = useState(false);
 
-  // Cargar regalos desde localStorage al iniciar
   useEffect(() => {
     const guardados = localStorage.getItem("regalos");
     if (guardados) {
       try {
-        const regalosParseados = JSON.parse(guardados);
-        if (Array.isArray(regalosParseados)) {
-          setRegalos(regalosParseados);
-        }
-      } catch (error) {
-        console.error("Error al leer regalos desde localStorage", error);
-      }
+        const parsed = JSON.parse(guardados);
+        if (Array.isArray(parsed)) setRegalos(parsed);
+      } catch {}
     }
   }, []);
 
-  // Guardar regalos en localStorage cada vez que cambian
   useEffect(() => {
     localStorage.setItem("regalos", JSON.stringify(regalos));
   }, [regalos]);
@@ -42,7 +39,7 @@ export default function PaginaStreamer() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({
       ...form,
-      [e.target.name]: e.target.name === "nombre" ? e.target.value : Number(e.target.value),
+      [e.target.name]: e.target.name === "nombre" ? e.target.value : Number(e.target.value)
     });
   };
 
@@ -57,125 +54,87 @@ export default function PaginaStreamer() {
   };
 
   const guardarEdicion = () => {
-    setRegalos(regalos.map((r) => (r.id === form.id ? form : r)));
+    setRegalos(regalos.map(r => (r.id === form.id ? form : r)));
     setForm({ id: 0, nombre: "", costo: 0, puntos: 0 });
     setEditando(false);
   };
 
   const eliminarRegalo = (id: number) => {
-    setRegalos(regalos.filter((r) => r.id !== id));
+    setRegalos(regalos.filter(r => r.id !== id));
   };
 
   return (
-    <div
-      style={{
-        padding: "0px",
-        marginTop: "0px",
-        color: "white",
-        textAlign: "center",
-      }}
-    >
-      <h2 style={{ color: "#00b7ff" }}>{detalleCanal.nombre}</h2>
-      <p style={{ opacity: 0.8 }}>{detalleCanal.descripcion}</p>
+    <div className="streamer-page">
 
-      <div
-        style={{
-          margin: "0px auto",
-          width: "100%",
-          maxWidth: "1000px",
-          backgroundColor: "#1f1f23",
-          borderRadius: "12px",
-          padding: "0px",
-          boxShadow: "0 0 15px rgba(0,0,0,0.4)",
-        }}
-      >
-        <input
-          name="nombre"
-          value={form.nombre}
-          onChange={handleChange}
-          placeholder="Nombre del regalo"
-          style={{ margin: "5px", padding: "8px", width: "80%" }}
-        />
-        <input
-          name="costo"
-          type="number"
-          value={form.costo}
-          onChange={handleChange}
-          placeholder="Costo"
-          style={{ margin: "5px", padding: "8px", width: "80%" }}
-        />
-        <input
-          name="puntos"
-          type="number"
-          value={form.puntos}
-          onChange={handleChange}
-          placeholder="Puntos"
-          style={{ margin: "5px", padding: "8px", width: "80%" }}
-        />
-        <button
-          onClick={editando ? guardarEdicion : agregarRegalo}
-          style={{
-            marginTop: "10px",
-            backgroundColor: "#00b7ff",
-            padding: "10px 20px",
-            borderRadius: "8px",
-            color: "white",
-            fontWeight: "bold",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          {editando ? "Guardar cambios" : "Agregar regalo"}
-        </button>
-
-        <ul style={{ listStyle: "none", padding: 0, marginTop: "20px" }}>
-          {regalos.map((regalo) => (
-            <li
-              key={regalo.id}
-              style={{
-                backgroundColor: "#2a2a2e",
-                margin: "10px 0",
-                padding: "10px",
-                borderRadius: "8px",
-              }}
-            >
-              <strong>{regalo.nombre}</strong> - ${regalo.costo} - {regalo.puntos}
-              <div style={{ marginTop: "10px" }}>
-                <button
-                  onClick={() => editarRegalo(regalo)}
-                  style={{
-                    marginRight: "10px",
-                    backgroundColor: "#ffaa00",
-                    padding: "6px 12px",
-                    borderRadius: "6px",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() => eliminarRegalo(regalo.id)}
-                  style={{
-                    backgroundColor: "#ff4444",
-                    padding: "6px 12px",
-                    borderRadius: "6px",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "white",
-                  }}
-                >
-                  Eliminar
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
+      <div className="streamer-header">
+        <h2 className="streamer-title">{detalleCanal.nombre}</h2>
+        <p className="streamer-description">{detalleCanal.descripcion}</p>
       </div>
 
-      <div style={{ marginTop: "40px" }}>
+      <div className="streamer-content-wrapper">
+
+        <div id="streamer-root" className="streamer-box">
+
+          <div className="streamer-form">
+            <input
+              className="streamer-input"
+              name="nombre"
+              value={form.nombre}
+              onChange={handleChange}
+              placeholder="Nombre del regalo"
+            />
+
+            <input
+              className="streamer-input"
+              name="costo"
+              type="number"
+              value={form.costo}
+              onChange={handleChange}
+              placeholder="Costo"
+            />
+
+            <input
+              className="streamer-input"
+              name="puntos"
+              type="number"
+              value={form.puntos}
+              onChange={handleChange}
+              placeholder="Puntos"
+            />
+
+            <button
+              className="streamer-button"
+              onClick={editando ? guardarEdicion : agregarRegalo}
+            >
+              {editando ? "Guardar cambios" : "Agregar regalo"}
+            </button>
+          </div>
+
+          <ul className="streamer-list">
+            {regalos.map((regalo) => (
+              <li key={regalo.id} className="streamer-item">
+                <strong>{regalo.nombre}</strong> — ${regalo.costo} — {regalo.puntos}
+
+                <div className="streamer-actions">
+                  <button className="streamer-edit" onClick={() => editarRegalo(regalo)}>
+                    Editar
+                  </button>
+
+                  <button className="streamer-delete" onClick={() => eliminarRegalo(regalo.id)}>
+                    Eliminar
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+        </div>
+      </div>
+
+      <div className="streamer-gifts-wrapper">
         <BotonRegalo regalos={regalos} />
       </div>
+
     </div>
   );
 }

@@ -50,7 +50,7 @@ export default function App() {
           <main 
             className="content-area"
             style={{
-              marginLeft: hideSidebar ? 0 : (sidebarOpen ? 0 : 60),
+              marginLeft: hideSidebar ? 0 : (sidebarOpen ? 250 : 40),
               transition: "margin-left 0.3s ease"
             }}
           >

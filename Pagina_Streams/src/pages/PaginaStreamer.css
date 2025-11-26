@@ -1,0 +1,125 @@
+/* CONTENEDOR PRINCIPAL DE LA PÁGINA */
+.streamer-page {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: white;
+  flex: 1;
+  min-height: 0;
+}
+
+/* HEADER DEL STREAM */
+.streamer-header {
+  text-align: left;
+  padding-left: 10px;
+}
+
+.streamer-title {
+  color: #00b7ff;
+  margin: 0;
+}
+
+.streamer-description {
+  opacity: 0.8;
+  margin-top: 4px;
+}
+
+/* CONTENEDOR PRINCIPAL INTERNO */
+.streamer-content-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
+}
+
+/* CUADRO DE CONTENIDO */
+.streamer-box {
+  width: 100%;
+  max-width: none;
+  background-color: #1f1f23;
+  padding: 20px;
+  border-radius: 12px;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+}
+
+/* FORMULARIO DE REGALOS */
+.streamer-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.streamer-input {
+  margin: 5px;
+  padding: 8px;
+  width: 80%;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+}
+
+.streamer-button {
+  margin-top: 10px;
+  background-color: #00b7ff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.streamer-button:hover {
+  opacity: 0.85;
+}
+
+/* LISTA DE REGALOS */
+.streamer-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.streamer-item {
+  background-color: #2a2a2e;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.streamer-edit {
+  margin-right: 10px;
+  background-color: #ffaa00;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.streamer-delete {
+  background-color: #ff4444;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.streamer-actions {
+  margin-top: 10px;
+}
+
+/* BOTÓN DE REGALOS GLOBAL */
+.streamer-gifts-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}

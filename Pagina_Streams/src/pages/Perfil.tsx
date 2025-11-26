@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
 import Player from "../components/Player";
@@ -74,7 +73,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
           color: "white",
           textAlign: "center",
           padding: "2rem",
-          marginLeft: 250, // espacio del sidebar
+          // marginLeft: 250, ❌ ELIMINADO
         }}
       >
         <h2>Streamer no encontrado</h2>
@@ -86,22 +85,23 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
     <div
       style={{
         display: "flex",
-        minHeight: "calc(100vh - 60px)", // deja espacio al navbar superior
+        minHeight: "calc(100vh - 60px)",
         backgroundColor: "#0e0e10",
         color: "white",
-        marginLeft: 250, // 🔹 deja espacio fijo al sidebar
+        // marginLeft: 250, ❌ ELIMINADO
         transition: "margin-left 0.3s ease",
         padding: "20px",
+        width: "100%",    // ✔ asegura ancho completo
+        boxSizing: "border-box",
       }}
     >
       {/* Contenido principal */}
       <div style={{ flex: 1, paddingRight: "20px" }}>
-        {/* Imagen (simulación del stream) */}
+        
         <div style={{ marginBottom: "20px" }}>
           <Player imagenUrl={streamer.imagenUrl} />
         </div>
 
-        {/* Información dinámica */}
         <h1>{streamer.username}</h1>
         <p style={{ color: "#ccc" }}>{streamer.descripcion}</p>
         <p>
@@ -111,7 +111,6 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
           <strong>Seguidores:</strong> {streamer.seguidores}
         </p>
 
-        {/* VODs */}
         <div style={{ marginTop: "30px" }}>
           <h2>Videos anteriores</h2>
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
@@ -136,7 +135,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
         </div>
       </div>
 
-      {/* ChatBox (mantiene monedas) */}
+      {/* ChatBox */}
       <div
         style={{
           width: 380,
