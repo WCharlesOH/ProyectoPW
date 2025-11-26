@@ -54,6 +54,8 @@ export default function App() {
               <Route path="/nosotros" element={<Nosotros />} />
               <Route path="/terminos" element={<Terminos />} />   
               <Route path="/dashboard" element={<DashboardStreamer monedas={monedas} setMonedas={setMonedas} />} />
+              <Route path="/terminos" element={<Terminos />} />
+              <Route path="/dashboard" element={<DashboardStreamer monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/dashboard" element={<DashboardStreamer monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/panel" element={<PanelControl monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/suscripciones" element={<Suscripciones />} />

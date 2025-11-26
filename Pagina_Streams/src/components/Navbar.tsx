@@ -17,12 +17,6 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
   const [dropOpen, setDropOpen] = useState(false);
   const [menuMonedasAbierto, setMenuMonedasAbierto] = useState(false);
 
-  const linkStyle = ({ isActive }: { isActive: boolean }) => ({
-    color: isActive ? "#00b7ff" : "#fff",
-    textDecoration: "none",
-    fontWeight: isActive ? "bold" : "normal",
-  });
-
   return (
     <header className="navbar">
       <div className="navbar__group">
@@ -56,7 +50,7 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
         <img
           src={algo}
           alt="Buscar"
-          style={{ width: 20, height: 20, backgroundColor: "white" }}
+          className="navbar__search-icon"
         />
         <input
           type="text"
