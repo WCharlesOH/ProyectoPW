@@ -266,4 +266,5 @@ const GestionRegalos: React.FC = () => {
   );
 };
 
-export default GestionRegalos;
+export default  GestionRegalos 
+

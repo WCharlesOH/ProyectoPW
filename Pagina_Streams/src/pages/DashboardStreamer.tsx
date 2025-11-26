@@ -5,6 +5,55 @@ import {
   canalActividad,
   canalStream,
 } from '../datos/sincronizacion';
+import GestionRegalos from "./GestionRegalos";
+
+
+const PopupModal = ({ children, onClose }: never) => (
+  <div style={styles.overlay}>
+    <div style={styles.modal}>
+      <button onClick={onClose} style={styles.btnCerrar}>✖</button>
+      <div style={{ height: "100%", overflow: "auto" }}>
+        {children}
+      </div>
+    </div>
+  </div>
+);
+
+const styles = {
+  overlay: {
+    position: "fixed" as const,
+    top: 0,
+    left: 0,
+    width: "100vw",
+    height: "100vh",
+    background: "rgba(0,0,0,0.6)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+  },
+  modal: {
+    position: "relative" as const,
+    width: "600px",
+    height: "700px",
+    background: "#0f1724",
+    borderRadius: 10,
+    padding: 0,
+    overflow: "hidden",
+  },
+  btnCerrar: {
+    position: "absolute" as const,
+    top: 10,
+    right: 10,
+    background: "transparent",
+    color: "white",
+    border: "none",
+    fontSize: 22,
+    cursor: "pointer",
+    zIndex: 2,
+  }
+};
+// ---------------------------------------------------------
 
 type Stat = {
   label: string;
@@ -28,13 +77,14 @@ interface DashboardStreamerProps {
 }
 
 const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMonedas }) => {
-  // 🔥 Estado del stream sincronizado
   const [isLive, setIsLive] = useState(false);
   const [tiempoTransmision, setTiempoTransmision] = useState(0);
   const [actividades, setActividades] = useState<Array<{id: string; text: string; time: string}>>([]);
   const timerRef = useRef<number | null>(null);
 
-  // 🔥 Datos mock actualizados
+  // ---- NUEVO ESTADO PARA EL POPUP ----
+  const [mostrarPopupRegalos, setMostrarPopupRegalos] = useState(false);
+
   const stats: Stat[] = [
     { label: 'Horas streameadas', value: `${Math.floor(tiempoTransmision / 3600)}h`, hint: 'Tiempo en vivo actual' },
     { label: 'Sesiones este mes', value: 28, hint: 'Streams realizados' },
@@ -48,7 +98,6 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
     { label: 'Subs nuevas', value: 48 },
   ];
 
-  // 🔥 Sincronización entre pestañas
   useEffect(() => {
     const manejarActividad = (e: MessageEvent) => {
       if (e.data?.tipo === "actividad") {
@@ -58,7 +107,7 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
         });
         setActividades(prev => [
           { id: crypto.randomUUID(), text: e.data.texto, time: hora },
-          ...prev.slice(0, 19), // Mantener últimas 20 actividades
+          ...prev.slice(0, 19),
         ]);
       }
     };
@@ -79,52 +128,45 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
     return () => {
       canalActividad.removeEventListener("message", manejarActividad);
       canalStream.removeEventListener("message", manejarStream);
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
+      if (timerRef.current) clearInterval(timerRef.current);
     };
   }, []);
 
-  // 🔥 Función para iniciar/detener transmisión
   const toggleTransmision = () => {
-  if (isLive) {
-    // Detener transmisión
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    emitirActividad("🟥 Transmisión detenida", "stream", { duracion: tiempoTransmision });
-    emitirStream(false);
-    setTiempoTransmision(0);
-    setMonedas(monedas + 25);
-  } else {
-    // Iniciar transmisión
-    emitirActividad("🟢 Transmisión iniciada", "stream");
-    emitirStream(true, Date.now());
-    
-    timerRef.current = setInterval(() => {
-      setTiempoTransmision(prev => prev + 1);
-    }, 1000);
+    if (isLive) {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      emitirActividad("🟥 Transmisión detenida", "stream", { duracion: tiempoTransmision });
+      emitirStream(false);
+      setTiempoTransmision(0);
+      setMonedas(monedas + 25);
+    } else {
+      emitirActividad("🟢 Transmisión iniciada", "stream");
+      emitirStream(true, Date.now());
 
-    // 🔥 Abrir nueva pestaña con LiveStart
-    window.open('/live-start', '_blank', 'width=800,height=600');
-  }
+      timerRef.current = setInterval(() => {
+        setTiempoTransmision(prev => prev + 1);
+      }, 1000);
+
+      window.open('/live-start', '_blank', 'width=800,height=600');
+    }
+
     setIsLive(!isLive);
   };
 
-  // 🔥 Función para abrir gestión de regalos en nueva pestaña
+  // ----------- POPUP EN VEZ DE NUEVA PESTAÑA -----------
   const abrirGestionRegalos = () => {
-    const ventanaRegalos = window.open('/gestion-regalos', '_blank', 'width=600,height=700');
-    
-    // Enviar datos iniciales a la nueva ventana
-    setTimeout(() => {
-      if (ventanaRegalos) {
-        emitirActividad("🎁 Gestión de regalos abierta", "regalo");
-      }
-    }, 1000);
-  };
+    setMostrarPopupRegalos(true);
 
-  // 🔥 Formatear tiempo de transmisión
+    // Emitir actividad
+    setTimeout(() => {
+      emitirActividad("🎁 Gestión de regalos abierta", "regalo");
+    }, 500);
+  };
+  // -------------------------------------------------------
+
   const formatearTiempo = (segundos: number) => {
     const h = String(Math.floor(segundos / 3600)).padStart(2, "0");
     const m = String(Math.floor((segundos % 3600) / 60)).padStart(2, "0");
@@ -134,10 +176,18 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
 
   return (
     <div style={{ padding: 20, color: 'white' }}>
-      {/* 🔥 Header con controles de transmisión */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
+      
+      {/* POPUP DE REGALOS */}
+      {mostrarPopupRegalos && (
+        <PopupModal onClose={() => setMostrarPopupRegalos(false)}>
+          <GestionRegalos />
+        </PopupModal>
+      )}
+
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 30,
         background: '#0f1724',
@@ -147,15 +197,13 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
         <div>
           <h1 style={{ margin: 0 }}>Dashboard del Streamer</h1>
           <p style={{ marginTop: 6, opacity: 0.8 }}>
-            {isLive 
-              ? `🔴 EN VIVO - ${formatearTiempo(tiempoTransmision)}` 
-              : "⏸️ Sin transmisión"
-            }
+            {isLive
+              ? `🔴 EN VIVO - ${formatearTiempo(tiempoTransmision)}`
+              : "⏸️ Sin transmisión"}
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: 12 }}>
-          {/* 🔥 Botón Iniciar/Detener Live */}
           <button
             onClick={toggleTransmision}
             style={{
@@ -173,7 +221,6 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
             {isLive ? '⏹️ Detener Live' : '🔴 Iniciar Live'}
           </button>
 
-          {/* 🔥 Botón Gestión de Regalos */}
           <button
             onClick={abrirGestionRegalos}
             style={{
@@ -200,24 +247,24 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
         ))}
       </section>
 
-      {/* Contenido principal */}
+      {/* Actividades + Economía */}
       <section style={{ display: 'flex', gap: 20, marginTop: 30, flexWrap: 'wrap' }}>
-        {/* Actividad reciente Sincronizada */}
+        
         <div style={{ flex: 1, minWidth: 300, background: '#071029', padding: 16, borderRadius: 8 }}>
           <h3 style={{ margin: '0 0 15px 0' }}>Actividad Reciente Sincronizada</h3>
           <div style={{ maxHeight: 400, overflowY: 'auto' }}>
             {actividades.map((actividad) => (
-              <div 
-                key={actividad.id} 
-                style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  background: 'rgba(255,255,255,0.02)', 
-                  padding: 12, 
+              <div
+                key={actividad.id}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  background: 'rgba(255,255,255,0.02)',
+                  padding: 12,
                   borderRadius: 6,
                   marginBottom: 8,
                   borderLeft: `3px solid ${
-                    actividad.text.includes('🟢') ? '#00b7ff' : 
+                    actividad.text.includes('🟢') ? '#00b7ff' :
                     actividad.text.includes('🟥') ? '#ef4444' :
                     actividad.text.includes('🎁') ? '#9147ff' :
                     actividad.text.includes('💬') ? '#00b7ff' : '#333'
@@ -230,15 +277,9 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
                 </div>
               </div>
             ))}
-            {actividades.length === 0 && (
-              <div style={{ textAlign: 'center', opacity: 0.5, padding: 40 }}>
-                No hay actividad reciente. Las actividades se sincronizarán entre pestañas.
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Economía */}
         <div style={{ width: 340, minWidth: 260, background: '#071029', padding: 16, borderRadius: 8 }}>
           <h3 style={{ margin: '0 0 15px 0' }}>Economía</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -248,13 +289,13 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
                 <div style={{ fontSize: 18, fontWeight: 700, marginTop: 6 }}>{e.value}</div>
               </div>
             ))}
-            {/* Monedas actuales */}
             <div style={{ background: '#0b1830', padding: 12, borderRadius: 6 }}>
               <div style={{ fontSize: 12, opacity: 0.85 }}>Monedas Actuales</div>
               <div style={{ fontSize: 18, fontWeight: 700, marginTop: 6 }}>🪙 {monedas}</div>
             </div>
           </div>
         </div>
+
       </section>
     </div>
   );
