@@ -52,10 +52,8 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/registro" element={<Registro />} />
               <Route path="/nosotros" element={<Nosotros />} />
-              <Route path="/terminos" element={<Terminos />} />   
-              <Route path="/dashboard" element={<DashboardStreamer monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/terminos" element={<Terminos />} />
-              <Route path="/dashboard" element={<DashboardStreamer monedas={monedas} setMonedas={setMonedas} />} />
+
               <Route path="/dashboard" element={<DashboardStreamer monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/panel" element={<PanelControl monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/suscripciones" element={<Suscripciones />} />
@@ -63,8 +61,9 @@ export default function App() {
               <Route path="/usuario" element={<Usuario />} />
               <Route path="/canal/:id" element={<PaginaStreamer />} />
               <Route path="/gestion-regalos" element={<GestionRegalos />} />
-              <Route path="/Logros/:username" element={<Logros />} />
+              <Route path="/logros/:username" element={<Logros />} />
               <Route path="/live-start" element={<LiveStart monedas={monedas} setMonedas={setMonedas} />} />
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

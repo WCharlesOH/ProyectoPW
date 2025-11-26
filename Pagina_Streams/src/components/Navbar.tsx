@@ -17,6 +17,12 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
   const [dropOpen, setDropOpen] = useState(false);
   const [menuMonedasAbierto, setMenuMonedasAbierto] = useState(false);
 
+  const linkStyle: React.CSSProperties = {
+    textDecoration: "none",
+    color: "inherit",
+    margin: "0 8px"
+  };
+
   return (
     <header className="navbar">
       <div className="navbar__group">
