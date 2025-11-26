@@ -24,9 +24,10 @@ const StatCard: React.FC<{ stat: Stat }> = ({ stat }) => {
 
 interface DashboardStreamerProps {
   monedas: number;
+  setMonedas: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas }) => {
+const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMonedas }) => {
   // 🔥 Estado del stream sincronizado
   const [isLive, setIsLive] = useState(false);
   const [tiempoTransmision, setTiempoTransmision] = useState(0);
