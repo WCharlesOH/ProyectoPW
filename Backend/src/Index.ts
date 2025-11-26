@@ -2,6 +2,8 @@ import express, {Request, Response, NextFunction} from "express"
 import dotenv from "dotenv"
 import bodyParser from "body-parser"
 import cors from "cors"
+import { PrismaClient } from "./generated/prisma/client"
+
 
 dotenv.config() 
 const app = express()
@@ -14,10 +16,10 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(cors())
 
-app.post("/login", (req : Request, resp : Response) => {
+app.post("/Usuario", (req : Request, resp : Response) => {
     
 })
 
-app.get("/profile", (req : Request, resp : Response) => {
+app.get("/UsuariosRanking", (req : Request, resp : Response) => {
     
 })
