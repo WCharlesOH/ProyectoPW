@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
-import Player from "../components/Player";
+import LivePlayer from "../components/LivePlayer";
 
 interface PerfilProps {
   monedas: number;
@@ -99,7 +99,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
       <div style={{ flex: 1, paddingRight: "20px" }}>
         
         <div style={{ marginBottom: "20px" }}>
-          <Player imagenUrl={streamer.imagenUrl} />
+          <LivePlayer fallbackImage={streamer.imagenUrl} />
         </div>
 
         <h1>{streamer.username}</h1>
