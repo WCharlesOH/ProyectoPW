@@ -3,7 +3,6 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import './App.css'
 
-
 import Home from './pages/Home'
 import Explorar from './pages/Explorar'
 import Perfil from './pages/Perfil'
@@ -28,22 +27,33 @@ import Perfil_V from './pages/Perfil_V'
 import GestionRegalos from './pages/GestionRegalos'
 import Logros from './pages/Logros'
 
-
-
-//main
-
 export default function App() {
+
   const [monedas, setMonedas] = useState(120);
+  const [sidebarOpen, setSidebarOpen] = useState(true); 
+
   const location = useLocation();
   const hideSidebar = location.pathname === '/dashboard';
 
   return (
     <AuthProvider>
       <div className="app-shell">
+        
         <Navbar monedas={monedas} setMonedas={setMonedas} />
+
         <div className="app-body">
-          {!hideSidebar && <Sidebar />}
-          <main className="content-area">
+          
+          {!hideSidebar && (
+            <Sidebar onToggle={setSidebarOpen} />
+          )}
+
+          <main 
+            className="content-area"
+            style={{
+              marginLeft: hideSidebar ? 0 : (sidebarOpen ? 0 : 60),
+              transition: "margin-left 0.3s ease"
+            }}
+          >
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/explorar" element={<Explorar />} />
@@ -68,7 +78,9 @@ export default function App() {
             </Routes>
           </main>
         </div>
+
         <Footer />
+
       </div>
     </AuthProvider>
   )

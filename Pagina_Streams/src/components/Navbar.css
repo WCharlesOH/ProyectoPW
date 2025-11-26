@@ -7,7 +7,7 @@
   justify-content: space-between;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 200; /* <-- AUMENTADO */
   gap: 12px;
 }
 

@@ -21,7 +21,7 @@ interface ExplorarProps {
 }
 
 export default function Explorar({ sidebarAbierto = true }: ExplorarProps) {
-  const paddingLeft = sidebarAbierto ? "270px" : "60px";
+  const paddingLeft = sidebarAbierto ? "0px" : "60px";
   
   return (
     <div 

@@ -69,11 +69,10 @@ export default function PaginaStreamer() {
   return (
     <div
       style={{
-        padding: "40px",
+        padding: "0px",
+        marginTop: "0px",
         color: "white",
         textAlign: "center",
-        
-        minHeight: "100vh",
       }}
     >
       <h2 style={{ color: "#00b7ff" }}>{detalleCanal.nombre}</h2>
@@ -81,12 +80,12 @@ export default function PaginaStreamer() {
 
       <div
         style={{
-          margin: "30px auto",
-          width: "90%",
-          maxWidth: "600px",
+          margin: "0px auto",
+          width: "100%",
+          maxWidth: "1000px",
           backgroundColor: "#1f1f23",
           borderRadius: "12px",
-          padding: "20px",
+          padding: "0px",
           boxShadow: "0 0 15px rgba(0,0,0,0.4)",
         }}
       >

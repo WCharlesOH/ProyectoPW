@@ -44,15 +44,16 @@ export default function Sidebar({ onToggle }: SidebarProps) {
     <div style={{ display: "flex" }}>
       <div
         style={{
-    width: isOpen ? 250 : 40,
-    transition: "width 0.3s",
-    backgroundColor: "#0e0e10",
-    color: "white",
-    height: "calc(100vh - 60px)", // deja espacio para el navbar arriba
-    overflow: "hidden",
-    top: 60, // altura del navbar
-    left: 0,
-    zIndex: 100,
+     width: isOpen ? 250 : 40,
+      transition: "width 0.3s",
+      backgroundColor: "#0e0e10",
+      color: "white",
+      height: "calc(100vh - 60px)",
+      overflow: "hidden",
+      position: "fixed", 
+      top: 60,              
+      left: 0,
+      zIndex: 100,
   }}
       >
         {/* 🔹 Encabezado del sidebar */}

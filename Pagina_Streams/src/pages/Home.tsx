@@ -46,7 +46,7 @@ const ITEMS_RECOMENDADOS: Item[] = [
 
 export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoProps) {
   // Ajustar el padding según si el sidebar está abierto o cerrado
-  const paddingLeft = sidebarAbierto ? "270px" : "60px";
+  const paddingLeft = sidebarAbierto ? "0px" : "60px";
 
   return (
     <div className="home-page" style={{ paddingLeft }}>
