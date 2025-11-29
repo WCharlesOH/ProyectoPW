@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
 import LivePlayer from "../components/LivePlayer";
+import { useEffect, useState } from "react";
+import { useAuth } from "../components/AuthContext";
 
 interface PerfilProps {
   monedas: number;
@@ -66,6 +68,21 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
     (s) => s.username.toLowerCase() === username?.toLowerCase()
   );
 
+  // Estado local para seguimiento
+  const { isLogged } = useAuth();
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  useEffect(() => {
+    if (!streamer) return;
+    try {
+      const stored = localStorage.getItem("following");
+      const following: string[] = stored ? JSON.parse(stored) : [];
+      setIsFollowing(following.includes(streamer.username));
+    } catch {
+      setIsFollowing(false);
+    }
+  }, [streamer]);
+
   if (!streamer) {
     return (
       <div
@@ -91,24 +108,69 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
         // marginLeft: 250, ❌ ELIMINADO
         transition: "margin-left 0.3s ease",
         padding: "20px",
-        width: "100%",    // ✔ asegura ancho completo
+        width: "100%", // ✔ asegura ancho completo
         boxSizing: "border-box",
       }}
     >
       {/* Contenido principal */}
       <div style={{ flex: 1, paddingRight: "20px" }}>
-        
         <div style={{ marginBottom: "20px" }}>
           <LivePlayer fallbackImage={streamer.imagenUrl} />
         </div>
 
-        <h1>{streamer.username}</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <h1 style={{ margin: 0 }}>{streamer.username}</h1>
+
+          {/* Follow button (no elimina nada existente, solo añade) */}
+          <div>
+            <button
+              disabled={!isLogged}
+              onClick={() => {
+                if (!streamer) return;
+                try {
+                  const stored = localStorage.getItem("following");
+                  const following: string[] = stored ? JSON.parse(stored) : [];
+
+                  if (following.includes(streamer.username)) {
+                    const next = following.filter(
+                      (u) => u !== streamer.username
+                    );
+                    localStorage.setItem("following", JSON.stringify(next));
+                    setIsFollowing(false);
+                  } else {
+                    const next = [...following, streamer.username];
+                    localStorage.setItem("following", JSON.stringify(next));
+                    setIsFollowing(true);
+                  }
+                } catch {
+                  // ignore errors
+                }
+              }}
+              style={{
+                background: isFollowing ? "#4b5563" : "#06b6d4",
+                color: "white",
+                border: "none",
+                padding: "8px 12px",
+                borderRadius: 8,
+                cursor: "pointer",
+                fontWeight: 700,
+                opacity: !isLogged ? 0.6 : 1,
+              }}
+            >
+              {isFollowing ? "Siguiendo" : "Seguir"}
+            </button>
+          </div>
+        </div>
         <p style={{ color: "#ccc" }}>{streamer.descripcion}</p>
         <p>
           <strong>Categoría:</strong> {streamer.categoria}
         </p>
         <p>
           <strong>Seguidores:</strong> {streamer.seguidores}
+        </p>
+        <p style={{ marginTop: 6, color: "#cbd5e1" }}>
+          <strong>Seguidores (con tu seguimiento):</strong>{" "}
+          {streamer.seguidores + (isFollowing ? 1 : 0)}
         </p>
 
         <div style={{ marginTop: "30px" }}>
