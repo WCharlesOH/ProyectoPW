@@ -1,14 +1,12 @@
 
 import { useNavigate } from "react-router-dom";
-import ImagenPerfil from "../imagenes/Mirko.jpg";
-import { type User } from "../components/PaseLogin";
+import type { Usuario } from "../components/types";
 
 export default function Perfil_V() {
   const navigate = useNavigate()
   const user = localStorage.getItem("user")
-    
-  const titi : User | null = user ? JSON.parse(user) : null
-  const nombre = titi?.name ?? "invitado"
+  const titi : Usuario | null = user ? JSON.parse(user) : null
+  const nombre = titi?.NombreUsuario
   return (
     <div
       style={{
@@ -24,7 +22,7 @@ export default function Perfil_V() {
       {/* Imagen central */}
       <div style={{ margin: "20px auto" }}>
         <img
-          src={ImagenPerfil}
+          src={titi?.ImagenPerfil}
           alt="Streamer"
           style={{
             width: "200px",

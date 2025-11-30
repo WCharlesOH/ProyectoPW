@@ -51,7 +51,7 @@ export const API = {
     MisSuscripciones: async (idUsuario: number) => {
         try {
             const response = await fetch("http://localhost:5000/Suscrito", {
-                method: "GET",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ID_Usuario: idUsuario }),
             });
@@ -72,7 +72,7 @@ export const API = {
     SuscripcionesCanal: async (idCanal: number) => {
         try {
             const response = await fetch("http://localhost:5000/SuscripcioneMias", {
-                method: "GET",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ID_Streamer: idCanal }),
             });
@@ -211,7 +211,7 @@ export const API = {
     ObtenerChatStreamer: async (idStreamer: number, idviewer: number) => {
         try {
             const response = await fetch("http://localhost:5000/ObtenerDatosChat", {
-                method: "GET",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ID_chatStreamer: idStreamer,
@@ -346,7 +346,7 @@ export const API = {
     ObtenerLogrosUsuario: async (idUsuario: number) => {
         try {
             const response = await fetch("http://localhost:5000/LogrosUsuario", {
-                method: "GET",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ID_Usuario: idUsuario,
@@ -410,7 +410,7 @@ export const API = {
     Ver_logrosMios: async (idUsuario: number) => {
         try {
             const response = await fetch("http://localhost:5000/Todos_Los_Logros", {
-                method: "GET",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ID_Usuario: idUsuario,
@@ -450,7 +450,7 @@ export const API = {
     SeguidosEnVIvo: async (idUsuario: number) => {
         try {
             const response = await fetch("http://localhost:5000/SeguidosEnVIvo", {
-                method: "GET",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ID_Usuario: idUsuario,
@@ -518,7 +518,7 @@ export const API = {
     DatosdelStream: async (idusuario: number) => {
         try{
             const response = await fetch("http://localhost:5000/datos_Stream",{
-                method: "GET",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ID_Usuario: idusuario

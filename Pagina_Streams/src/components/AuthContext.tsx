@@ -41,7 +41,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsLogged(true);
     localStorage.setItem("user", JSON.stringify(userData));
   }
-
+  
   function logout() {
     setUser(null);
     setIsLogged(false);

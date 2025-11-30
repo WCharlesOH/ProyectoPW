@@ -1,44 +1,70 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Ranking from "./Ranking";
-import vegeta from "../imagenes/Mirko.jpg";
-import fork from "../imagenes/fork.jpg";
-import grefg from "../imagenes/grefg.jpg";
-
-interface Logro {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  xp: number;
-}
+import type { Logro, Usuario } from "../components/types";
+import type { ranking } from "../components/types";
+import { API } from "../Comandosllamadas/llamadas";
 
 export default function Logros() {
-  const logrosIniciales: Logro[] = [
-    { id: 1, nombre: "Primer Stream", descripcion: "Iniciaste tu primer stream", xp: 25 },
-    { id: 2, nombre: "100 Monedas", descripcion: "Has ganado 100 monedas", xp: 25 },
-    { id: 3, nombre: "5 Seguidores", descripcion: "Alcanzaste 5 seguidores", xp: 25 },
-    { id: 4, nombre: "Nivel 2", descripcion: "Subiste al nivel 2", xp: 25 },
-    { id: 5, nombre: "10 Streams", descripcion: "Has transmitido 10 veces", xp: 25 },
-  ];
-
+  const [logros, setLogros] = useState<Logro[]>([]);
+  const [rankingUsuarios, setRankingUsuarios] = useState<ranking[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [xpTotal, setXpTotal] = useState(0);
+  
+  const info: Usuario | null = JSON.parse(localStorage.getItem("user") || "null");
+  const id = info ? Number(info.ID) : null;
+
+  const todo = API;
+
+  const SacarLogros = async () => {
+    const data = await todo.ObtenerTodosLogros();
+    if (data.success) {
+      setLogros(data.logros); 
+    } else {
+      setError(data.error);
+    }
+  };
+
+  const actualizarInfoUsuario = async () => {
+    if (!id) {
+      console.error("ID inválido, no se puede actualizar info del usuario");
+      return;
+    }
+
+    const data = await todo.ObtenerDatosUsuario(id);
+    localStorage.setItem("user", JSON.stringify(data.user));
+  };
+
+  const SacarRanking = async () => {
+    const data = await todo.ObtenerRanking();
+    setRankingUsuarios(data.ranking); // <-- AHORA SI RENDERIZA
+  };
+
+  const ActualizarNivel = async () => {
+    if(!id){
+      console.error("ID inválido, no se puede actualizar info del usuario");
+      return;
+    }
+    await todo.ActualizarNivelStreams(id, xpTotal)
+    actualizarInfoUsuario()
+  }
+
+  useEffect(() => {
+    SacarLogros();
+    SacarRanking();
+  }, []);
+
+
 
   const reclamar = (xp: number) => {
     setXpTotal(prev => prev + xp);
+    ActualizarNivel()
+    actualizarInfoUsuario()
   };
 
   // Calcular nivel actual
   const nivel = 1 + Math.floor(xpTotal / 100);
   const xpParaNivelActual = xpTotal % 100; // XP restante para la barra
   const progreso = Math.min((xpParaNivelActual / 100) * 100, 100);
-
-  const usuariosRanking = [
-    { id: "1", name: "Vegeta", avatarUrl: vegeta, nivel: 5 },
-    { id: "2", name: "Frok", avatarUrl: fork, nivel: 3 },
-    { id: "3", name: "Zak", avatarUrl: grefg, nivel: 4 },
-    { id: "4", name: "Staxx", avatarUrl: vegeta, nivel: 2 },
-    { id: "5", name: "AuronPlay", avatarUrl: fork, nivel: 6 },
-    { id: "6", name: "Grefg", avatarUrl: grefg, nivel: 7 },
-  ];
 
   return (
     <div style={{ display: "flex", padding: "40px", backgroundColor: "#0e0e10", minHeight: "100vh", color: "white" }}>
@@ -58,13 +84,13 @@ export default function Logros() {
 
         {/* Lista de logros */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center", maxWidth: "600px", margin: "0 auto" }}>
-          {logrosIniciales.map(l => (
-            <div key={l.id} style={{ flex: "0 1 45%", backgroundColor: "#1f1f23", color: "white", padding: "15px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          {logros.map(l => (
+            <div key={l.ID} style={{ flex: "0 1 45%", backgroundColor: "#1f1f23", color: "white", padding: "15px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ textAlign: "left" }}>
-                <h4 style={{ margin: 0 }}>{l.nombre}</h4>
+                <h4 style={{ margin: 0 }}>{l.Nombre}</h4>
                 <p style={{ margin: "5px 0 0", fontSize: "14px", opacity: 0.8 }}>{l.descripcion}</p>
               </div>
-              <button style={{ backgroundColor: "#00ff7f", border: "none", borderRadius: "6px", padding: "6px 12px", fontWeight: "bold", cursor: "pointer" }} onClick={() => reclamar(l.xp)}>
+              <button style={{ backgroundColor: "#00ff7f", border: "none", borderRadius: "6px", padding: "6px 12px", fontWeight: "bold", cursor: "pointer" }} onClick={() => reclamar(l.Puntaje)}>
                 Reclamar
               </button>
             </div>
@@ -73,7 +99,7 @@ export default function Logros() {
       </div>
 
       {/* Ranking al costado */}
-      <Ranking usuarios={usuariosRanking} />
+      <Ranking usuarios={rankingUsuarios} />
     </div>
   );
 }

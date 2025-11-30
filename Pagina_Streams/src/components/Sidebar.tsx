@@ -18,6 +18,7 @@ interface SidebarProps {
   onToggle?: (isOpen: boolean) => void;
 }
 
+
 // 🔹 IDs corregidos y nombres únicos
 const SEGUIDOS: Seguido[] = [
   { id: "1", name: "Vegeta", avatarUrl: vegeta },
