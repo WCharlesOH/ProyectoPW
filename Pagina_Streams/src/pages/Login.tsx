@@ -1,7 +1,6 @@
 import { useState} from "react"
 import "./StyleLogin.css"
 import { useAuth } from "../components/AuthContext";
-import { login } from "../components/PaseLogin";
 import { useNavigate, Link } from "react-router-dom";
 import {API} from "../Comandosllamadas/llamadas"
 
@@ -26,22 +25,6 @@ export default function Login() {
       else{
           seterror(logins.error)
       }
-  }
-
-  const handleLogin = ({ email, password }: { email: string; password: string }) => {
-    const result = login(email, password)
-    if (result.success && result.user) {
-      seterror(`Hola, ${result.user.role} bienvenido!`)
-      logincontext(result.user);
-      if(result.user.role == "streamer"){
-        navigate(`/`)
-      }
-      else{
-        navigate(`/`)
-      }
-    } else {
-      seterror(result.error)
-    }
   }
 
   return (

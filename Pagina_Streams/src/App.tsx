@@ -27,6 +27,8 @@ import Perfil_V from './pages/Perfil_V'
 import GestionRegalos from './pages/GestionRegalos'
 import Logros from './pages/Logros'
 
+import {API} from './Comandosllamadas/llamadas'
+
 export default function App() {
 
   const [monedas, setMonedas] = useState(120);
@@ -34,6 +36,8 @@ export default function App() {
 
   const location = useLocation();
   const hideSidebar = location.pathname === '/dashboard';
+
+  const todo = API
 
   return (
     <AuthProvider>
