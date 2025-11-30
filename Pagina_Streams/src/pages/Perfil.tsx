@@ -6,7 +6,7 @@ import { useAuth } from "../components/AuthContext";
 
 interface PerfilProps {
   monedas: number;
-  setMonedas: (monedas: number) => void;
+  setMonedas: React.Dispatch<React.SetStateAction<number>>;
 }
 
 interface StreamerInfo {
@@ -34,31 +34,10 @@ const STREAMERS: StreamerInfo[] = [
   },
   {
     username: "Zak",
-    descripcion: "Torneos de shooters y contenido competitivo.",
-    categoria: "Esports",
-    seguidores: 5300,
+    descripcion: "Speedruns y desafíos épicos",
+    categoria: "Speedrunning",
+    seguidores: 3200,
     imagenUrl: "https://placehold.co/800x450?text=Zak+Streaming",
-  },
-  {
-    username: "Staxx",
-    descripcion: "Creador de contenido de variedad y desafíos locos.",
-    categoria: "Variedad",
-    seguidores: 4200,
-    imagenUrl: "https://placehold.co/800x450?text=Staxx+Stream",
-  },
-  {
-    username: "AuronPlay",
-    descripcion: "Humor, juegos y charlas con la comunidad.",
-    categoria: "Entretenimiento",
-    seguidores: 9000,
-    imagenUrl: "https://placehold.co/800x450?text=AuronPlay+Directo",
-  },
-  {
-    username: "Grefg",
-    descripcion: "Streamings de gaming y retos competitivos.",
-    categoria: "Gaming",
-    seguidores: 10000,
-    imagenUrl: "https://placehold.co/800x450?text=Grefg+Live",
   },
 ];
 
@@ -83,14 +62,39 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
     }
   }, [streamer]);
 
-  if (!streamer) {
+  const toggleFollow = () => {
+    if (! isLogged) {
+      alert("Debes iniciar sesión para seguir a un streamer");
+      return;
+    }
+
+    if (! streamer) return;
+
+    try {
+      const stored = localStorage. getItem("following");
+      const following: string[] = stored ? JSON.parse(stored) : [];
+
+      if (isFollowing) {
+        const updated = following.filter((u) => u !== streamer.username);
+        localStorage.setItem("following", JSON.stringify(updated));
+        setIsFollowing(false);
+      } else {
+        const updated = [...following, streamer.username];
+        localStorage.setItem("following", JSON.stringify(updated));
+        setIsFollowing(true);
+      }
+    } catch (err) {
+      console.error("Error al actualizar seguimiento:", err);
+    }
+  };
+
+  if (! streamer) {
     return (
       <div
         style={{
           color: "white",
           textAlign: "center",
           padding: "2rem",
-          // marginLeft: 250, ❌ ELIMINADO
         }}
       >
         <h2>Streamer no encontrado</h2>
@@ -105,108 +109,71 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
         minHeight: "calc(100vh - 60px)",
         backgroundColor: "#0e0e10",
         color: "white",
-        // marginLeft: 250, ❌ ELIMINADO
-        transition: "margin-left 0.3s ease",
+        transition: "margin-left 0. 3s ease",
         padding: "20px",
-        width: "100%", // ✔ asegura ancho completo
+        width: "100%",
         boxSizing: "border-box",
       }}
     >
       {/* Contenido principal */}
       <div style={{ flex: 1, paddingRight: "20px" }}>
         <div style={{ marginBottom: "20px" }}>
-          <LivePlayer fallbackImage={streamer.imagenUrl} />
+          {/* 🎥 LivePlayer ahora usa VDO.Ninja con sala personalizada por streamer */}
+          <LivePlayer 
+            fallbackImage={streamer.imagenUrl} 
+            streamerName={streamer.username}
+          />
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <h1 style={{ margin: 0 }}>{streamer.username}</h1>
-
-          {/* Follow button (no elimina nada existente, solo añade) */}
-          <div>
-            <button
-              disabled={!isLogged}
-              onClick={() => {
-                if (!streamer) return;
-                try {
-                  const stored = localStorage.getItem("following");
-                  const following: string[] = stored ? JSON.parse(stored) : [];
-
-                  if (following.includes(streamer.username)) {
-                    const next = following.filter(
-                      (u) => u !== streamer.username
-                    );
-                    localStorage.setItem("following", JSON.stringify(next));
-                    setIsFollowing(false);
-                  } else {
-                    const next = [...following, streamer.username];
-                    localStorage.setItem("following", JSON.stringify(next));
-                    setIsFollowing(true);
-                  }
-                } catch {
-                  // ignore errors
-                }
-              }}
-              style={{
-                background: isFollowing ? "#4b5563" : "#06b6d4",
-                color: "white",
-                border: "none",
-                padding: "8px 12px",
-                borderRadius: 8,
-                cursor: "pointer",
-                fontWeight: 700,
-                opacity: !isLogged ? 0.6 : 1,
-              }}
-            >
-              {isFollowing ? "Siguiendo" : "Seguir"}
-            </button>
-          </div>
+          <button
+            onClick={toggleFollow}
+            style={{
+              padding: "8px 20px",
+              borderRadius: "6px",
+              border: "none",
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: "14px",
+              background: isFollowing ? "#555" : "#9147ff",
+              color: "white",
+              transition: "all 0.2s ease",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = "scale(1.05)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+            }}
+          >
+            {isFollowing ? "✔ Siguiendo" : "+ Seguir"}
+          </button>
         </div>
-        <p style={{ color: "#ccc" }}>{streamer.descripcion}</p>
-        <p>
-          <strong>Categoría:</strong> {streamer.categoria}
-        </p>
-        <p>
-          <strong>Seguidores:</strong> {streamer.seguidores}
-        </p>
-        <p style={{ marginTop: 6, color: "#cbd5e1" }}>
-          <strong>Seguidores (con tu seguimiento):</strong>{" "}
-          {streamer.seguidores + (isFollowing ? 1 : 0)}
+
+        <p style={{ color: "#aaa", marginTop: "10px" }}>
+          {streamer.descripcion}
         </p>
 
-        <div style={{ marginTop: "30px" }}>
-          <h2>Videos anteriores</h2>
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                style={{
-                  backgroundColor: "#1e1e1e",
-                  borderRadius: "10px",
-                  width: "200px",
-                  height: "120px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#888",
-                }}
-              >
-                VOD #{i}
-              </div>
-            ))}
-          </div>
+        <div
+          style={{
+            display: "flex",
+            gap: "20px",
+            marginTop: "15px",
+            fontSize: "14px",
+          }}
+        >
+          <span>
+            <strong>Categoría:</strong> {streamer. categoria}
+          </span>
+          <span>
+            <strong>Seguidores:</strong> {streamer.seguidores. toLocaleString()}
+          </span>
         </div>
       </div>
 
-      {/* ChatBox */}
-      <div
-        style={{
-          width: 380,
-          backgroundColor: "#18181b",
-          display: "flex",
-          flexDirection: "column",
-          borderLeft: "1px solid #2a2a2a",
-        }}
-      >
+      {/* Chat */}
+      <div style={{ width: "340px", flexShrink: 0 }}>
         <ChatBox monedas={monedas} setMonedas={setMonedas} />
       </div>
     </div>
