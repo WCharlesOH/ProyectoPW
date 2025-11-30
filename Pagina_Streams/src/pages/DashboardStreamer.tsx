@@ -8,7 +8,12 @@ import {
 import GestionRegalos from "./GestionRegalos";
 
 
-const PopupModal = ({ children, onClose }: never) => (
+interface PopupModalProps {
+  children: React.ReactNode;
+  onClose: () => void;
+}
+
+const PopupModal: React.FC<PopupModalProps> = ({ children, onClose }) => (
   <div style={styles.overlay}>
     <div style={styles.modal}>
       <button onClick={onClose} style={styles.btnCerrar}>✖</button>
@@ -133,28 +138,27 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
   }, []);
 
   const toggleTransmision = () => {
-    if (isLive) {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      emitirActividad("🟥 Transmisión detenida", "stream", { duracion: tiempoTransmision });
-      emitirStream(false);
-      setTiempoTransmision(0);
-      setMonedas(monedas + 25);
-    } else {
-      emitirActividad("🟢 Transmisión iniciada", "stream");
-      emitirStream(true, Date.now());
-
-      timerRef.current = setInterval(() => {
-        setTiempoTransmision(prev => prev + 1);
-      }, 1000);
-
-      window.open('/live-start', '_blank', 'width=800,height=600');
+  if (isLive) {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-
-    setIsLive(!isLive);
-  };
+    setIsLive(false);
+    setTiempoTransmision(0);
+    emitirStream(false);
+    emitirActividad('🟥 Transmisión detenida', 'stream');
+  } else {
+    setIsLive(true);
+    timerRef.current = window.setInterval(() => {
+      setTiempoTransmision((prev) => prev + 1);
+    }, 1000);
+    emitirStream(true, Date.now());
+    emitirActividad('🟢 Transmisión iniciada', 'stream');
+    
+    // 🎥 Abrir ventana con VDO.Ninja
+    window.open('/live-start', '_blank', 'width=1400,height=900');
+  }
+};
 
   // ----------- POPUP EN VEZ DE NUEVA PESTAÑA -----------
   const abrirGestionRegalos = () => {
@@ -173,6 +177,7 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
     const s = String(segundos % 60).padStart(2, "0");
     return `${h}:${m}:${s}`;
   };
+
 
   return (
     <div style={{ padding: 20, color: 'white' }}>
