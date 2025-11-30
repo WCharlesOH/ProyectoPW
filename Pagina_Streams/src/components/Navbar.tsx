@@ -1,26 +1,43 @@
 // Navbar.jsx
 import { useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import MonedasMenu from "./MonedasMenu";
 import UserMenu from "./Usuario_Desplegable";
-import algo from "../assets/zoom-svgrepo-com.svg"
-import "./Navbar.css"
+import algo from "../assets/zoom-svgrepo-com.svg";
+import "./Navbar.css";
 
 type NavbarProps = {
-  monedas: any; // Replace 'any' with the actual type if known, e.g., number, string[], etc.
-  setMonedas: (value: any) => void; // Replace 'any' with the actual type if known
+  monedas: any;
+  setMonedas: (value: any) => void;
 };
 
-export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ Recibe props
+export default function Navbar({ monedas, setMonedas }: NavbarProps) {
   const { isLogged } = useAuth();
   const [dropOpen, setDropOpen] = useState(false);
   const [menuMonedasAbierto, setMenuMonedasAbierto] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   const linkStyle: React.CSSProperties = {
     textDecoration: "none",
     color: "inherit",
     margin: "0 8px"
+  };
+
+  // Manejar la búsqueda
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/buscar? q=${encodeURIComponent(searchQuery. trim())}`);
+    }
+  };
+
+  // Manejar Enter en el input
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch(e);
+    }
   };
 
   return (
@@ -38,7 +55,7 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
             onMouseEnter={() => setDropOpen(true)}
             onMouseLeave={() => setDropOpen(false)}
           >
-            <button style={{ fontWeight: dropOpen ? "bold" : "normal" }}>
+            <button style={{ fontWeight: dropOpen ?  "bold" : "normal" }}>
               Más
             </button>
             {dropOpen && (
@@ -52,20 +69,25 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
         </nav>
       </div>
 
-      <div className="navbar__search">
+      <form className="navbar__search" onSubmit={handleSearch}>
         <img
           src={algo}
           alt="Buscar"
           className="navbar__search-icon"
+          onClick={handleSearch}
+          style={{ cursor: "pointer" }}
         />
         <input
           type="text"
           placeholder="Buscar transmisiones o canales"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
-      </div>
+      </form>
 
       <div className="navbar__actions">
-        {!isLogged ? (
+        {! isLogged ? (
           <>
             <NavLink to="/login" style={linkStyle} className="navbar__button-link">
               Login
