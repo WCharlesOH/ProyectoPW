@@ -51,10 +51,12 @@ export function getRegisteredUsers(): User[] {
     return [];
   }
 }
-
+  const users : User[] = [] 
 /** Guarda la lista completa en localStorage */
-export function setRegisteredUsers(users: User[]) {
+export function setRegisteredUsers(user: User) {
+  users.push(user)
   localStorage.setItem(LS_KEY, JSON.stringify(users));
+
 }
 
 /** Todos los usuarios disponibles: hardcodeados + registrados */
