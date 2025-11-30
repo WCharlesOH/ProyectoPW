@@ -23,7 +23,7 @@ export default function LivePlayer({
 
         // Si se proporciona streamerName, crear sala personalizada
         if (streamerName) {
-          const resp = await fetch("http://localhost:5020/api/live-room/create", {
+          const resp = await fetch("http://localhost:5000/api/live-room/create", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -39,7 +39,7 @@ export default function LivePlayer({
           setEmbedUrl(data.viewUrl);
         } else {
           // Usar sala predeterminada
-          const resp = await fetch("http://localhost:5020/api/live-url");
+          const resp = await fetch("http://localhost:5000/api/live-url");
           if (!resp.ok) throw new Error("Error al obtener la URL de la transmisión");
           const data = await resp.json();
           setEmbedUrl(data.url);
