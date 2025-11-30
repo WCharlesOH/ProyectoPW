@@ -6,13 +6,10 @@ import MonedasMenu from "./MonedasMenu";
 import UserMenu from "./Usuario_Desplegable";
 import algo from "../assets/zoom-svgrepo-com.svg"
 import "./Navbar.css"
+import type {dataprops} from "../pages/Login"
 
-type NavbarProps = {
-  monedas: any; // Replace 'any' with the actual type if known, e.g., number, string[], etc.
-  setMonedas: (value: any) => void; // Replace 'any' with the actual type if known
-};
 
-export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ Recibe props
+export default function Navbar( usuario : dataprops) {  // ✅ Recibe props
   const { isLogged } = useAuth();
   const [dropOpen, setDropOpen] = useState(false);
   const [menuMonedasAbierto, setMenuMonedasAbierto] = useState(false);
@@ -76,9 +73,10 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {  // ✅ R
           </>
         ) : (
           <>
+            
+            
             <MonedasMenu
-              monedas={monedas}
-              setMonedas={setMonedas}
+              monedas={usuario.monedasNumber}
               abierto={menuMonedasAbierto}
               setAbierto={setMenuMonedasAbierto}
             />

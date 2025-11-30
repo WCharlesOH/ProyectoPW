@@ -1,6 +1,7 @@
 // Sistema de sincronización mejorado entre pestañas
 // Usando BroadcastChannel nativo del navegador
 
+
 export interface EventoActividad {
   tipo: "actividad";
   texto: string;

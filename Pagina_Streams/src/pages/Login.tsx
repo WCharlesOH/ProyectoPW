@@ -1,33 +1,65 @@
 import { useState} from "react"
 import "./StyleLogin.css"
-import { useAuth } from "../components/AuthContext";
-import { login } from "../components/PaseLogin";
+
 import { useNavigate, Link } from "react-router-dom";
+import {setRegistereddatapropss} from "../components/PaseLogin"
+
+ 
+
+export interface dataprops {
+  ID : number
+  nombreUsuario : string,
+  horasTransmision : number,
+  monedasNumber : number,
+  nivelStreams : number ,
+  puntos : number
+}
 
 export default function Login() {
-  const [error, seterror] = useState<String>();
+  
   const [email, setemail] = useState<string>("");
   const [password, setpassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
-  const { login: logincontext } = useAuth();
+
   const navigate = useNavigate();
+
+
+  const direc= "http://localhost:5000" 
+
+
+
+  const HttpObtenerData = async ( { email, password }: { email: string; password: string }) => {
   
-  const handleLogin = ({ email, password }: { email: string; password: string }) => {
-    const result = login(email, password)
-    if (result.success && result.user) {
-      seterror(`Hola, ${result.user.role} bienvenido!`)
-      logincontext(result.user);
-      if(result.user.role == "streamer"){
-        navigate(`/`)
+
+    try{
+      const resp = await fetch(`${direc}/Validar_Usuario`,{ 
+        method: "POST", 
+        headers : { "Content-Type": "application/json"},
+        body : JSON.stringify({email, password} )
+      })
+       
+      const data = await resp.json()
+      const usuario : dataprops = {
+        ID : data.ID,
+        nombreUsuario : data.NombreUsuario,
+        horasTransmision : data.HorasTransimision,
+        monedasNumber : data.Monedas,
+        nivelStreams : data.NivelStreams,
+        puntos :  data.Puntos
       }
-      else{
-        navigate(`/`)
-      }
-    } else {
-      seterror(result.error)
+      setRegistereddatapropss(usuario)
+      loginConfirmado()
+      } catch (error) {
+      console.log(error)
     }
   }
 
+  const loginConfirmado = () => {
+
+    navigate("/", )
+
+  }  
+  
   return (
     <div className="login-wrapper">
       <div className="login-card">
@@ -64,8 +96,8 @@ export default function Login() {
         </div>
 
         <button
-          onClick={() => handleLogin({ email, password })}
-          onKeyDown={(e) => e.key === "Enter" && handleLogin({ email, password })}
+          onClick={() => HttpObtenerData({email, password})}
+          onKeyDown={(e) => e.key === "Enter" && HttpObtenerData({email,password})}
           className="login-button"
         >
           Logear
@@ -75,9 +107,7 @@ export default function Login() {
           <Link to={"/registro"}>REGISTRARSE</Link>
         </p>
 
-        {error && (
-          <p className="login-error">{error}</p>
-        )}
+        
       </div>
     </div>
   );

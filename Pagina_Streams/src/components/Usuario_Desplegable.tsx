@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
-import { type User } from "./PaseLogin";
-import Algo from "../assets/accessibility-svgrepo-com.svg"
+import Algo from "../assets/accessibility-svgrepo-com.svg";
+import type {dataprops} from "../pages/Login";
 
 
 export default function UserMenu() {
@@ -11,8 +11,8 @@ export default function UserMenu() {
   const  navigate  = useNavigate()
   const user = localStorage.getItem("user")
 
-  const titi: User | null = user ? JSON.parse(user) : null
-  const nombreUsuario = titi?.name ?? "invitado"
+  const titi: dataprops | null = user ? JSON.parse(user) : null
+  const nombreUsuario = titi?.nombreUsuario
 
 
   return (

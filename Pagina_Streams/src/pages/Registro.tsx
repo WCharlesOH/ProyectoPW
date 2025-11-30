@@ -1,23 +1,27 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
-import type { User, UserRole } from "../components/PaseLogin";
 import "./StyleRegistro.css";
+import type { dataprops } from "./Login";
+import { setRegistereddatapropss } from "../components/PaseLogin";
 
-type NewUser = Omit<User, "id" | "createdAt" | "coins" | "level" | "points" | "streamingHours"> & {
-  role: UserRole;
-};
+interface NewUser {
+  nombre: string;
+  contraseña: string;
+  email: string;
+  imagenPerfil: string;
+}
 
 export default function Registro() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [confirm, setconfirm] = useState(false)
+  const [confirm, setConfirm] = useState(false);
 
   const [form, setForm] = useState<NewUser>({
-    name: "",
+    nombre: "",
+    contraseña: "",
     email: "",
-    password: "",
-    role: "viewer",
+    imagenPerfil: "",
   });
 
   const [error, setError] = useState<string>("");
@@ -29,49 +33,73 @@ export default function Registro() {
   };
 
   const validate = () => {
-    if (!form.name.trim()) return "Ingresa tu nombre.";
+    if (!form.nombre.trim()) return "Ingresa tu nombre.";
     if (!/\S+@\S+\.\S+/.test(form.email)) return "Correo electrónico inválido.";
-    if (form.password.length < 6) return "La contraseña debe tener al menos 6 caracteres.";
-    if (!confirm) return "Aceptar los terminos y condiciones"
+    if (form.contraseña.length < 6) return "La contraseña debe tener al menos 6 caracteres. ";
+    if (!confirm) return "Debes aceptar los términos y condiciones";
     return "";
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  // ✅ Mover httpRegistro FUERA de onSubmit
+  const httpRegistro = async () => {
+    try {
+      const newUser = {
+        NombreUsuario: form.nombre.trim(),  // ← Backend espera "NombreUsuario"
+        Contraseña: form.contraseña,        // ← Backend espera "Contraseña"
+        email: form.email.trim(),
+        ImagenPerfil: form.imagenPerfil.trim() || "https://via.placeholder.com/150", // ← Imagen por defecto
+      };
+
+      const resp = await fetch("http://localhost:5000/Registrar_Usuario", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newUser),
+      });
+
+      if (!resp.ok) {
+        throw new Error("Error al registrar usuario");
+      }
+
+      const data = await resp.json();
+      
+      const usuario: dataprops = {
+        ID: data.ID,
+        nombreUsuario: data.NombreUsuario,
+        horasTransmision: data.HorasTransmision,
+        monedasNumber: data.Monedas,
+        nivelStreams: data.NivelStreams,
+        puntos: data. Puntos,
+      };
+
+      setRegistereddatapropss(usuario);
+      
+      // Autologin y navegación
+      login({ nombre: form.nombre, contraseña: form.contraseña, email: form.email, imagenPerfil: form. imagenPerfil });
+      navigate("/");
+      
+      return true;
+    } catch (error) {
+      console.error("Error en registro:", error);
+      setError("Error al crear la cuenta. Intenta de nuevo.");
+      return false;
+    }
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     const msg = validate();
     if (msg) return setError(msg);
+    
     setError("");
     setLoading(true);
 
-    // Simular "API" de registro usando localStorage
-    const key = "registeredUsers";
-    const existing: User[] = JSON.parse(localStorage.getItem(key) || "[]");
-
-    if (existing.some((u) => u.email.toLowerCase() === form.email.toLowerCase())) {
-      setLoading(false);
-      return setError("Ya existe una cuenta con ese correo.");
-    }
-
-    const newUser: User = {
-      id: crypto.randomUUID(),
-      name: form.name.trim(),
-      email: form.email.trim(),
-      password: form.password,       // en proyecto real: encriptar / nunca guardes en texto plano
-      role: form.role,
-      coins: 0,
-      level: 1,
-      points: 0,
-      streamingHours: 0,
-      createdAt: new Date().toISOString(),
-    };
-
-    const updated = [...existing, newUser];
-    localStorage.setItem(key, JSON.stringify(updated));
-
-    // Autologin y navegación
-    login(newUser);
+    // ✅ Llamar a httpRegistro
+    await httpRegistro();
+    
     setLoading(false);
-    navigate("/"); // o a "/perfil" si prefieres
   };
 
   return (
@@ -86,12 +114,12 @@ export default function Registro() {
 
         {error && <div className="reg-error">{error}</div>}
 
-        <label className="reg-label" htmlFor="name">Nombre</label>
+        <label className="reg-label" htmlFor="nombre">Nombre</label>
         <input
-          id="name"
-          name="name"
+          id="nombre"
+          name="nombre"  
           type="text"
-          value={form.name}
+          value={form.nombre}
           onChange={onChange}
           className="reg-input"
           autoComplete="name"
@@ -108,52 +136,52 @@ export default function Registro() {
           autoComplete="email"
         />
 
-        <label className="reg-label" htmlFor="password">Contraseña</label>
+        <label className="reg-label" htmlFor="contraseña">Contraseña</label>
         <input
-          id="password"
-          name="password"
+          id="contraseña"
+          name="contraseña" 
           type="password"
-          value={form.password}
+          value={form.contraseña}
           onChange={onChange}
           className="reg-input"
           autoComplete="new-password"
         />
 
-        <div className="reg-label">Tipo de Cuenta</div>
-        <div className="reg-radio-row">
-          <label className="reg-radio">
-            <input
-              type="radio"
-              name="role"
-              value="viewer"
-              checked={form.role === "viewer"}
-              onChange={(e) => setForm((f) => ({ ...f, role: e.target.value as UserRole }))}
-            />
-            <span>@Espectador</span>
-          </label>
-          <label className="reg-radio">
-            <input
-              type="radio"
-              name="role"
-              value="streamer"
-              checked={form.role === "streamer"}
-              onChange={(e) => setForm((f) => ({ ...f, role: e.target.value as UserRole }))}
-            />
-            <span>Streamer</span>
+        <label className="reg-label" htmlFor="imagenPerfil">URL Imagen de Perfil (opcional)</label>
+        <input
+          id="imagenPerfil"
+          name="imagenPerfil"
+          type="url"
+          value={form. imagenPerfil}
+          onChange={onChange}
+          className="reg-input"
+          placeholder="https://ejemplo.com/foto.jpg"
+        />
+
+        {/* ✅ Checkbox de términos y condiciones */}
+        <div style={{ margin: "15px 0", display: "flex", alignItems: "center", gap: "10px" }}>
+          <input
+            type="checkbox"
+            id="terminos"
+            checked={confirm}
+            onChange={(e) => setConfirm(e.target.checked)}
+            style={{ width: "20px", height: "20px", cursor: "pointer" }}
+          />
+          <label htmlFor="terminos" style={{ cursor: "pointer", fontSize: "14px" }}>
+            Acepto los{" "}
+            <Link to="/terminos" style={{ color: "#00b7ff" }}>
+              Términos y Condiciones
+            </Link>
           </label>
         </div>
 
+        {/* ✅ Botón de submit - sin onClick porque onSubmit ya maneja todo */}
         <button className="reg-btn" type="submit" disabled={loading}>
           {loading ? "Creando cuenta..." : "Registrarse"}
         </button>
-        <p 
-        className="reg-foot">acepto los {" "}
-            <Link to={"/terminos"}>Terminos y condiciones</Link>
-            <button onClick={()=>setconfirm(!confirm)}> {confirm ? "No" : "yes"} </button>
-        </p>
 
         <div className="reg-foot">
-          ¿Ya tienes cuenta? <Link to="/login">Inicia sesión aquí</Link>
+          ¿Ya tienes cuenta?  <Link to="/login">Inicia sesión aquí</Link>
         </div>
       </form>
     </div>

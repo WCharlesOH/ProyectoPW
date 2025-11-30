@@ -52,6 +52,7 @@ const styles = {
     cursor: "pointer",
     zIndex: 2,
   }
+  
 };
 // ---------------------------------------------------------
 
@@ -72,11 +73,11 @@ const StatCard: React.FC<{ stat: Stat }> = ({ stat }) => {
 };
 
 interface DashboardStreamerProps {
+  nombreUsuario : string,
   monedas: number;
-  setMonedas: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMonedas }) => {
+const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas}) => {
   const [isLive, setIsLive] = useState(false);
   const [tiempoTransmision, setTiempoTransmision] = useState(0);
   const [actividades, setActividades] = useState<Array<{id: string; text: string; time: string}>>([]);
@@ -141,7 +142,7 @@ const DashboardStreamer: React.FC<DashboardStreamerProps> = ({ monedas, setMoned
       emitirActividad("🟥 Transmisión detenida", "stream", { duracion: tiempoTransmision });
       emitirStream(false);
       setTiempoTransmision(0);
-      setMonedas(monedas + 25);
+     
     } else {
       emitirActividad("🟢 Transmisión iniciada", "stream");
       emitirStream(true, Date.now());

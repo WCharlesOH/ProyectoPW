@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 
 interface MonedasMenuProps {
   monedas: number;
-  setMonedas: (nuevas: number) => void;
   abierto: boolean;
   setAbierto: (estado: boolean) => void;
 }
 
 export default function MonedasMenu({
   monedas,
-  setMonedas,
   abierto,
   setAbierto,
 }: MonedasMenuProps) {
@@ -64,7 +62,6 @@ export default function MonedasMenu({
       setProcesando(false);
       setMostrarPago(false);
       setMostrarRecibo(true);
-      setMonedas(monedas + (compra?.monto ?? 0));
       setMonedasPersonalizadas(0);
     }, 1500);
   };

@@ -1,80 +1,34 @@
-export type UserRole = "viewer" | "streamer";
+import type {dataprops} from "../pages/Login"
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  role: UserRole;
-  coins: number;
-  level: number;
-  points: number;
-  streamingHours: number;
-  createdAt: string;
-}
 
-/* Usuarios de ejemplo (pueden quedarse para pruebas) */
-const User1: User = {
-  id: "123s",
-  name: "Holas",
-  email: "a@gmail.com",
-  password: "123456",
-  role: "viewer",
-  coins: 100,
-  level: 1,
-  points: 0,
-  streamingHours: 0,
-  createdAt: "2019-01-24",
-};
 
-const User2: User = {
-  id: "123sq",
-  name: "Rebolas",
-  email: "b@gmail.com",
-  password: "1000",
-  role: "streamer",
-  coins: 0,
-  level: 1,
-  points: 0,
-  streamingHours: 0,
-  createdAt: "2019-01-24",
-};
+export type datapropsRole = "viewer" | "streamer";
+
+
 
 /* --- Helpers de almacenamiento --- */
-const LS_KEY = "registeredUsers";
+const LS_KEY = "registereddatapropss";
 
 /** Devuelve la lista de usuarios registrados en localStorage (si no hay, []) */
-export function getRegisteredUsers(): User[] {
+export function getRegistereddatapropss(Usuarios: dataprops[]): dataprops[] {
   try {
     return JSON.parse(localStorage.getItem(LS_KEY) || "[]");
   } catch {
     return [];
   }
 }
+const users : dataprops[] = []
 
 /** Guarda la lista completa en localStorage */
-export function setRegisteredUsers(users: User[]) {
+export function setRegistereddatapropss(user: dataprops) {
+
+    users.push(user)
   localStorage.setItem(LS_KEY, JSON.stringify(users));
 }
 
 /** Todos los usuarios disponibles: hardcodeados + registrados */
-export function getAllUsers(): User[] {
-  const locals = getRegisteredUsers();
-  return [User1, User2, ...locals];
+export function getAlldatapropss(): dataprops[] {
+  const locals = getRegistereddatapropss();
+  return [...locals];
 }
 
-/** Login que busca en TODOS los usuarios */
-export function login(
-  email: string,
-  password: string
-): { success: boolean; error?: string; user?: User } {
-  const usuarios = getAllUsers();
-  const user = usuarios.find(
-    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-  );
-
-  if (!user) {
-    return { success: false, error: "Correo o contraseña incorrectos" };
-  }
-  return { success: true, user };
-}

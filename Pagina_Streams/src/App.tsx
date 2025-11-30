@@ -19,7 +19,7 @@ import Suscripciones from './pages/Suscripciones'
 import Ajustes from './pages/Ajustes'
 import Usuario from './pages/Usuario'
 import PaginaStreamer from './pages/PaginaStreamer'
-
+import dataprops from './pages/Login'
 import { AuthProvider } from "./components/AuthContext";
 
 import { useState } from 'react'
@@ -35,6 +35,7 @@ export default function App() {
   const location = useLocation();
   const hideSidebar = location.pathname === '/dashboard';
 
+  
   return (
     <AuthProvider>
       <div className="app-shell">
@@ -55,9 +56,10 @@ export default function App() {
             }}
           >
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Home/>} />
               <Route path="/explorar" element={<Explorar />} />
-              <Route path="/perfil/:username" element={<Perfil monedas={monedas} setMonedas={setMonedas} />} />
+              <Route path="/perfil/:username" 
+              element={<Perfil monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/perfilv/:username" element={<Perfil_V />} />
               <Route path="/login" element={<Login />} />
               <Route path="/registro" element={<Registro />} />
