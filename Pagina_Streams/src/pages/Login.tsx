@@ -1,31 +1,30 @@
 import { useState} from "react"
 import "./StyleLogin.css"
 import { useAuth } from "../components/AuthContext";
-import { login } from "../components/PaseLogin";
 import { useNavigate, Link } from "react-router-dom";
+import {API} from "../Comandosllamadas/llamadas"
+
 
 export default function Login() {
   const [error, seterror] = useState<String>();
-  const [email, setemail] = useState<string>("");
+  const [Nombre, setNombre] = useState<string>("");
   const [password, setpassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
   const { login: logincontext } = useAuth();
   const navigate = useNavigate();
   
-  const handleLogin = ({ email, password }: { email: string; password: string }) => {
-    const result = login(email, password)
-    if (result.success && result.user) {
-      seterror(`Hola, ${result.user.role} bienvenido!`)
-      logincontext(result.user);
-      if(result.user.role == "streamer"){
-        navigate(`/`)
+  const todo = API
+
+  const validacion = async (Nombre: string, password: string) => {
+      const logins = await todo.LoginUsuario(Nombre, password)
+      const validado = logins.success
+      if(validado){
+          logincontext(logins.user)
+          navigate("/")
       }
       else{
-        navigate(`/`)
+          seterror(logins.error)
       }
-    } else {
-      seterror(result.error)
-    }
   }
 
   return (
@@ -36,10 +35,10 @@ export default function Login() {
         <div className="input-group">
           <label className="input-label">Correo</label>
           <input
-            type="email"
+            type="text"
             required
-            value={email}
-            onChange={(p) => setemail(p.target.value)}
+            value={Nombre}
+            onChange={(p) => setNombre(p.target.value)}
             placeholder="Ingresar correo"
             className="input-field"
           />
@@ -64,8 +63,8 @@ export default function Login() {
         </div>
 
         <button
-          onClick={() => handleLogin({ email, password })}
-          onKeyDown={(e) => e.key === "Enter" && handleLogin({ email, password })}
+          onClick={() => validacion(Nombre, password )}
+          onKeyDown={(e) => e.key === "Enter" && validacion(Nombre, password)}
           className="login-button"
         >
           Logear
