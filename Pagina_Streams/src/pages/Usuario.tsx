@@ -105,23 +105,10 @@ export default function Usuario() {
       {/* Configuración */}
       <section>
         <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16, color: "#64748b", display: "flex", alignItems: "center", gap: 8 }}>
-          ⚙️ Configuración
+          ⚙️ CUENTA
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
-          <article style={{ background: "#1f1f23", padding: 20, borderRadius: 10, border: "1px solid #2e2e35" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-              <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg, #64748b, #475569)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>
-                🔧
-              </div>
-              <h3 style={{ margin: 0, fontSize: 18 }}>Ajustes</h3>
-            </div>
-            <p style={{ opacity: 0.8, fontSize: 14, marginBottom: 16, lineHeight: 1.5 }}>
-              Personaliza tu perfil, preferencias y configuración de la cuenta.
-            </p>
-            <Link to="/ajustes" style={{ background: "#64748b", color: "white", padding: "10px 16px", borderRadius: 8, textDecoration: "none", fontWeight: 600, display: "inline-block", fontSize: 14 }}>
-              Configurar
-            </Link>
-          </article>
+          
 
           <article style={{ background: "#1f1f23", padding: 20, borderRadius: 10, border: "1px solid #2e2e35" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
