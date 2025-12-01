@@ -380,7 +380,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
             gap: "8px",
           }}
         >
-          <BotonMonedas monedas={monedas} setMonedas={setMonedas} />
+          <BotonMonedas monedas={monedas} setMonedas={setMonedas} streamerName={streamerName} />
           <BotonRegalo monedas={monedas} setMonedas={setMonedas} streamerID={streamerID ?? undefined} />
           <BotonNivel nivel={nivel} progreso={progreso} />
         </div>

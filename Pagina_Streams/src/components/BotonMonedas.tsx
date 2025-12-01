@@ -5,10 +5,10 @@ import { useAuth } from "./AuthContext";
 interface BotonMonedasProps {
   monedas?: number;
   setMonedas?: (nuevas: number) => void;
-  streamerID?: number;
+  streamerName?: string;  // Cambiado de streamerID a streamerName
 }
 
-export default function BotonMonedas({ monedas = 0, setMonedas, streamerID }: BotonMonedasProps) {
+export default function BotonMonedas({ monedas = 0, setMonedas, streamerName }: BotonMonedasProps) {
   const [abierto, setAbierto] = useState(false);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
   const [cantidadEnviar, setCantidadEnviar] = useState("");
@@ -28,7 +28,7 @@ export default function BotonMonedas({ monedas = 0, setMonedas, streamerID }: Bo
   // Colocar menú en posición fija
   const posicionarMenu = () => {
     const btn = botonRef.current;
-    if (! btn) return setCoords(null);
+    if (!btn) return setCoords(null);
     const r = btn.getBoundingClientRect();
     setCoords({ top: r.top - 8, left: r.left + r.width / 2 });
   };
@@ -46,10 +46,10 @@ export default function BotonMonedas({ monedas = 0, setMonedas, streamerID }: Bo
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
       const target = e.target as Node | null;
-      if (!target) return;
+      if (! target) return;
       if (
         botonRef.current &&
-        (botonRef.current.contains(target as Node) || menuRef.current?.contains(target as Node))
+        (botonRef.current. contains(target as Node) || menuRef.current?.contains(target as Node))
       ) {
         return;
       }
@@ -60,7 +60,7 @@ export default function BotonMonedas({ monedas = 0, setMonedas, streamerID }: Bo
     window.addEventListener("resize", posicionarMenu);
     return () => {
       window.removeEventListener("mousedown", onDown);
-      window.removeEventListener("scroll", posicionarMenu, true);
+      window. removeEventListener("scroll", posicionarMenu, true);
       window.removeEventListener("resize", posicionarMenu);
     };
   }, []);
@@ -85,7 +85,7 @@ export default function BotonMonedas({ monedas = 0, setMonedas, streamerID }: Bo
     }
 
     // Validar que haya un streamer
-    if (!streamerID || ! idUsuario) {
+    if (!streamerName || ! idUsuario) {
       setNotificacion("Error: No se pudo identificar al streamer.");
       const rect = botonRef.current?. getBoundingClientRect();
       if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
@@ -94,39 +94,46 @@ export default function BotonMonedas({ monedas = 0, setMonedas, streamerID }: Bo
     }
 
     try {
-      console.log(`🔄 [BotonMonedas] Enviando ${cantidad} monedas... `);
+      console.log(`🔄 [BotonMonedas] Enviando ${cantidad} monedas a ${streamerName}...`);
 
-      // 1. Descontar monedas del usuario que envía
+      // 1. Obtener datos del streamer por nombre usando API. ObtenerDatosUsuarioNombre
+      const streamerResult = await API.ObtenerDatosUsuarioNombre(streamerName);
+
+      if (!streamerResult.success || !streamerResult.user) {
+        setNotificacion("Error: Streamer no encontrado.");
+        const rect = botonRef.current?. getBoundingClientRect();
+        if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
+        setTimeout(() => setNotificacion(null), 2200);
+        return;
+      }
+
+      const streamerData = streamerResult.user;
+      const streamerID = streamerData.ID;
+      const monedasStreamer = streamerData. Monedas || 0;
+
+      console.log(`✅ [BotonMonedas] Streamer encontrado: ${streamerName} (ID: ${streamerID}, Monedas actuales: ${monedasStreamer})`);
+
+      // 2.  Descontar monedas del usuario que envía
       const nuevasMonedasUsuario = monedas - cantidad;
       const resultUsuario = await API.ActualizarMonedas(idUsuario, nuevasMonedasUsuario);
 
-      if (! resultUsuario.success) {
+      if (!resultUsuario. success) {
         setNotificacion("Error al actualizar tus monedas.");
         return;
       }
 
-      console.log(`✅ [BotonMonedas] Monedas del usuario: ${nuevasMonedasUsuario}`);
-
-      // 2. Obtener monedas actuales del streamer
-      const streamerDataResult = await API.ObtenerDatosUsuario(streamerID);
-
-      if (!streamerDataResult. success || !streamerDataResult.user) {
-        setNotificacion("Error al obtener datos del streamer.");
-        return;
-      }
-
-      const monedasStreamer = streamerDataResult.user. Monedas || 0;
-      const nuevasMonedasStreamer = monedasStreamer + cantidad;
+      console.log(`✅ [BotonMonedas] Monedas del usuario actualizadas: ${nuevasMonedasUsuario}`);
 
       // 3. Agregar monedas al streamer
-      const resultStreamer = await API.ActualizarMonedas(streamerID, nuevasMonedasStreamer);
+      const nuevasMonedasStreamer = monedasStreamer + cantidad;
+      const resultStreamer = await API. ActualizarMonedas(streamerID, nuevasMonedasStreamer);
 
-      if (!resultStreamer.success) {
+      if (! resultStreamer.success) {
         setNotificacion("Error al actualizar monedas del streamer.");
         return;
       }
 
-      console.log(`✅ [BotonMonedas] Monedas del streamer: ${nuevasMonedasStreamer}`);
+      console.log(`✅ [BotonMonedas] Monedas del streamer actualizadas: ${nuevasMonedasStreamer}`);
 
       // 4. Actualizar localStorage y estado local
       if (setMonedas) setMonedas(nuevasMonedasUsuario);
@@ -140,7 +147,7 @@ export default function BotonMonedas({ monedas = 0, setMonedas, streamerID }: Bo
       }
 
       // 5. Mostrar notificación
-      setNotificacion(`Has enviado ${cantidad} monedas 💰`);
+      setNotificacion(`Has enviado ${cantidad} monedas 💰 a ${streamerName}`);
       const rect = botonRef.current?. getBoundingClientRect();
       if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
       setTimeout(() => setNotificacion(null), 2200);
@@ -152,7 +159,7 @@ export default function BotonMonedas({ monedas = 0, setMonedas, streamerID }: Bo
       console.error("❌ [BotonMonedas] Error:", error);
       setNotificacion("Error al enviar monedas.");
       const rect = botonRef.current?.getBoundingClientRect();
-      if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect. top - 48 });
+      if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
       setTimeout(() => setNotificacion(null), 2200);
     }
   };
@@ -210,9 +217,14 @@ export default function BotonMonedas({ monedas = 0, setMonedas, streamerID }: Bo
           </div>
 
           <div style={{ marginBottom: 12 }}>
-            <p style={{ fontSize: "12px", color: "#b3b3b3", marginBottom: 8 }}>
-              Saldo actual: {monedas} monedas
+            <p style={{ fontSize: "12px", color: "#b3b3b3", marginBottom: 4 }}>
+              Saldo actual: <strong>{monedas} monedas</strong>
             </p>
+            {streamerName && (
+              <p style={{ fontSize: "12px", color: "#9147ff", marginBottom: 8 }}>
+                Enviar a: <strong>{streamerName}</strong>
+              </p>
+            )}
             
             {/* Input de cantidad */}
             <input
@@ -242,7 +254,7 @@ export default function BotonMonedas({ monedas = 0, setMonedas, streamerID }: Bo
                   enviarMonedas(cantidad);
                 }
               }}
-              disabled={!cantidadEnviar || parseInt(cantidadEnviar) <= 0}
+              disabled={! cantidadEnviar || parseInt(cantidadEnviar) <= 0}
               style={{
                 width: "100%",
                 padding: "10px",
@@ -272,7 +284,7 @@ export default function BotonMonedas({ monedas = 0, setMonedas, streamerID }: Bo
                   disabled={monedas < cantidad}
                   style={{
                     padding: "8px",
-                    backgroundColor: monedas >= cantidad ? "linear-gradient(180deg,#141416,#1e1e22)" : "#333",
+                    backgroundColor: monedas >= cantidad ? "#1e1e22" : "#333",
                     border: "1px solid #555",
                     color: monedas >= cantidad ? "white" : "#666",
                     borderRadius: 6,
