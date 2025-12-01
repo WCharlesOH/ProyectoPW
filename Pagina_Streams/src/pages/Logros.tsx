@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Ranking from "./Ranking";
 import type { Logro, Usuario } from "../components/types";
 import type { ranking } from "../components/types";
@@ -9,10 +10,13 @@ export default function Logros() {
   const [rankingUsuarios, setRankingUsuarios] = useState<ranking[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [xpTotal, setXpTotal] = useState(0);
+  const navigate = useNavigate();
+  const { username } = useParams();
   
   const info: Usuario | null = JSON.parse(localStorage.getItem("user") || "null");
   const id = info ? Number(info.ID) : null;
-  const nivels = info ? Number(info.NivelStreams) : null
+  const nivels = info ? Number(info.NivelStreams) : null;
+  const nombreUsuario = info?.NombreUsuario || username;
   const todo = API;
 
   const SacarLogros = async () => {
@@ -65,13 +69,21 @@ export default function Logros() {
   };
 
   useEffect(() => {
+    // Validar que existe usuario
+    if (!info || !nombreUsuario) {
+      console.error("No hay usuario logueado");
+      navigate("/login");
+      return;
+    }
+    
     SacarLogros();
     SacarRanking();
     if(!nivels){
       console.error("No hay datos de nivel, no se puede actualizar info del usuario");
       return;
     }
-    setXpTotal(nivels)
+    setXpTotal(nivels);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Calcular nivel actual
@@ -84,7 +96,14 @@ export default function Logros() {
       
       {/* Logros */}
       <div style={{ flex: 1 }}>
-        <h2 style={{ color: "#00b7ff", marginBottom: "20px" }}>Mis Logros</h2>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+          <h2 style={{ color: "#00b7ff", margin: 0 }}>Mis Logros</h2>
+          <Link to="/seleccionar-logros" style={{ textDecoration: "none" }}>
+            <button style={{ backgroundColor: "#00b7ff", color: "white", border: "none", borderRadius: "8px", padding: "10px 20px", fontWeight: "bold", cursor: "pointer", transition: "background 0.3s" }}>
+              Seleccionar Logros
+            </button>
+          </Link>
+        </div>
 
         {/* Barra de experiencia */}
         <div style={{ margin: "0 auto 30px", width: "80%", maxWidth: "500px", backgroundColor: "#1f1f23", borderRadius: "12px", padding: "20px" }}>
