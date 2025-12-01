@@ -1,6 +1,6 @@
 import React from 'react';
-import ChatBox from '../components/ChatBox';
-import LivePlayer from '../components/LivePlayer';
+import ChatBox from './ChatBox';
+import LivePlayer from './LivePlayer';
 
 interface StreamPreviewProps {
   nombreUsuario: string;
@@ -9,15 +9,17 @@ interface StreamPreviewProps {
   roomId: string;
   monedas: number;
   setMonedas: React.Dispatch<React.SetStateAction<number>>;
+  espectadoresActuales?: number; // Nuevo prop
 }
 
-const StreamPreview: React. FC<StreamPreviewProps> = ({
+const StreamPreview: React.FC<StreamPreviewProps> = ({
   nombreUsuario,
   streamTitle,
   streamCategory,
   roomId,
   monedas,
   setMonedas,
+  espectadoresActuales = 0, // Valor por defecto
 }) => {
   return (
     <div
@@ -107,7 +109,7 @@ const StreamPreview: React. FC<StreamPreviewProps> = ({
                 borderRadius: 6,
               }}
             >
-              <span>👁️ 23 espectadores</span>
+              <span>👁️ {espectadoresActuales} {espectadoresActuales === 1 ? 'espectador' : 'espectadores'}</span>
             </div>
           </div>
         </div>

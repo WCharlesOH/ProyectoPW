@@ -824,6 +824,127 @@ export const API = {
             console.error("Error obteniendo videos más vistos:", error);
             return { success: false, error: "Error obteniendo videos más vistos" };
         }
-    }       
+    },
+
+    ContarEspectadoresActuales: async (idStreamer: number) => {
+    try {
+        const response = await fetch("http://localhost:5000/Contar_Espectadores_Actuales", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                ID_Streamer: idStreamer,
+            }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { success: false, error: errorData. error };
+        }
+
+        const data = await response.json();
+        return { success: true, espectadores: data.espectadores };
+        } catch (error) {
+            console.error("Error al contar espectadores actuales:", error);
+            return { success: false, error: "Error al contar espectadores actuales" };
+        }
+    },
+
+    ContarSeguidoresTotales: async (idStreamer: number) => {
+        try {
+            const response = await fetch("http://localhost:5000/Contar_Seguidores_Totales", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ID_Streamer: idStreamer,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error };
+            }
+
+            const data = await response.json();
+            return { success: true, seguidores: data.seguidores };
+        } catch (error) {
+            console.error("Error al contar seguidores totales:", error);
+            return { success: false, error: "Error al contar seguidores totales" };
+        }
+    },
+
+    EstadisticasStreamer: async (idStreamer: number) => {
+        try {
+            const response = await fetch("http://localhost:5000/Estadisticas_Streamer", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ID_Streamer: idStreamer,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData. error };
+            }
+
+            const data = await response.json();
+            return { 
+                success: true, 
+                streamer: data.streamer,
+                estadisticas: data.estadisticas 
+            };
+        } catch (error) {
+            console.error("Error al obtener estadísticas del streamer:", error);
+            return { success: false, error: "Error al obtener estadísticas del streamer" };
+        }
+    },
+
+    ListaEspectadoresActuales: async (idStreamer: number) => {
+        try {
+            const response = await fetch("http://localhost:5000/Lista_Espectadores_Actuales", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON. stringify({
+                    ID_Streamer: idStreamer,
+                }),
+            });
+
+            if (! response.ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error };
+            }
+
+            const data = await response.json();
+            return { 
+                success: true, 
+                totalEspectadores: data.totalEspectadores,
+                espectadores: data.espectadores 
+            };
+        } catch (error) {
+            console. error("Error al obtener lista de espectadores:", error);
+            return { success: false, error: "Error al obtener lista de espectadores" };
+        }
+    },
+
+    TopStreamersPorEspectadores: async () => {
+        try {
+            const response = await fetch("http://localhost:5000/Top_Streamers_Por_Espectadores");
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData. error };
+            }
+
+            const data = await response.json();
+            return { 
+                success: true, 
+                total: data.total,
+                streamers: data.streamers 
+            };
+        } catch (error) {
+            console.error("Error al obtener top streamers:", error);
+            return { success: false, error: "Error al obtener top streamers" };
+        }
+    },
 
 };
