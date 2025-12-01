@@ -42,11 +42,12 @@ const integrantes = [
 export default function Nosotros() {
   return (
     <div className="nosotros-page">
-      <h1 className="nosotros-title">Nuestro Equipo</h1>
+      <div className="nosotros-container">
+        <h1 className="nosotros-title">Nuestro Equipo</h1>
 
-      <div className="nosotros-grid">
+        <div className="nosotros-grid">
         {integrantes.map((persona, index) => (
-          <div key={index} className="card">
+          <div key={index} className="nosotros-card" tabIndex={0}>
             <div className="card-img-container">
               <img src={persona.imagen} alt={persona.nombre} className="card-img" />
             </div>
@@ -55,6 +56,7 @@ export default function Nosotros() {
             <div className="descripcion">{persona.descripcion}</div>
           </div>
         ))}
+        </div>
       </div>
     </div>
   );
