@@ -30,6 +30,7 @@ import Logros from './pages/Logros'
 
 import {API} from './Comandosllamadas/llamadas'
 import type { Usuario } from './components/types'
+import CategoriaDetalle from './pages/CategoriaDetalle'
 
 export default function App() {
 
@@ -82,7 +83,7 @@ export default function App() {
               <Route path="/registro" element={<Registro />} />
               <Route path="/nosotros" element={<Nosotros />} />
               <Route path="/terminos" element={<Terminos />} />
-
+              <Route path="/categoria/:nombreJuego" element={<CategoriaDetalle />} />
               <Route path="/dashboard" element={<DashboardStreamer monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/panel" element={<PanelControl monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/suscripciones" element={<Suscripciones />} />

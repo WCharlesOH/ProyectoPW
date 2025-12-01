@@ -771,6 +771,7 @@ export const API = {
                     DescripcionRegalo,
                     icono
                 })
+
             });
 
             if (!response.ok) {
@@ -803,6 +804,31 @@ export const API = {
         return { success: false, error: "Error obteniendo regalos" };
     }
 },
+    ObtenerRegalos: async (ID: number) => {
+        try {
+            const response = await fetch(`http://localhost:5000/regalos`,{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: ID
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error };
+            }
+
+            const datos = await response.json();
+            return { success: true, data: datos };
+
+        } catch (error) {
+            console.error("Error obteniendo regalos:", error);
+            return { success: false, error: "Error obteniendo regalos" };
+        }
+    },
     BuscarVideos: async (texto: string) => {
         try {
             const response = await fetch(`http://localhost:5000/videos/buscar?q=${encodeURIComponent(texto)}`);
@@ -954,6 +980,46 @@ export const API = {
         } catch (error) {
             console.error("Error al obtener top streamers:", error);
             return { success: false, error: "Error al obtener top streamers" };
+        }
+    },
+
+    ObtenerJuegos: async () => {
+    try {
+        const response = await fetch("http://localhost:5000/ObtenerJuegos");
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { success: false, error: errorData. error };
+        }
+
+        const data = await response.json();
+        return { success: true, juegos: data };
+    } catch (error) {
+        console.error("Error al obtener juegos:", error);
+        return { success: false, error: "Error al obtener juegos" };
+    }
+},
+
+    StreamersPorJuego: async (nombreJuego: string) => {
+        try {
+            const response = await fetch("http://localhost:5000/StreamersPorJuego", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    NombreJuego: nombreJuego,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error };
+            }
+
+            const data = await response.json();
+            return { success: true, streamers: data. streamers, total: data.totalStreamers };
+        } catch (error) {
+            console.error("Error al obtener streamers por juego:", error);
+            return { success: false, error: "Error al obtener streamers por juego" };
         }
     },
 

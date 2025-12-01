@@ -5,7 +5,8 @@ import { useAuth } from "./AuthContext";
 interface BotonRegaloProps {
   monedas?: number;
   setMonedas?: (nuevas: number) => void;
-  streamerID?: number;
+  // Acepta number o null, reflejando el estado de carga
+  streamerID?: number | null; 
   disabled?: boolean;
 }
 
@@ -36,12 +37,21 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disab
   // Cargar regalos del backend
   useEffect(() => {
     const cargarRegalos = async () => {
+      // 🚨 CORRECCIÓN CLAVE: Solo cargar si el streamerID es un número válido.
+      if (typeof streamerID !== 'number' || streamerID <= 0) {
+        // Si no hay ID válido, restablecer o no hacer nada (se mantiene en cargando si es null)
+        if (streamerID === null) {
+            setCargandoRegalos(false); // Si se determinó que es null (streamer no existe), terminamos la carga
+        }
+        return;
+      }
+      
       setCargandoRegalos(true);
       try {
-        console.log("🔄 [BotonRegalo] Cargando regalos...");
-        
-        const result = await API.ObtenerRegalos(idUsuario);
-        
+        console.log("🔄 [BotonRegalo] Cargando regalos para ID:", streamerID);
+          
+        const result = await API.ObtenerRegalos(streamerID);
+
         if (result.success && result.data) {
           setRegalosList(result.data);
           console.log(`✅ [BotonRegalo] ${result.data.length} regalos cargados`);
@@ -49,18 +59,20 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disab
           setRegalosList([]);
         }
       } catch (error) {
-        console.error("❌ [BotonRegalo] Error:", error);
+        console.error("❌ [BotonRegalo] Error cargando regalos:", error);
         setRegalosList([]);
       } finally {
         setCargandoRegalos(false);
       }
     };
-
+    
+    // 🚨 CORRECCIÓN CLAVE: Agregamos streamerID a las dependencias. 
+    // Esto asegura que la función se ejecute cuando el ID cambie de 'null' a un número real.
     cargarRegalos();
-  }, []);
+  }, [streamerID]); 
 
   const posicionarMenu = () => {
-    const btn = botonRef. current;
+    const btn = botonRef.current;
     if (!btn) return setCoords(null);
     const r = btn.getBoundingClientRect();
     setCoords({ top: r.top - 8, left: r.left + r.width / 2 });
@@ -80,7 +92,7 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disab
       if (!target) return;
       if (
         botonRef.current &&
-        (botonRef.current.contains(target as Node) || menuRef.current?. contains(target as Node))
+        (botonRef.current.contains(target as Node) || menuRef.current?.contains(target as Node))
       ) {
         return;
       }
@@ -100,14 +112,15 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disab
     if (monedas < regalo.PrecioRegalo) {
       setNotificacion("No tienes suficientes monedas.");
       const rect = botonRef.current?.getBoundingClientRect();
-      if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect. top - 48 });
+      if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
       setTimeout(() => setNotificacion(null), 2200);
       return;
     }
 
-    if (! streamerID || !idUsuario) {
+    // Usamos la misma comprobación de tipo para asegurar que es un ID válido antes de usarlo
+    if (typeof streamerID !== 'number' || streamerID <= 0 || !idUsuario) {
       setNotificacion("Error: No se pudo identificar al streamer.");
-      const rect = botonRef.current?. getBoundingClientRect();
+      const rect = botonRef.current?.getBoundingClientRect();
       if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
       setTimeout(() => setNotificacion(null), 2200);
       return;
@@ -117,10 +130,10 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disab
       console.log(`🔄 [BotonRegalo] Enviando ${regalo.NombreRegalo}...`);
 
       // 1. Descontar monedas del usuario
-      const nuevasMonedasUsuario = monedas - regalo. PrecioRegalo;
-      const resultUsuario = await API. ActualizarMonedas(idUsuario, nuevasMonedasUsuario);
+      const nuevasMonedasUsuario = monedas - regalo.PrecioRegalo;
+      const resultUsuario = await API.ActualizarMonedas(idUsuario, nuevasMonedasUsuario);
 
-      if (! resultUsuario.success) {
+      if (!resultUsuario.success) {
         setNotificacion("Error al actualizar tus monedas.");
         return;
       }
@@ -150,14 +163,14 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disab
       const userStorage = localStorage.getItem("user");
       if (userStorage) {
         const userData = JSON.parse(userStorage);
-        userData. Monedas = nuevasMonedasUsuario;
-        localStorage.setItem("user", JSON. stringify(userData));
+        userData.Monedas = nuevasMonedasUsuario;
+        localStorage.setItem("user", JSON.stringify(userData));
       }
 
       console.log(`✅ [BotonRegalo] Regalo enviado, localStorage actualizado`);
 
       // 4. Mostrar notificación
-      setNotificacion(`Has enviado ${regalo.icono} ${regalo.NombreRegalo} por ${regalo.PrecioRegalo} monedas. `);
+      setNotificacion(`Has enviado ${regalo.icono} ${regalo.NombreRegalo} por ${regalo.PrecioRegalo} monedas.`);
       const rect = botonRef.current?.getBoundingClientRect();
       if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
       setTimeout(() => setNotificacion(null), 2200);
@@ -178,25 +191,28 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disab
         ref={botonRef}
         onClick={() => setAbierto((v) => !v)}
         aria-expanded={abierto}
-        disabled={cargandoRegalos || disabled || !streamerID}
+        // Deshabilitado si: está cargando regalos, está deshabilitado por el padre, o si el streamerID aún no es válido
+        disabled={cargandoRegalos || disabled || typeof streamerID !== 'number' || streamerID <= 0}
         style={{
           backgroundColor: "#1f1f23",
           color: "white",
           border: "1px solid #333",
           borderRadius: "6px",
           padding: "6px 10px",
-          cursor: cargandoRegalos ? "wait" : "pointer",
+          cursor: cargandoRegalos || disabled || typeof streamerID !== 'number' || streamerID <= 0 ? "not-allowed" : "pointer",
           display: "flex",
           alignItems: "center",
           gap: "8px",
           fontWeight: "600",
-          opacity: cargandoRegalos ? 0.5 : 1,
+          opacity: cargandoRegalos || disabled || typeof streamerID !== 'number' || streamerID <= 0 ? 0.5 : 1,
+          transition: "opacity 0.2s",
         }}
       >
-        🎁 {cargandoRegalos ? "..." : "Regalos"}
+        🎁 {cargandoRegalos && (typeof streamerID === 'number' && streamerID > 0) ? "Cargando..." : "Regalos"}
+        {!cargandoRegalos && (typeof streamerID !== 'number' || streamerID <= 0) && " (N/A)"}
       </button>
 
-      {abierto && coords && ! cargandoRegalos && (
+      {abierto && coords && !cargandoRegalos && (
         <div
           ref={menuRef}
           role="dialog"
@@ -228,7 +244,7 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disab
           <div style={{ maxHeight: 260, overflowY: "auto" }}>
             {regalosList.length === 0 ? (
               <div style={{ textAlign: "center", padding: "20px", color: "#adadb8" }}>
-                <p>No hay regalos disponibles</p>
+                <p>{cargandoRegalos ? "Cargando..." : "No hay regalos disponibles"}</p>
               </div>
             ) : (
               regalosList.map((r: Regalo) => (
@@ -249,7 +265,7 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disab
                     <div>
                       <div style={{ fontWeight: 700 }}>{r.NombreRegalo}</div>
                       <div style={{ fontSize: 12, color: "#b3b3b3" }}>
-                        {r. DescripcionRegalo || "Envía un gesto"}
+                        {r.DescripcionRegalo || "Envía un gesto"}
                       </div>
                     </div>
                   </div>
@@ -263,13 +279,14 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disab
                         e.stopPropagation();
                         comprarRegalo(r);
                       }}
+                      disabled={monedas < r.PrecioRegalo}
                       style={{
-                        backgroundColor: "#00b7ff",
+                        backgroundColor: monedas < r.PrecioRegalo ? "#444" : "#00b7ff",
                         border: "none",
                         color: "black",
                         padding: "6px 10px",
                         borderRadius: 6,
-                        cursor: "pointer",
+                        cursor: monedas < r.PrecioRegalo ? "not-allowed" : "pointer",
                         fontWeight: 700,
                       }}
                     >
@@ -295,7 +312,7 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disab
             color: "white",
             padding: "10px 14px",
             borderRadius: 8,
-            boxShadow: "0 6px 18px rgba(0,0,0,0. 6)",
+            boxShadow: "0 6px 18px rgba(0,0,0,0.6)",
             zIndex: 10001,
             textAlign: "center",
           }}
