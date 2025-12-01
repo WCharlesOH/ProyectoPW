@@ -37,7 +37,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './Pagina_Streams/Pagina_Streams/dist'
+          path: './Pagina_Streams/dist'
           
   deploy:
     environment:
