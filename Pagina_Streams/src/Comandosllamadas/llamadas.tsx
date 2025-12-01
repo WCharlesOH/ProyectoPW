@@ -55,7 +55,7 @@ export const API = {
             const response = await fetch("http://localhost:5000/Suscrito", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ID_Usuario: idUsuario }),
+                body: JSON.stringify({ ID_Viewer: idUsuario }),
             });
 
             if (!response.ok) {
