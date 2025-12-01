@@ -54,7 +54,7 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
   // Usuario actual
   const { user } = useAuth();
   const nombreUsuario = (user as any)?.NombreUsuario || (user as any)?.name || 'StreamerPrueba';
-  const idUsuario = (user as any)?.ID;
+  const idUsuario = (user as any)?. ID;
 
   const stats: Stat[] = [
     { 
@@ -92,7 +92,7 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
     if (!idUsuario) return;
 
     try {
-      console.log('🔄 [Dashboard] Cargando datos del usuario...');
+      console.log('🔄 [Dashboard] Cargando datos del usuario.. .');
       const result = await API.ObtenerDatosUsuario(idUsuario);
 
       if (result.success && result.user) {
@@ -108,16 +108,15 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
         const actividadInicial: ActividadMoneda = {
           id: Date.now(). toString(),
           text: `💰 Saldo actual: ${monedasActuales} monedas`,
-          time: new Date(). toLocaleTimeString(),
+          time: new Date().toLocaleTimeString(),
           tipo: 'moneda',
           cantidad: monedasActuales,
         };
         setActividades((prev) => {
-          // Evitar duplicados
           if (prev.some(a => a.text. includes('Saldo actual'))) {
             return prev;
           }
-          return [actividadInicial, ...prev].slice(0, 10);
+          return [actividadInicial, ...prev]. slice(0, 10);
         });
       }
     } catch (error) {
@@ -130,7 +129,7 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
     if (!idUsuario) return;
 
     try {
-      console.log('🔄 [Dashboard] Cargando conteo de seguidores.. .');
+      console.log('🔄 [Dashboard] Cargando conteo de seguidores...');
       const result = await API.ContarSeguidoresTotales(idUsuario);
 
       if (result.success) {
@@ -154,14 +153,14 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
       if (result.success && result.subscriptions) {
         const listaSeguidores: Seguidor[] = result.subscriptions.map((sub: any) => ({
           ID_Viewer: sub.ID_Viewer || 0,
-          NombreUsuario: sub.viewerC?.NombreUsuario || 'Usuario',
+          NombreUsuario: sub.viewerC?. NombreUsuario || 'Usuario',
           ImagenPerfil: sub.viewerC?.ImagenPerfil || `https://ui-avatars.com/api/? name=Usuario&background=9147ff&color=fff`,
-          NivelViewer: sub. NivelViewer || 1,
+          NivelViewer: sub.NivelViewer || 1,
           Habilitado: sub.Habilitado !== undefined ? sub.Habilitado : true,
         }));
 
         setSeguidores(listaSeguidores);
-        console.log(`✅ [Dashboard] ${listaSeguidores.length} seguidores en lista detallada`);
+        console. log(`✅ [Dashboard] ${listaSeguidores.length} seguidores en lista detallada`);
       }
     } catch (error) {
       console.error('❌ [Dashboard] Error al cargar lista de seguidores:', error);
@@ -170,13 +169,7 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
 
   // Obtener espectadores actuales viendo el stream
   const obtenerEspectadoresActuales = async () => {
-    if (!idUsuario) {
-      setEspectadoresActuales(0);
-      return;
-    }
-
-    // Si no está en vivo, resetear a 0
-    if (!isLive) {
+    if (!idUsuario || !isLive) {
       setEspectadoresActuales(0);
       return;
     }
@@ -206,7 +199,7 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
     const h = Math.floor(segundos / 3600);
     const m = Math.floor((segundos % 3600) / 60);
     const s = segundos % 60;
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    return `${h. toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString(). padStart(2, '0')}`;
   }
 
   function formatearTiempoHoras(horas: number): string {
@@ -222,25 +215,31 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
     return `${horasEnteras}h ${minutos}m`;
   }
 
+  // ============================================
+  // FUNCIONES DE STREAMING (USANDO API)
+  // ============================================
+
   const obtenerSalaStreamer = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/stream/room', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          streamerName: nombreUsuario,
-        }),
-      });
+      console.log('🔄 [Dashboard] Obteniendo sala de streaming...');
+      
+      // Usar la función CrearSalaStreaming de llamadas.tsx
+      const result = await API.CrearSalaStreaming(nombreUsuario);
 
-      if (response.ok) {
-        const data = await response.json();
-        setBroadcasterUrl(data. broadcasterUrl);
-        setViewerUrl(data.viewerUrl);
-        setRoomId(data.roomId);
-        console.log(`✅ [VDO.Ninja] Sala obtenida: ${data.roomId}`);
-        return data;
+      if (result.success) {
+        setBroadcasterUrl(result. broadcasterUrl || '');
+        setViewerUrl(result.viewerUrl || '');
+        setRoomId(result.roomId || '');
+        
+        console.log(`✅ [VDO.Ninja] Sala obtenida:`, {
+          roomId: result.roomId,
+          broadcasterUrl: result.broadcasterUrl,
+          viewerUrl: result.viewerUrl,
+        });
+        
+        return result;
       } else {
-        throw new Error('Error al obtener sala');
+        throw new Error(result.error || 'Error al obtener sala');
       }
     } catch (error) {
       console. error('❌ [VDO.Ninja] Error al obtener sala:', error);
@@ -255,25 +254,21 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
         console.log('🔴 [Stream] Iniciando transmisión.. .');
         
         // Asegurar que tenemos la sala
-        let salaData = broadcasterUrl ? { broadcasterUrl, viewerUrl, roomId } : await obtenerSalaStreamer();
+        let salaData = broadcasterUrl ?  { broadcasterUrl, viewerUrl, roomId } : await obtenerSalaStreamer();
 
-        if (!salaData) {
+        if (!salaData || !salaData.broadcasterUrl) {
           alert('Error al obtener la sala de transmisión');
           return;
         }
 
-        // Notificar al backend que iniciamos
-        const resp = await fetch('http://localhost:5000/api/stream/start', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            streamerName: nombreUsuario,
-            title: streamTitle || `Stream de ${nombreUsuario}`,
-            category: streamCategory,
-          }),
-        });
+        // Notificar al backend que iniciamos usando API. IniciarStream
+        const result = await API.IniciarStream(
+          nombreUsuario,
+          streamTitle || `Stream de ${nombreUsuario}`,
+          streamCategory
+        );
 
-        if (resp.ok) {
+        if (result. success) {
           setIsLive(true);
 
           // Actualizar estado en vivo en la base de datos
@@ -287,6 +282,7 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
 
           // Abrir ventana del broadcaster
           if (salaData.broadcasterUrl) {
+            console.log(`🎥 [VDO.Ninja] Abriendo broadcaster: ${salaData.broadcasterUrl}`);
             broadcasterWindowRef.current = window.open(
               salaData.broadcasterUrl,
               'VDO_Broadcaster',
@@ -295,51 +291,71 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
           }
 
           console.log('✅ [Stream] Transmisión iniciada correctamente');
+          
+          // Agregar actividad de inicio
+          const actividadInicio: ActividadMoneda = {
+            id: Date.now(). toString(),
+            text: `🔴 Transmisión iniciada: ${streamTitle || 'Sin título'}`,
+            time: new Date().toLocaleTimeString(),
+            tipo: 'normal',
+          };
+          setActividades((prev) => [actividadInicio, ...prev]. slice(0, 10));
+        } else {
+          throw new Error(result.error || 'Error al iniciar stream');
         }
       } catch (error) {
         console.error('❌ [Stream] Error al iniciar stream:', error);
-        alert('Error al iniciar la transmisión');
+        alert(`Error al iniciar la transmisión: ${error}`);
       }
     } else {
       // ========== DETENER TRANSMISIÓN ==========
       try {
         console.log('⚫ [Stream] Deteniendo transmisión...');
         
-        await fetch('http://localhost:5000/api/stream/stop', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ streamerName: nombreUsuario }),
-        });
+        // Usar API.DetenerStream
+        const result = await API.DetenerStream(nombreUsuario);
 
-        setIsLive(false);
+        if (result.success) {
+          setIsLive(false);
 
-        // Guardar horas de streaming
-        if (idUsuario) {
-          const horasSesion = tiempoTransmision / 3600;
-          const nuevasHorasTotales = horasTransmitidasTotales + horasSesion;
+          // Guardar horas de streaming
+          if (idUsuario) {
+            const horasSesion = tiempoTransmision / 3600;
+            const nuevasHorasTotales = horasTransmitidasTotales + horasSesion;
 
-          await API.ActualizarHorasStreaming(idUsuario, nuevasHorasTotales);
-          await API.ActualizarEnVivo(idUsuario, 'false');
+            await API.ActualizarHorasStreaming(idUsuario, nuevasHorasTotales);
+            await API.ActualizarEnVivo(idUsuario, 'false');
 
-          setHorasTransmitidasTotales(nuevasHorasTotales);
+            setHorasTransmitidasTotales(nuevasHorasTotales);
+            
+            console.log(`✅ [BD] Horas guardadas: +${horasSesion.toFixed(2)}h (Total: ${nuevasHorasTotales. toFixed(2)}h)`);
+            console.log('✅ [BD] Estado EnVivo actualizado a false');
+          }
+
+          setTiempoTransmision(0);
+          setEspectadoresActuales(0);
+          emitirStream({ tipo: 'estado', en_vivo: false });
+          emitirActividad('⚫ Transmisión finalizada');
+
+          // Cerrar ventana del broadcaster
+          if (broadcasterWindowRef.current && ! broadcasterWindowRef.current.closed) {
+            broadcasterWindowRef.current.close();
+          }
+
+          console.log('✅ [Stream] Transmisión detenida correctamente');
           
-          console.log(`✅ [BD] Horas guardadas: +${horasSesion.toFixed(2)}h (Total: ${nuevasHorasTotales.toFixed(2)}h)`);
-          console.log('✅ [BD] Estado EnVivo actualizado a false');
+          // Agregar actividad de cierre
+          const actividadCierre: ActividadMoneda = {
+            id: Date.now().toString(),
+            text: `⚫ Transmisión finalizada - Duración: ${formatearTiempo(tiempoTransmision)}`,
+            time: new Date(). toLocaleTimeString(),
+            tipo: 'normal',
+          };
+          setActividades((prev) => [actividadCierre, ...prev].slice(0, 10));
         }
-
-        setTiempoTransmision(0);
-        setEspectadoresActuales(0);
-        emitirStream({ tipo: 'estado', en_vivo: false });
-        emitirActividad('⚫ Transmisión finalizada');
-
-        // Cerrar ventana del broadcaster
-        if (broadcasterWindowRef. current && ! broadcasterWindowRef.current.closed) {
-          broadcasterWindowRef.current.close();
-        }
-
-        console.log('✅ [Stream] Transmisión detenida correctamente');
       } catch (error) {
         console.error('❌ [Stream] Error al detener stream:', error);
+        alert(`Error al detener la transmisión: ${error}`);
       }
     }
   };
@@ -359,14 +375,8 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
   useEffect(() => {
     if (idUsuario) {
       console.log('🚀 [Dashboard] Cargando datos iniciales...');
-      
-      // Cargar datos básicos del usuario
       cargarDatosUsuario();
-      
-      // Cargar conteo de seguidores
       cargarSeguidoresTotales();
-      
-      // Cargar lista detallada de seguidores
       cargarListaSeguidores();
     }
   }, [idUsuario]);
@@ -374,10 +384,8 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
   // Actualizar espectadores cada 10 segundos cuando está en vivo
   useEffect(() => {
     if (isLive && idUsuario) {
-      // Obtener inmediatamente
       obtenerEspectadoresActuales();
       
-      // Luego cada 10 segundos
       const interval = setInterval(() => {
         obtenerEspectadoresActuales();
       }, 10000);
@@ -394,7 +402,7 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
       const interval = setInterval(() => {
         cargarSeguidoresTotales();
         cargarListaSeguidores();
-      }, 30000); // 30 segundos
+      }, 30000);
 
       return () => clearInterval(interval);
     }
@@ -413,7 +421,7 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
       }
     }
     return () => {
-      if (timerRef.current !== null) {
+      if (timerRef. current !== null) {
         clearInterval(timerRef.current);
       }
     };
@@ -428,7 +436,7 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
         time: new Date().toLocaleTimeString(),
         tipo: mensaje.includes('💰') || mensaje.includes('💝') ? 'moneda' : 'normal',
       };
-      setActividades((prev) => [nueva, ...prev]. slice(0, 10));
+      setActividades((prev) => [nueva, ...prev].slice(0, 10));
     });
 
     return () => {

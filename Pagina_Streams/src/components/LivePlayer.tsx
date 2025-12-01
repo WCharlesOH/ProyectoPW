@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API } from "../Comandosllamadas/llamadas";
 
 interface LivePlayerProps {
   streamerName: string; // Nombre del streamer (REQUERIDO)
@@ -27,23 +28,41 @@ export default function LivePlayer({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Función para verificar el estado del stream
+  // Función para verificar el estado del stream usando API de llamadas. tsx
   const checkStreamStatus = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/stream/status/${streamerName}`);
+      console.log(`🔍 [LivePlayer] Verificando estado de stream: ${streamerName}`);
       
-      if (!response.ok) {
-        throw new Error('Error al verificar estado del stream');
-      }
+      // Usar la función ObtenerEstadoStream de llamadas.tsx
+      const result = await API.ObtenerEstadoStream(streamerName);
 
-      const data: StreamStatus = await response.json();
-      setStreamStatus(data);
-      setError(null);
-      setIsLoading(false);
-      
-      return data;
+      if (result.success) {
+        const statusData: StreamStatus = {
+          exists: result.exists || false,
+          isLive: result.isLive || false,
+          roomId: result.roomId,
+          viewerUrl: result. viewerUrl,
+          title: result.title,
+          category: result.category,
+          startedAt: result.startedAt,
+        };
+
+        setStreamStatus(statusData);
+        setError(null);
+        setIsLoading(false);
+
+        console.log(`✅ [LivePlayer] Estado obtenido:`, {
+          isLive: statusData.isLive,
+          viewerUrl: statusData.viewerUrl,
+          title: statusData.title,
+        });
+
+        return statusData;
+      } else {
+        throw new Error(result.error || 'Error al verificar estado del stream');
+      }
     } catch (err) {
-      console.error(`Error al verificar stream de ${streamerName}:`, err);
+      console.error(`❌ [LivePlayer] Error al verificar stream de ${streamerName}:`, err);
       setError('No se pudo conectar con el servidor');
       setIsLoading(false);
       return null;
@@ -52,12 +71,14 @@ export default function LivePlayer({
 
   // Cargar estado inicial
   useEffect(() => {
-    checkStreamStatus();
+    if (streamerName) {
+      checkStreamStatus();
+    }
   }, [streamerName]);
 
   // Auto-refresh del estado
   useEffect(() => {
-    if (! autoRefresh) return;
+    if (! autoRefresh || ! streamerName) return;
 
     const interval = setInterval(() => {
       checkStreamStatus();
@@ -89,14 +110,14 @@ export default function LivePlayer({
           style={{
             width: "60px",
             height: "60px",
-            border: "5px solid rgba(145, 71, 255, 0.2)",
+            border: "5px solid rgba(145, 71, 255, 0. 2)",
             borderTop: "5px solid #9147ff",
             borderRadius: "50%",
             animation: "spin 1s linear infinite",
           }}
         />
         <p style={{ margin: 0, fontSize: "16px", opacity: 0.9, fontWeight: 600 }}>
-          🎥 Verificando transmisión...
+          🎥 Verificando transmisión... 
         </p>
         <style>
           {`
@@ -307,25 +328,39 @@ export default function LivePlayer({
         </div>
       )}
 
-      {/* Iframe de VDO.Ninja */}
-      <iframe
-        src={streamStatus.viewerUrl}
-        style={{
+      {/* Iframe de VDO.Ninja - AQUÍ SE CARGA EL VIDEO */}
+      {streamStatus.viewerUrl ?  (
+        <iframe
+          key={streamStatus.viewerUrl} // Force reload cuando cambie la URL
+          src={streamStatus. viewerUrl}
+          style={{
+            width: "100%",
+            height: "100%",
+            border: "none",
+            display: "block",
+          }}
+          allow="camera; microphone; autoplay; fullscreen; picture-in-picture; display-capture; screen-wake-lock"
+          allowFullScreen
+          title={`Stream de ${streamerName}`}
+        />
+      ) : (
+        <div style={{
           width: "100%",
           height: "100%",
-          border: "none",
-          display: "block",
-        }}
-        allow="camera; microphone; autoplay; fullscreen; picture-in-picture; display-capture; screen-wake-lock"
-        allowFullScreen
-        title={`Stream de ${streamerName}`}
-      />
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#fff",
+        }}>
+          <p>⚠️ URL del stream no disponible</p>
+        </div>
+      )}
 
       <style>
         {`
           @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+            50% { opacity: 0. 3; }
           }
         `}
       </style>

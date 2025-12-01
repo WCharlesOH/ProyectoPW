@@ -15,7 +15,7 @@ export const API = {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response. json();
                 return { success: false, error: errorData.error };
             }
             const data = await response.json();
@@ -39,7 +39,7 @@ export const API = {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                return { success: false, error: errorData.error };
+                return { success: false, error: errorData. error };
             }
 
             const data = await response.json();
@@ -66,7 +66,7 @@ export const API = {
             const data = await response.json();
             return { success: true, subscriptions: data };
         } catch (error) {
-            console.error("Error al obtener suscripciones:", error);
+            console. error("Error al obtener suscripciones:", error);
             return { success: false, error: "Error al obtener suscripciones" };
         }
     },
@@ -202,7 +202,7 @@ export const API = {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response. json();
                 return { success: false, error: errorData.error };
             }
 
@@ -231,13 +231,13 @@ export const API = {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response. json();
                 return { success: false, error: errorData.error };
             }
 
             return { success: true };
         } catch (error) {
-            console.error("Error al editar datos del usuario:", error);
+            console. error("Error al editar datos del usuario:", error);
             return { success: false, error: "Error al editar datos del usuario" };
         }
     },
@@ -281,7 +281,7 @@ export const API = {
                 }),
             });
 
-            if (!response.ok) {
+            if (! response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
@@ -305,13 +305,13 @@ export const API = {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response. json();
                 return { success: false, error: errorData.error };
             }
 
             return { success: true };
         } catch (error) {
-            console.error("Error al actualizar nivel del streamer:", error);
+            console. error("Error al actualizar nivel del streamer:", error);
             return { success: false, error: "Error al actualizar nivel del streamer" };
         }
     },
@@ -321,13 +321,13 @@ export const API = {
             const response = await fetch("http://localhost:5000/Actualizar_HorasTransmision", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
+                body: JSON. stringify({
                     ID_Usuario: idStreamer,
                     NuevasHoras: horas,
                 }),
             });
 
-            if (!response.ok) {
+            if (! response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
@@ -345,7 +345,7 @@ export const API = {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                return { success: false, error: errorData.error };
+                return { success: false, error: errorData. error };
             }
 
             const data = await response.json();
@@ -369,13 +369,13 @@ export const API = {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response. json();
                 return { success: false, error: errorData.error };
             }
 
             return { success: true };
         } catch (error) {
-            console.error("Error al asignar logro al usuario:", error);
+            console. error("Error al asignar logro al usuario:", error);
             return { success: false, error: "Error al asignar logro al usuario" };
         }
     },
@@ -455,7 +455,7 @@ export const API = {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response. json();
                 return { success: false, error: errorData.error };
             }
 
@@ -472,14 +472,14 @@ export const API = {
             const response = await fetch("http://localhost:5000/Mas_Vistos");
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response. json();
                 return { success: false, error: errorData.error };
             }
 
             const data = await response.json();
             return { success: true, streamers: data };
         } catch (error) {
-            console.error("Error al obtener los streamers más vistos:", error);
+            console. error("Error al obtener los streamers más vistos:", error);
             return { success: false, error: "Error al obtener los streamers más vistos" };
         }
     },
@@ -502,7 +502,7 @@ export const API = {
             const data = await response.json();
             return { success: true, streamers: data };
         } catch (error) {
-            console.error("Error al obtener los streamers seguidos:", error);
+            console. error("Error al obtener los streamers seguidos:", error);
             return { success: false, error: "Error al obtener los streamers seguidos" };
         }
     },
@@ -518,7 +518,7 @@ export const API = {
                 }),
             });
 
-            if (!response.ok) {
+            if (! response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
@@ -552,6 +552,7 @@ export const API = {
             return { success: false, error: "Error al actualizar monedas del streamer" };
         }
     },
+    
     DatosdelStream: async (idusuario: number) => {
         try{
             const response = await fetch("http://localhost:5000/datos_Stream",{
@@ -562,7 +563,7 @@ export const API = {
                 })
             })
 
-            if (!response.ok) {
+            if (! response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
@@ -570,10 +571,11 @@ export const API = {
             const data = await response.json()
             return {success: true, data:data}
         } catch(error) {
-            console.error("Error al actualizar monedas del streamer:", error);
+            console.error("Error al obtener datos del stream:", error);
             return { success: false, error: "Error al obtener datos del stream" };
         }
     },
+
     CrearVideo: async (
         Titulo: string,
         url: string,
@@ -604,10 +606,11 @@ export const API = {
             return{success: true}
 
         } catch(error) {
-            console.error("Error al actualizar monedas del streamer:", error);
-            return { success: false, error: "Error al obtener datos del stream" };
+            console.error("Error al crear video:", error);
+            return { success: false, error: "Error al crear video" };
         }
     },
+
     VincularJuegoVideo: async (
         ID_Juego: number,
         ID_Video: number
@@ -626,7 +629,7 @@ export const API = {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                return { success: false, error: errorData.error };
+                return { success: false, error: errorData. error };
             }
 
             return { success: true };
@@ -636,6 +639,7 @@ export const API = {
             return { success: false, error: "Error en la vinculación" };
         }
     },
+
     ActualizarVideo: async (
         ID_Video: number,
         duracion: number,
@@ -668,6 +672,7 @@ export const API = {
             return { success: false, error: "Error actualizando video" };
         }
     },
+
     EliminarVideo: async (
         ID_Video: number
     ) => {
@@ -702,11 +707,11 @@ export const API = {
     PrecioRegalo: number,
     DescripcionRegalo: string,
     icono: string,
-    idStreamer: number // <--- NUEVO: Necesitamos tu ID aquí
+    idStreamer: number
 ) => {
     try {
         const response = await fetch("http://localhost:5000/regalos/crear", {
-            method: "POST", // <--- OBLIGATORIO: Cambiar GET a POST
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -715,12 +720,12 @@ export const API = {
                 PrecioRegalo,
                 DescripcionRegalo,
                 icono,
-                ID_Streamer: idStreamer // <--- Enviamos tu ID al backend
+                ID_Streamer: idStreamer
             })
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
+            const errorData = await response. json();
             return { success: false, error: errorData.error };
         }
 
@@ -732,14 +737,11 @@ export const API = {
     }
 },
 
-// Asegúrate de que tu función de OBTENER envíe el ID así:
-
-
     EliminarRegalo: async (nombre: string) => {
         try {
-            const response = await fetch(`http://localhost:5000/regalos/eliminar?nombre=${encodeURIComponent(nombre)}`);
+            const response = await fetch(`http://localhost:5000/regalos/eliminar? nombre=${encodeURIComponent(nombre)}`);
 
-            if (!response.ok) {
+            if (!response. ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
@@ -751,6 +753,7 @@ export const API = {
             return { success: false, error: "Error eliminando regalo" };
         }
     },
+
     ActualizarRegalo: async (
         ID_Regalo: number,
         nuevoNombre: string,
@@ -774,7 +777,7 @@ export const API = {
 
             });
 
-            if (!response.ok) {
+            if (!response. ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
@@ -786,9 +789,9 @@ export const API = {
             return { success: false, error: "Error actualizando regalo" };
         }
     },
+
   ObtenerRegalosGestionar: async (ID: number) => {
     try {
-        // ✅ URL CORRECTA + ✅ SEGURIDAD
         const response = await fetch(`http://localhost:5000/regalosbyMirko?ID=${ID}`);
 
         if (!response.ok) {
@@ -804,6 +807,7 @@ export const API = {
         return { success: false, error: "Error obteniendo regalos" };
     }
 },
+
     ObtenerRegalos: async (ID: number) => {
         try {
             const response = await fetch(`http://localhost:5000/regalos`,{
@@ -829,6 +833,7 @@ export const API = {
             return { success: false, error: "Error obteniendo regalos" };
         }
     },
+
     BuscarVideos: async (texto: string) => {
         try {
             const response = await fetch(`http://localhost:5000/videos/buscar?q=${encodeURIComponent(texto)}`);
@@ -873,8 +878,8 @@ export const API = {
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            return { success: false, error: errorData. error };
+            const errorData = await response. json();
+            return { success: false, error: errorData.error };
         }
 
         const data = await response.json();
@@ -897,7 +902,7 @@ export const API = {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                return { success: false, error: errorData.error };
+                return { success: false, error: errorData. error };
             }
 
             const data = await response.json();
@@ -920,7 +925,7 @@ export const API = {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                return { success: false, error: errorData. error };
+                return { success: false, error: errorData.error };
             }
 
             const data = await response.json();
@@ -940,12 +945,12 @@ export const API = {
             const response = await fetch("http://localhost:5000/Lista_Espectadores_Actuales", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON. stringify({
+                body: JSON.stringify({
                     ID_Streamer: idStreamer,
                 }),
             });
 
-            if (! response.ok) {
+            if (!response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
@@ -957,7 +962,7 @@ export const API = {
                 espectadores: data.espectadores 
             };
         } catch (error) {
-            console. error("Error al obtener lista de espectadores:", error);
+            console.error("Error al obtener lista de espectadores:", error);
             return { success: false, error: "Error al obtener lista de espectadores" };
         }
     },
@@ -1011,15 +1016,158 @@ export const API = {
             });
 
             if (!response.ok) {
+                const errorData = await response. json();
+                return { success: false, error: errorData.error };
+            }
+
+            const data = await response.json();
+            return { success: true, streamers: data.streamers, total: data.totalStreamers };
+        } catch (error) {
+            console.error("Error al obtener streamers por juego:", error);
+            return { success: false, error: "Error al obtener streamers por juego" };
+        }
+    },
+
+    // ============================================
+    // NUEVAS FUNCIONES DE VDO. NINJA STREAMING
+    // ============================================
+
+    // Crear/Obtener sala de streaming para un streamer
+    CrearSalaStreaming: async (streamerName: string, password?: string) => {
+        try {
+            const response = await fetch("http://localhost:5000/api/stream/room", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    streamerName,
+                    password
+                }),
+            });
+
+            if (!response. ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error };
+            }
+
+            const data = await response. json();
+            return { 
+                success: true, 
+                roomId: data.roomId,
+                broadcasterUrl: data.broadcasterUrl,
+                viewerUrl: data.viewerUrl,
+                isLive: data.isLive,
+                streamerName: data.streamerName
+            };
+        } catch (error) {
+            console.error("Error al crear sala de streaming:", error);
+            return { success: false, error: "Error al crear sala de streaming" };
+        }
+    },
+
+    // Iniciar transmisión en vivo
+    IniciarStream: async (streamerName: string, title?: string, category?: string) => {
+        try {
+            const response = await fetch("http://localhost:5000/api/stream/start", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    streamerName,
+                    title,
+                    category
+                }),
+            });
+
+            if (! response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
 
             const data = await response.json();
-            return { success: true, streamers: data. streamers, total: data.totalStreamers };
+            return { 
+                success: true, 
+                stream: data.stream,
+                message: data.message
+            };
         } catch (error) {
-            console.error("Error al obtener streamers por juego:", error);
-            return { success: false, error: "Error al obtener streamers por juego" };
+            console.error("Error al iniciar stream:", error);
+            return { success: false, error: "Error al iniciar stream" };
+        }
+    },
+
+    // Detener transmisión en vivo
+    DetenerStream: async (streamerName: string) => {
+        try {
+            const response = await fetch("http://localhost:5000/api/stream/stop", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    streamerName
+                }),
+            });
+
+            if (! response.ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error };
+            }
+
+            const data = await response.json();
+            return { 
+                success: true, 
+                message: data.message
+            };
+        } catch (error) {
+            console.error("Error al detener stream:", error);
+            return { success: false, error: "Error al detener stream" };
+        }
+    },
+
+    // Obtener estado del stream de un streamer
+    ObtenerEstadoStream: async (streamerName: string) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/stream/status/${streamerName}`);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error };
+            }
+
+            const data = await response.json();
+            return { 
+                success: true, 
+                exists: data.exists,
+                isLive: data.isLive,
+                roomId: data.roomId,
+                viewerUrl: data.viewerUrl,
+                streamerName: data.streamerName,
+                title: data.title,
+                category: data.category,
+                startedAt: data.startedAt
+            };
+        } catch (error) {
+            console.error("Error al obtener estado del stream:", error);
+            return { success: false, error: "Error al obtener estado del stream" };
+        }
+    },
+
+    // Listar todos los streams activos
+    ObtenerStreamsActivos: async () => {
+        try {
+            const response = await fetch("http://localhost:5000/api/streams/live");
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error };
+            }
+
+            const data = await response.json();
+            return { 
+                success: true, 
+                count: data.count,
+                streams: data.streams
+            };
+        } catch (error) {
+            console.error("Error al obtener streams activos:", error);
+            return { success: false, error: "Error al obtener streams activos" };
         }
     },
 
