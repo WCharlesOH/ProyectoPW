@@ -771,6 +771,7 @@ export const API = {
                     DescripcionRegalo,
                     icono
                 })
+
             });
 
             if (!response.ok) {
@@ -787,8 +788,16 @@ export const API = {
     },
     ObtenerRegalos: async (ID: number) => {
         try {
-            const response = await fetch(`http://localhost:5000/regalos?${ID}`);
-
+            const response = await fetch(`http://localhost:5000/regalos`,{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: ID
+                })
+            });
+            
             if (!response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
