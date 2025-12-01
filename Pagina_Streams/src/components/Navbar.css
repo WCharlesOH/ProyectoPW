@@ -5,10 +5,27 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 200;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   gap: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0. 3s ease;
+  will-change: transform;
+}
+
+/* Navbar visible - desliza hacia abajo */
+.navbar--visible {
+  transform: translateY(0);
+}
+
+/* Navbar oculto - desliza hacia arriba */
+.navbar--hidden {
+  transform: translateY(-100%);
+  box-shadow: none;
 }
 
 .navbar__group {
@@ -20,11 +37,21 @@
 .navbar__brand {
   margin: 0;
   font-size: 1.4rem;
+  transition: transform 0.2s ease;
+}
+
+.navbar__brand:hover {
+  transform: scale(1.05);
 }
 
 .navbar__brand a {
   color: #00b7ff;
   text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.navbar__brand a:hover {
+  color: #0099dd;
 }
 
 .navbar__links {
@@ -36,11 +63,29 @@
   color: #fff;
   text-decoration: none;
   font-weight: 500;
+  transition: color 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.navbar__link:hover {
+  color: #00b7ff;
+  transform: translateY(-2px);
 }
 
 .navbar__link--active {
   color: #00b7ff;
   font-weight: 700;
+}
+
+.navbar__link--active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #00b7ff;
+  border-radius: 2px;
 }
 
 .navbar__search {
@@ -50,6 +95,23 @@
   max-width: 520px;
   min-width: 180px;
   gap: 8px;
+  background-color: #18181b;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  transition: border-color 0.3s ease, 
+              background-color 0.3s ease, 
+              transform 0.2s ease;
+}
+
+.navbar__search:focus-within {
+  border-color: #9147ff;
+  background-color: #1f1f23;
+  transform: scale(1.02);
+}
+
+.navbar__search:hover {
+  border-color: #555;
 }
 
 .navbar__search-icon {
@@ -57,6 +119,13 @@
   height: 20px;
   background-color: white;
   border-radius: 4px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.navbar__search-icon:hover {
+  transform: scale(1.15) rotate(5deg);
+  opacity: 0.9;
 }
 
 .navbar__search input {
@@ -66,6 +135,16 @@
   color: white;
   flex: 1;
   min-width: 120px;
+  font-size: 14px;
+}
+
+.navbar__search input::placeholder {
+  color: #adadb8;
+  transition: color 0.2s ease;
+}
+
+.navbar__search input:focus::placeholder {
+  color: #6b6b7b;
 }
 
 .navbar__more {
@@ -77,6 +156,14 @@
   border: none;
   color: white;
   cursor: pointer;
+  font-size: 1rem;
+  padding: 4px 8px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.navbar__more button:hover {
+  color: #00b7ff;
+  transform: translateY(-2px);
 }
 
 .navbar__more-toggle {
@@ -85,24 +172,50 @@
 
 .navbar__more-toggle--open {
   font-weight: 700;
+  color: #00b7ff;
 }
 
 .navbar__more-menu {
   position: absolute;
   top: 100%;
   left: 0;
+  margin-top: 8px;
   background-color: #1f1f23;
   border: 1px solid #333;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
   overflow: hidden;
-  z-index: 20;
+  z-index: 1001;
+  min-width: 180px;
+  animation: slideDownFade 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top;
+}
+
+@keyframes slideDownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .navbar__more-menu a {
   display: block;
-  padding: 8px 12px;
+  padding: 12px 16px;
   color: white;
+  text-decoration: none;
+  transition: background-color 0.2s ease, 
+              color 0.2s ease, 
+              padding-left 0.2s ease;
+}
+
+.navbar__more-menu a:hover {
+  background-color: #2a2a2e;
+  color: #00b7ff;
+  padding-left: 20px;
 }
 
 .navbar__actions {
@@ -116,12 +229,42 @@
   color: inherit;
   text-decoration: none;
   font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, 
+              color 0.2s ease, 
+              transform 0.2s ease;
 }
 
+.navbar__button-link:hover {
+  background-color: #18181b;
+  color: #00b7ff;
+  transform: translateY(-2px);
+}
+
+/* Efecto de brillo sutil al hacer scroll */
+.navbar--visible {
+  animation: navbarGlow 0.3s ease-out;
+}
+
+@keyframes navbarGlow {
+  0% {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 2px 16px rgba(0, 183, 255, 0.1);
+  }
+  100% {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Responsive */
 @media (max-width: 820px) {
   .navbar {
     flex-direction: column;
     align-items: flex-start;
+    padding: 12px 16px;
   }
 
   .navbar__group,
@@ -136,19 +279,50 @@
 
   .navbar__links {
     gap: 12px;
+    font-size: 0.9rem;
+  }
+
+  .navbar__search {
+    max-width: 100%;
+  }
+
+  .navbar__actions {
+    justify-content: flex-start;
+  }
+
+  .navbar__link::after {
+    bottom: -2px;
   }
 }
 
 @media (max-width: 540px) {
   .navbar {
-    padding: 12px 16px;
+    padding: 10px 12px;
+  }
+
+  .navbar__brand {
+    font-size: 1.2rem;
   }
 
   .navbar__links {
-    font-size: 0.95rem;
+    font-size: 0. 85rem;
+    gap: 8px;
+  }
+
+  .navbar__search {
+    padding: 6px 10px;
+  }
+
+  .navbar__search input {
+    font-size: 13px;
   }
 
   .navbar__actions {
-    justify-content: flex-start;
+    gap: 12px;
+  }
+
+  .navbar__button-link {
+    padding: 6px 12px;
+    font-size: 0.9rem;
   }
 }

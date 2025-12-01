@@ -1,5 +1,5 @@
 // Navbar.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import MonedasMenu from "./MonedasMenu";
@@ -17,6 +17,8 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {
   const [dropOpen, setDropOpen] = useState(false);
   const [menuMonedasAbierto, setMenuMonedasAbierto] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const navigate = useNavigate();
 
   const linkStyle: React.CSSProperties = {
@@ -24,6 +26,44 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {
     color: "inherit",
     margin: "0 8px"
   };
+
+  // Control dinámico del navbar con scroll
+  useEffect(() => {
+    let ticking = false;
+
+    const updateNavbar = () => {
+      const currentScrollY = window.scrollY;
+
+      // Si estamos en el tope (primeros 50px), siempre mostrar
+      if (currentScrollY < 50) {
+        setIsVisible(true);
+      } 
+      // Si scrolleamos hacia abajo más de 5px
+      else if (currentScrollY > lastScrollY + 5) {
+        setIsVisible(false);
+      } 
+      // Si scrolleamos hacia arriba más de 5px
+      else if (currentScrollY < lastScrollY - 5) {
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateNavbar);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
 
   // Manejar la búsqueda
   const handleSearch = (e: React.FormEvent) => {
@@ -41,7 +81,7 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {
   };
 
   return (
-    <header className="navbar">
+    <header className={`navbar ${isVisible ? 'navbar--visible' : 'navbar--hidden'}`}>
       <div className="navbar__group">
         <h2 className="navbar__brand">
           <Link to="/">Tinamo</Link>
