@@ -369,10 +369,10 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
           >
             Enviar
           </button>
-        </div>
+      </div>
 
-        {/* Botones inferiores */}
-        <div
+      {/* Botones inferiores */}
+      <div
           style={{
             display: "flex",
             justifyContent: "space-between",
@@ -381,7 +381,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
           }}
         >
           <BotonMonedas monedas={monedas} setMonedas={setMonedas} />
-          <BotonRegalo monedas={monedas} setMonedas={setMonedas} />
+          <BotonRegalo monedas={monedas} setMonedas={setMonedas} streamerID={streamerID ?? undefined} />
           <BotonNivel nivel={nivel} progreso={progreso} />
         </div>
       </div>
