@@ -31,7 +31,7 @@ import Logros from './pages/Logros'
 import {API} from './Comandosllamadas/llamadas'
 import type { Usuario } from './components/types'
 import CategoriaDetalle from './pages/CategoriaDetalle'
-
+//Comentario para probar el deploy
 export default function App() {
 
   const [monedas, setMonedas] = useState(0);
