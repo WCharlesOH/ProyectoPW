@@ -50,7 +50,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
           // Si está logueado, obtener seguidos en vivo usando API.MisSuscripciones
           const result = await API.MisSuscripciones(userData.ID);
           
-          if (result.success && result.subscriptions) {
+          if (result.success) {
             // Filtrar solo los streamers que están en vivo
             const seguidos = result.subscriptions
               .filter((sub: any) => sub.streamer?. EnVivo === true)
