@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
+import { API } from "../Comandosllamadas/llamadas";
 import type { Usuario } from "./types";
 
 const DEFAULT_AVATAR = "https://placehold.co/40x40? text=User";
@@ -46,40 +47,38 @@ export default function Sidebar({ onToggle }: SidebarProps) {
         const userData = getUserData();
         
         if (isLogged && userData?. ID) {
-          // Si está logueado, obtener seguidos en vivo
-          const response = await fetch("http://localhost:3000/SeguidosEnVIvo", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              ID_Usuario: userData.ID,
-            }),
-          });
-
-          if (response.ok) {
-            const data = await response. json();
-            // Mapear la respuesta del backend
-            const seguidos = data.map((item: any) => ({
-              ID: item.streamer?. ID,
-              NombreUsuario: item.streamer?.NombreUsuario,
-              ImagenPerfil: item.streamer?. ImagenPerfil,
-              EnVivo: true,
-            }));
+          // Si está logueado, obtener seguidos en vivo usando API.MisSuscripciones
+          const result = await API.MisSuscripciones(userData.ID);
+          
+          if (result.success && result.subscriptions) {
+            // Filtrar solo los streamers que están en vivo
+            const seguidos = result.subscriptions
+              .filter((sub: any) => sub.streamer?. EnVivo === true)
+              .map((sub: any) => ({
+                ID: sub.streamer?.ID || sub.ID_Streamer,
+                NombreUsuario: sub.streamer?.NombreUsuario || "Usuario",
+                ImagenPerfil: sub.streamer?.ImagenPerfil,
+                EnVivo: true,
+              }));
+            
             setStreamersEnVivo(seguidos);
+          } else {
+            setStreamersEnVivo([]);
           }
         } else {
           // Si no está logueado, obtener todos los streams activos
-          const response = await fetch("http://localhost:3000/api/streams/live");
+          const response = await fetch("http://localhost:5000/api/streams/live");
 
           if (response.ok) {
-            const data = await response. json();
+            const data = await response.json();
             const streams = data.streams?. map((stream: any) => ({
               NombreUsuario: stream.streamerName,
               ImagenPerfil: undefined,
               EnVivo: true,
             })) || [];
             setStreamersEnVivo(streams);
+          } else {
+            setStreamersEnVivo([]);
           }
         }
       } catch (error) {
@@ -151,7 +150,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
               <p style={{ color: "#aaa", fontSize: "14px" }}>Cargando... </p>
             ) : streamersEnVivo.length === 0 ? (
               <p style={{ color: "#aaa", fontSize: "14px" }}>
-                {isLogged ? "No hay seguidos en vivo" : "No hay canales en vivo"}
+                {isLogged ?  "No hay seguidos en vivo" : "No hay canales en vivo"}
               </p>
             ) : (
               <ul
@@ -171,7 +170,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
                     }}
                   >
                     <img
-                      src={streamer.ImagenPerfil || DEFAULT_AVATAR}
+                      src={streamer. ImagenPerfil || DEFAULT_AVATAR}
                       alt={streamer.NombreUsuario}
                       style={{
                         width: 40,
@@ -186,17 +185,18 @@ export default function Sidebar({ onToggle }: SidebarProps) {
                         color: "white",
                         marginLeft: "10px",
                         textDecoration: "none",
+                        flex: 1,
                       }}
                     >
                       {streamer.NombreUsuario}
                     </Link>
                     <span
                       style={{
-                        marginLeft: "auto",
                         width: 8,
                         height: 8,
                         borderRadius: "50%",
                         backgroundColor: "#e91916",
+                        marginLeft: "8px",
                       }}
                       title="En vivo"
                     />
