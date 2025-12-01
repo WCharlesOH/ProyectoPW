@@ -776,9 +776,9 @@ export const API = {
             return { success: false, error: "Error actualizando regalo" };
         }
     },
-    ObtenerRegalos: async (id: number) => {
+    ObtenerRegalos: async (ID: number) => {
         try {
-            const response = await fetch(`http://localhost:5000/regalos?${id}`);
+            const response = await fetch(`http://localhost:5000/regalos?${ID}`);
 
             if (!response.ok) {
                 const errorData = await response.json();
