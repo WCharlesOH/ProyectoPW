@@ -92,7 +92,7 @@ export default function App() {
               <Route path="/canal/:id" element={<PaginaStreamer />} />
               <Route path="/gestion-regalos" element={<GestionRegalos />} />
               <Route path="/logros/:username" element={<Logros />} />
-              <Route path="/seleccionar-logros" element={<SeleccionarLogros />} />
+              <Route path="/seleccionar-logros/:username" element={<SeleccionarLogros />} />
               <Route path="/live-start" element={<LiveStart monedas={monedas} setMonedas={setMonedas} />} />
               
               <Route path="*" element={<NotFound />} />

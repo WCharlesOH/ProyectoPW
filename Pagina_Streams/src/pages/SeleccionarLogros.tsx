@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { Logro, Usuario } from "../components/types";
 import { API } from "../Comandosllamadas/llamadas";
 
@@ -7,9 +7,11 @@ export default function SeleccionarLogros() {
   const [logros, setLogros] = useState<Logro[]>([]);
   const [logrosSeleccionados, setLogrosSeleccionados] = useState<number[]>([]);
   const navigate = useNavigate();
+  const { username } = useParams();
   
   const info: Usuario | null = JSON.parse(localStorage.getItem("user") || "null");
   const id = info ? Number(info.ID) : null;
+  const nombreUsuario = info?.NombreUsuario || username;
   const todo = API;
 
   const SacarLogros = async () => {
@@ -20,7 +22,7 @@ export default function SeleccionarLogros() {
   };
 
   useEffect(() => {
-    if (!id || !info) {
+    if (!id || !info || !nombreUsuario) {
       alert("Debes iniciar sesión para seleccionar logros");
       navigate("/login");
       return;
@@ -38,7 +40,7 @@ export default function SeleccionarLogros() {
   };
 
   const guardarSeleccion = async () => {
-    if (!id || !info?.NombreUsuario) {
+    if (!id || !nombreUsuario) {
       alert("Usuario no válido");
       navigate("/login");
       return;
@@ -46,12 +48,13 @@ export default function SeleccionarLogros() {
 
     // Aquí puedes hacer una llamada API para guardar los logros seleccionados
     console.log("Logros seleccionados:", logrosSeleccionados);
+    console.log("Usuario:", nombreUsuario);
     
     // Ejemplo de llamada (ajusta según tu API):
     // await todo.GuardarLogrosSeleccionados(id, logrosSeleccionados);
     
     alert("¡Logros seleccionados guardados!");
-    navigate("/logros/" + info.NombreUsuario);
+    navigate("/logros/" + nombreUsuario);
   };
 
   return (

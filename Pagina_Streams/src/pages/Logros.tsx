@@ -98,7 +98,7 @@ export default function Logros() {
       <div style={{ flex: 1 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
           <h2 style={{ color: "#00b7ff", margin: 0 }}>Mis Logros</h2>
-          <Link to="/seleccionar-logros" style={{ textDecoration: "none" }}>
+          <Link to={`/seleccionar-logros/${nombreUsuario}`} style={{ textDecoration: "none" }}>
             <button style={{ backgroundColor: "#00b7ff", color: "white", border: "none", borderRadius: "8px", padding: "10px 20px", fontWeight: "bold", cursor: "pointer", transition: "background 0.3s" }}>
               Seleccionar Logros
             </button>
