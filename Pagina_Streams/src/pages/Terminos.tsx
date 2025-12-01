@@ -17,7 +17,7 @@ export default function Terminos() {
         <section className="t-block">
           <h2>1. Aceptación de los Términos</h2>
           <p>
-            Al acceder y utilizar <strong>Streams</strong>, usted acepta estar sujeto a estos Términos y Condiciones, así como a
+            Al utilizar <strong>Streams</strong>, usted acepta estar sujeto a estos Términos y Condiciones, así como a
             las leyes y regulaciones aplicables. Si no está de acuerdo con alguno de estos términos, tiene prohibido usar o acceder
             a este sitio.
           </p>
@@ -58,7 +58,7 @@ export default function Terminos() {
         </section>
 
         <section className="t-block">
-          <h2>5. Conducta del Usuario</h2>
+          <h2>5.Conducta del Usuario</h2>
           <p>Los usuarios deben comportarse de manera respetuosa y apropiada. Está prohibido:</p>
           <ul>
             <li>Acosar, intimidar o amenazar a otros usuarios.</li>
