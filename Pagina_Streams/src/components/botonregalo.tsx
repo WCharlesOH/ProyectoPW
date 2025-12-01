@@ -16,34 +16,44 @@ type Regalo = {
   icono: string;
 };
 
-export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: BotonRegaloProps) {
+export default function BotonRegalo({
+  monedas = 0,
+  setMonedas,
+  streamerID,
+}: BotonRegaloProps) {
   const [abierto, setAbierto] = useState(false);
-  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(
+    null
+  );
   const botonRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const { user } = useAuth();
 
   const [notificacion, setNotificacion] = useState<string | null>(null);
-  const [toastCoords, setToastCoords] = useState<{ top: number; left: number } | null>(null);
+  const [toastCoords, setToastCoords] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
 
   const [regalosList, setRegalosList] = useState<Regalo[]>([]);
   const [cargandoRegalos, setCargandoRegalos] = useState(true);
 
-  const usuario = (user as any);
+  const usuario = user as any;
   const idUsuario = usuario?.ID;
 
-  // Cargar regalos del backend
   useEffect(() => {
     const cargarRegalos = async () => {
       setCargandoRegalos(true);
       try {
         console.log("🔄 [BotonRegalo] Cargando regalos...");
-        
+
         const result = await API.ObtenerRegalos();
-        
+
         if (result.success && result.data) {
           setRegalosList(result.data);
-          console.log(`✅ [BotonRegalo] ${result.data.length} regalos cargados`);
+          console.log(
+            `✅ [BotonRegalo] ${result.data.length} regalos cargados`
+          );
         } else {
           setRegalosList([]);
         }
@@ -59,7 +69,7 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
   }, []);
 
   const posicionarMenu = () => {
-    const btn = botonRef. current;
+    const btn = botonRef.current;
     if (!btn) return setCoords(null);
     const r = btn.getBoundingClientRect();
     setCoords({ top: r.top - 8, left: r.left + r.width / 2 });
@@ -79,7 +89,8 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
       if (!target) return;
       if (
         botonRef.current &&
-        (botonRef.current.contains(target as Node) || menuRef.current?. contains(target as Node))
+        (botonRef.current.contains(target as Node) ||
+          menuRef.current?.contains(target as Node))
       ) {
         return;
       }
@@ -99,15 +110,23 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
     if (monedas < regalo.PrecioRegalo) {
       setNotificacion("No tienes suficientes monedas.");
       const rect = botonRef.current?.getBoundingClientRect();
-      if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect. top - 48 });
+      if (rect)
+        setToastCoords({
+          left: rect.left + rect.width / 2 - 120,
+          top: rect.top - 48,
+        });
       setTimeout(() => setNotificacion(null), 2200);
       return;
     }
 
-    if (! streamerID || !idUsuario) {
+    if (!streamerID || !idUsuario) {
       setNotificacion("Error: No se pudo identificar al streamer.");
-      const rect = botonRef.current?. getBoundingClientRect();
-      if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
+      const rect = botonRef.current?.getBoundingClientRect();
+      if (rect)
+        setToastCoords({
+          left: rect.left + rect.width / 2 - 120,
+          top: rect.top - 48,
+        });
       setTimeout(() => setNotificacion(null), 2200);
       return;
     }
@@ -115,16 +134,17 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
     try {
       console.log(`🔄 [BotonRegalo] Enviando ${regalo.NombreRegalo}...`);
 
-      // 1. Descontar monedas del usuario
-      const nuevasMonedasUsuario = monedas - regalo. PrecioRegalo;
-      const resultUsuario = await API. ActualizarMonedas(idUsuario, nuevasMonedasUsuario);
+      const nuevasMonedasUsuario = monedas - regalo.PrecioRegalo;
+      const resultUsuario = await API.ActualizarMonedas(
+        idUsuario,
+        nuevasMonedasUsuario
+      );
 
-      if (! resultUsuario.success) {
+      if (!resultUsuario.success) {
         setNotificacion("Error al actualizar tus monedas.");
         return;
       }
 
-      // 2. Obtener y actualizar monedas del streamer
       const streamerDataResult = await API.ObtenerDatosUsuario(streamerID);
 
       if (!streamerDataResult.success || !streamerDataResult.user) {
@@ -135,44 +155,56 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
       const monedasStreamer = streamerDataResult.user.Monedas || 0;
       const nuevasMonedasStreamer = monedasStreamer + regalo.PrecioRegalo;
 
-      const resultStreamer = await API.ActualizarMonedas(streamerID, nuevasMonedasStreamer);
+      const resultStreamer = await API.ActualizarMonedas(
+        streamerID,
+        nuevasMonedasStreamer
+      );
 
       if (!resultStreamer.success) {
         setNotificacion("Error al actualizar monedas del streamer.");
         return;
       }
 
-      // 3. Actualizar localStorage y estado local
       if (setMonedas) setMonedas(nuevasMonedasUsuario);
-      
-      // Actualizar usuario en localStorage
+
       const userStorage = localStorage.getItem("user");
       if (userStorage) {
         const userData = JSON.parse(userStorage);
-        userData. Monedas = nuevasMonedasUsuario;
-        localStorage.setItem("user", JSON. stringify(userData));
+        userData.Monedas = nuevasMonedasUsuario;
+        localStorage.setItem("user", JSON.stringify(userData));
       }
 
       console.log(`✅ [BotonRegalo] Regalo enviado, localStorage actualizado`);
 
-      // 4. Mostrar notificación
-      setNotificacion(`Has enviado ${regalo.icono} ${regalo.NombreRegalo} por ${regalo.PrecioRegalo} monedas. `);
+      setNotificacion(
+        `Has enviado ${regalo.icono} ${regalo.NombreRegalo} por ${regalo.PrecioRegalo} monedas. `
+      );
       const rect = botonRef.current?.getBoundingClientRect();
-      if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
+      if (rect)
+        setToastCoords({
+          left: rect.left + rect.width / 2 - 120,
+          top: rect.top - 48,
+        });
       setTimeout(() => setNotificacion(null), 2200);
       setAbierto(false);
-
     } catch (error) {
       console.error("❌ [BotonRegalo] Error:", error);
       setNotificacion("Error al enviar el regalo.");
       const rect = botonRef.current?.getBoundingClientRect();
-      if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
+      if (rect)
+        setToastCoords({
+          left: rect.left + rect.width / 2 - 120,
+          top: rect.top - 48,
+        });
       setTimeout(() => setNotificacion(null), 2200);
     }
   };
 
   return (
-    <div className="boton-regalo" style={{ position: "relative", display: "inline-block" }}>
+    <div
+      className="boton-regalo"
+      style={{ position: "relative", display: "inline-block" }}
+    >
       <button
         ref={botonRef}
         onClick={() => setAbierto((v) => !v)}
@@ -195,7 +227,7 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
         🎁 {cargandoRegalos ? "..." : "Regalos"}
       </button>
 
-      {abierto && coords && ! cargandoRegalos && (
+      {abierto && coords && !cargandoRegalos && (
         <div
           ref={menuRef}
           role="dialog"
@@ -214,11 +246,23 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
             padding: 12,
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 8,
+            }}
+          >
             <strong style={{ fontSize: "1rem" }}>Enviar regalo</strong>
             <button
               onClick={() => setAbierto(false)}
-              style={{ background: "transparent", border: "none", color: "#aaa", cursor: "pointer" }}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "#aaa",
+                cursor: "pointer",
+              }}
             >
               ✖
             </button>
@@ -226,7 +270,13 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
 
           <div style={{ maxHeight: 260, overflowY: "auto" }}>
             {regalosList.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "20px", color: "#adadb8" }}>
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "20px",
+                  color: "#adadb8",
+                }}
+              >
                 <p>No hay regalos disponibles</p>
               </div>
             ) : (
@@ -243,17 +293,21 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
                     background: "linear-gradient(180deg,#141416,#1e1e22)",
                   }}
                 >
-                  <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <div
+                    style={{ display: "flex", gap: 10, alignItems: "center" }}
+                  >
                     <div style={{ fontSize: 20 }}>{r.icono}</div>
                     <div>
                       <div style={{ fontWeight: 700 }}>{r.NombreRegalo}</div>
                       <div style={{ fontSize: 12, color: "#b3b3b3" }}>
-                        {r. DescripcionRegalo || "Envía un gesto"}
+                        {r.DescripcionRegalo || "Envía un gesto"}
                       </div>
                     </div>
                   </div>
 
-                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <div
+                    style={{ display: "flex", gap: 8, alignItems: "center" }}
+                  >
                     <div style={{ fontWeight: 800 }}>
                       {r.PrecioRegalo} <span style={{ fontSize: 12 }}>💰</span>
                     </div>

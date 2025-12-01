@@ -1,10 +1,10 @@
 :root {
-  --bg: #0b0c0d; /* near-black */
-  --accent: #00b7ff; /* celeste */
+  --bg: #0b0c0d;
+  --accent: #00b7ff;
   --white: #ffffff;
-  /* Professional dark card background (no bright white) */
+
   --card-bg: #0f1724;
-  --card-border: rgba(255,255,255,0.03);
+  --card-border: rgba(255, 255, 255, 0.03);
   --card-text: #e6f5ff;
   --muted: #94a3b8;
 }
@@ -22,7 +22,7 @@
 
 .nosotros-container {
   width: 100%;
-  /* Use full available width on large screens to avoid forcing wrap */
+
   max-width: 1600px;
 }
 
@@ -32,43 +32,46 @@
   font-size: 2.25rem;
   font-weight: 700;
   letter-spacing: 0.6px;
-  text-shadow: 0 3px 8px rgba(0,0,0,0.6);
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
 }
 
 .nosotros-grid {
   display: grid;
-  /* Force a single horizontal row and make each column a reasonable min size */
+
   grid-auto-flow: column;
   grid-auto-columns: minmax(200px, 1fr);
   gap: 32px;
   padding: 0 12px 40px 12px;
   align-items: start;
   justify-content: center;
-  /* Allow horizontal scrolling on small screens instead of wrapping */
+
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Scoped .nosotros-card to avoid bootstrap .card conflicts and ensure dark background */
 .nosotros-card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
   border-radius: 12px;
   width: 100%;
-  /* leave room for the absolute-positioned description */
+
   padding: 24px 18px 72px 18px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease,
+    background-color 0.25s ease;
   cursor: pointer;
   position: relative;
   overflow: visible;
-  border: 1px solid rgba(255,255,255,0.03);
+  border: 1px solid rgba(255, 255, 255, 0.03);
   box-shadow: 0 8px 30px rgba(3, 7, 18, 0.6);
   text-align: center;
   color: var(--card-text);
-  /* Keep all cards visually the same height so they align on a single row */
+
   min-height: 210px;
 }
 
-/* Force dark background and remove background image to override bootstrap if needed */
 .nosotros-page .nosotros-card {
   background-color: var(--card-bg);
   background-image: none;
@@ -80,9 +83,9 @@
   margin: 0 auto 12px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid rgba(0,183,255,0.9);
+  border: 2px solid rgba(0, 183, 255, 0.9);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
 
 .nosotros-card .card-img {
@@ -97,7 +100,7 @@
   color: var(--accent);
   font-size: 1.2rem;
   font-weight: 700;
-  text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
 }
 
 .nosotros-card .rol {
@@ -128,14 +131,14 @@
 .nosotros-card:hover,
 .nosotros-card:focus {
   transform: translateY(-6px);
-  box-shadow: 0 20px 42px rgba(0,183,255,0.12);
-  background-color: rgba(255,255,255,0.02);
+  box-shadow: 0 20px 42px rgba(0, 183, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .nosotros-card:hover .card-img-container,
 .nosotros-card:focus .card-img-container {
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 8px 26px rgba(0,183,255,0.08);
+  box-shadow: 0 8px 26px rgba(0, 183, 255, 0.08);
 }
 
 .nosotros-card:hover .descripcion,

@@ -1,18 +1,14 @@
-/* ====== Lienzo general (mismo mood del login) ====== */
-/* ====== Lienzo general (mismo mood del login) ====== */
 .reg-wrap {
   min-height: 100vh;
-  padding: 80px 16px 24px;      /* 👈 aumenta padding-top para subir la tarjeta */
+  padding: 80px 16px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #1f2024;          /* fondo oscuro */
+  background: #1f2024;
   color: #f5f5f5;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-
-/* ====== Marca superior (texto Streams pequeño) ====== */
 .brand {
   width: 100%;
   max-width: 520px;
@@ -21,23 +17,21 @@
 .brand-name {
   font-weight: 700;
   font-size: 18px;
-  color: #66b3ff;                  /* toque azul como el buscador */
+  color: #66b3ff;
 }
 
-/* ====== Tarjeta ====== */
 .reg-card {
   width: min(520px, 92vw);
-  background: #191b1f;             /* panel oscuro */
+  background: #191b1f;
   border: 1px solid #282b31;
   border-radius: 12px;
   padding: 28px 24px 22px;
-  box-shadow: 0 10px 28px rgba(0,0,0,.45);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
 }
 
-/* Título/subtítulo */
 .reg-title {
   margin: 0 0 18px;
-  font-size: 32px;                 /* grande como en login */
+  font-size: 32px;
   font-weight: 700;
   text-align: center;
   color: #ffffff;
@@ -49,7 +43,6 @@
   text-align: center;
 }
 
-/* Mensaje de error */
 .reg-error {
   background: rgba(255, 76, 76, 0.1);
   color: #ff6b6b;
@@ -68,7 +61,6 @@
   color: #d6d8dd;
 }
 
-/* Inputs: look celeste como en el login */
 .reg-input {
   width: 100%;
   height: 40px;
@@ -76,14 +68,17 @@
   border: 1px solid #31343b;
   outline: none;
   padding: 0 12px;
-  background: #e9f1ff;            /* celestito */
+  background: #e9f1ff;
   color: #0e1420;
-  transition: box-shadow .15s ease, border-color .15s ease, background .15s ease;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease,
+    background 0.15s ease;
 }
-.reg-input::placeholder { color: #5b6370; }
+.reg-input::placeholder {
+  color: #5b6370;
+}
 .reg-input:focus {
   border-color: #66b3ff;
-  box-shadow: 0 0 0 3px rgba(102, 179, 255, .25);
+  box-shadow: 0 0 0 3px rgba(102, 179, 255, 0.25);
 }
 
 /* Radios */
@@ -103,27 +98,32 @@
 .reg-radio input {
   width: 16px;
   height: 16px;
-  accent-color: #66b3ff;          /* azulito del tema */
+  accent-color: #66b3ff;
 }
 
-/* Botón (gris como el login) */
 .reg-btn {
   width: 100%;
   height: 44px;
   border-radius: 8px;
   border: none;
-  background: #4a4d53;            /* gris */
+  background: #4a4d53;
   color: #e9ecf1;
   font-weight: 700;
-  letter-spacing: .2px;
+  letter-spacing: 0.2px;
   cursor: pointer;
-  transition: background .2s ease, transform .05s ease-in-out, opacity .2s;
+  transition: background 0.2s ease, transform 0.05s ease-in-out, opacity 0.2s;
 }
-.reg-btn:hover   { background: #5b5f66; }
-.reg-btn:active  { transform: translateY(1px); }
-.reg-btn:disabled{ opacity: .6; cursor: default; }
+.reg-btn:hover {
+  background: #5b5f66;
+}
+.reg-btn:active {
+  transform: translateY(1px);
+}
+.reg-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
 
-/* Pie */
 .reg-foot {
   margin-top: 14px;
   text-align: center;
@@ -134,13 +134,21 @@
   color: #66b3ff;
   text-decoration: none;
 }
-.reg-foot a:hover { text-decoration: underline; }
+.reg-foot a:hover {
+  text-decoration: underline;
+}
 
 /* ====== Responsivo ====== */
 @media (max-width: 768px) {
-  .reg-card  { padding: 24px 18px 18px; }
-  .reg-title { font-size: 28px; }
+  .reg-card {
+    padding: 24px 18px 18px;
+  }
+  .reg-title {
+    font-size: 28px;
+  }
 }
 @media (max-width: 480px) {
-  .reg-title { font-size: 24px; }
+  .reg-title {
+    font-size: 24px;
+  }
 }

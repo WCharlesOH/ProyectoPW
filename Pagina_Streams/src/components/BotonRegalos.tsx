@@ -1,6 +1,5 @@
-
-import React from 'react';
-import type { Regalo } from './types';
+import React from "react";
+import type { Regalo } from "./types";
 
 interface Props {
   regalos: Regalo[];
@@ -14,7 +13,7 @@ const BotonRegalo: React.FC<Props> = ({ regalos }) => {
         <p>No hay regalos aún.</p>
       ) : (
         <ul>
-          {regalos.map(regalo => (
+          {regalos.map((regalo) => (
             <li key={regalo.id}>
               {regalo.nombre} - ${regalo.costo} - {regalo.puntos}
             </li>

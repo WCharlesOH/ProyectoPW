@@ -23,13 +23,12 @@ interface StreamerInfo {
 export default function Perfil({ monedas, setMonedas }: PerfilProps) {
   const { username } = useParams<{ username: string }>();
   const { isLogged } = useAuth();
-  
+
   const [streamer, setStreamer] = useState<StreamerInfo | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Obtener datos del usuario logueado
   const getUserData = (): Usuario | null => {
     try {
       const user = localStorage.getItem("user");
@@ -39,7 +38,6 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
     }
   };
 
-  // Obtener información del streamer usando API. ObtenerDatosUsuarioNombre
   useEffect(() => {
     const fetchStreamerInfo = async () => {
       if (!username) return;
@@ -48,22 +46,21 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
       setError(null);
 
       try {
-        // Usar la función ObtenerDatosUsuarioNombre del API
         const result = await API.ObtenerDatosUsuarioNombre(username);
 
-        if (! result.success || !result.user) {
+        if (!result.success || !result.user) {
           setError(result.error || "Streamer no encontrado");
           setStreamer(null);
           return;
         }
 
         setStreamer({
-          ID: result.user. ID,
+          ID: result.user.ID,
           NombreUsuario: result.user.NombreUsuario,
           ImagenPerfil: result.user.ImagenPerfil,
           NivelStreams: result.user.NivelStreams || 1,
           HorasTransmision: result.user.HorasTransmision || 0,
-          EnVivo: result. user.EnVivo || false,
+          EnVivo: result.user.EnVivo || false,
         });
       } catch (err) {
         console.error("Error obteniendo información del streamer:", err);
@@ -77,35 +74,32 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
     fetchStreamerInfo();
   }, [username]);
 
-  // Verificar si el usuario está siguiendo al streamer usando API.SeguidosEnVIvo
   useEffect(() => {
     const checkFollowing = async () => {
       if (!isLogged || !streamer) return;
 
       const userData = getUserData();
-      if (! userData?. ID) return;
+      if (!userData?.ID) return;
 
       try {
-        // Obtener todos los seguidos en vivo del usuario
         const resultEnVivo = await API.SeguidosEnVIvo(userData.ID);
-        
+
         if (resultEnVivo.success && resultEnVivo.streamers) {
-          // Verificar si el streamer actual está en la lista
           const siguiendoEnVivo = resultEnVivo.streamers.some(
-            (item: any) => item.streamer?. NombreUsuario === streamer. NombreUsuario
+            (item: any) =>
+              item.streamer?.NombreUsuario === streamer.NombreUsuario
           );
-          
+
           if (siguiendoEnVivo) {
             setIsFollowing(true);
             return;
           }
         }
 
-        // Si no está en vivo o no está siguiendo, verificar con SuscripcionesCanal
         const resultSubs = await API.SuscripcionesCanal(streamer.ID);
-        
+
         if (resultSubs.success && resultSubs.subscriptions) {
-          const siguiendo = resultSubs.subscriptions. some(
+          const siguiendo = resultSubs.subscriptions.some(
             (sub: any) => sub.ID_Viewer === userData.ID
           );
           setIsFollowing(siguiendo);
@@ -118,7 +112,6 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
     checkFollowing();
   }, [isLogged, streamer]);
 
-  // Seguir/Dejar de seguir al streamer usando API.NuevaSuscripcion y API.EliminarSuscripcion
   const toggleFollow = async () => {
     if (!isLogged) {
       alert("Debes iniciar sesión para seguir a un streamer");
@@ -145,7 +138,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
         }
       } else {
         // Usar la función NuevaSuscripcion
-        result = await API. NuevaSuscripcion(userData.ID, streamer.ID);
+        result = await API.NuevaSuscripcion(userData.ID, streamer.ID);
         if (result.success) {
           setIsFollowing(true);
         } else {
@@ -204,7 +197,8 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
         <div style={{ marginBottom: "20px" }}>
           <LivePlayer
             fallbackImage={
-              streamer.ImagenPerfil || "https://placehold.co/800x450? text=Stream"
+              streamer.ImagenPerfil ||
+              "https://placehold.co/800x450? text=Stream"
             }
             streamerName={streamer.NombreUsuario}
           />
@@ -258,20 +252,21 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
           }}
         >
           <span>
-            <strong>Nivel:</strong> {1 + Math.floor(streamer.NivelStreams/ 100)}
+            <strong>Nivel:</strong>{" "}
+            {1 + Math.floor(streamer.NivelStreams / 100)}
           </span>
           <span>
             <strong>Horas de transmisión:</strong>{" "}
-            {streamer.HorasTransmision. toLocaleString()}h
+            {streamer.HorasTransmision.toLocaleString()}h
           </span>
         </div>
       </div>
 
       {/* Chat */}
       <div style={{ width: "340px", flexShrink: 0 }}>
-        <ChatBox 
-          monedas={monedas} 
-          setMonedas={setMonedas} 
+        <ChatBox
+          monedas={monedas}
+          setMonedas={setMonedas}
           streamerName={streamer.NombreUsuario}
         />
       </div>

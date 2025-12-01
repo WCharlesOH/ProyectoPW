@@ -2,13 +2,12 @@ import { useState, useEffect } from "react";
 
 interface BotonNivelProps {
   nivel: number;
-  progreso: number; // porcentaje (0-100)
+  progreso: number;
 }
 
 export default function BotonNivel({ nivel, progreso }: BotonNivelProps) {
   const [abierto, setAbierto] = useState(false);
 
-  // Cerrar al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -19,7 +18,10 @@ export default function BotonNivel({ nivel, progreso }: BotonNivelProps) {
   }, []);
 
   return (
-    <div className="boton-nivel" style={{ position: "relative", display: "inline-block" }}>
+    <div
+      className="boton-nivel"
+      style={{ position: "relative", display: "inline-block" }}
+    >
       <button
         onClick={() => setAbierto(!abierto)}
         style={{
@@ -51,7 +53,9 @@ export default function BotonNivel({ nivel, progreso }: BotonNivelProps) {
             padding: "12px",
           }}
         >
-          <h4 style={{ margin: "0 0 8px", fontSize: "0.9rem" }}>Progreso de nivel</h4>
+          <h4 style={{ margin: "0 0 8px", fontSize: "0.9rem" }}>
+            Progreso de nivel
+          </h4>
           <div
             style={{
               height: "10px",
@@ -68,7 +72,9 @@ export default function BotonNivel({ nivel, progreso }: BotonNivelProps) {
               }}
             />
           </div>
-          <div style={{ marginTop: "8px", fontSize: "0.8rem", color: "#b3b3b3" }}>
+          <div
+            style={{ marginTop: "8px", fontSize: "0.8rem", color: "#b3b3b3" }}
+          >
             {progreso}% completado
           </div>
         </div>

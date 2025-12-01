@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import "./ResultadosBusqueda.css";
 
-// Interfaces
 interface Usuario {
   ID: number;
   NombreUsuario: string;
@@ -44,17 +43,17 @@ type TabActiva = "todos" | "usuarios" | "categorias" | "videos";
 export default function ResultadosBusquedaPage() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
-  
+
   const [resultados, setResultados] = useState<ResultadosBusqueda | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tabActiva, setTabActiva] = useState<TabActiva>("todos");
 
   // URL de tu API backend
-  const API_URL = import.meta.env. VITE_API_URL || "http://localhost:3000";
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
   useEffect(() => {
-    if (! query) {
+    if (!query) {
       setLoading(false);
       return;
     }
@@ -64,9 +63,11 @@ export default function ResultadosBusquedaPage() {
       setError(null);
 
       try {
-        const response = await fetch(`${API_URL}/buscar?q=${encodeURIComponent(query)}`);
-        
-        if (!response. ok) {
+        const response = await fetch(
+          `${API_URL}/buscar?q=${encodeURIComponent(query)}`
+        );
+
+        if (!response.ok) {
           throw new Error("Error al realizar la búsqueda");
         }
 
@@ -101,7 +102,10 @@ export default function ResultadosBusquedaPage() {
       <div className="busqueda-container">
         <div className="busqueda-empty">
           <h2>🔍 Realiza una búsqueda</h2>
-          <p>Escribe algo en la barra de búsqueda para encontrar usuarios, categorías y transmisiones.</p>
+          <p>
+            Escribe algo en la barra de búsqueda para encontrar usuarios,
+            categorías y transmisiones.
+          </p>
         </div>
       </div>
     );
@@ -120,19 +124,21 @@ export default function ResultadosBusquedaPage() {
   }
 
   // Sin resultados
-  if (! resultados || resultados.total === 0) {
+  if (!resultados || resultados.total === 0) {
     return (
       <div className="busqueda-container">
         <div className="busqueda-empty">
           <h2>😕 Sin resultados</h2>
           <p>No encontramos resultados para "{query}"</p>
-          <p className="busqueda-sugerencia">Intenta con otros términos de búsqueda</p>
+          <p className="busqueda-sugerencia">
+            Intenta con otros términos de búsqueda
+          </p>
         </div>
       </div>
     );
   }
 
-  const { usuarios, categorias, videos } = resultados. resultados;
+  const { usuarios, categorias, videos } = resultados.resultados;
 
   // Filtrar resultados según tab activa
   const mostrarUsuarios = tabActiva === "todos" || tabActiva === "usuarios";
@@ -144,30 +150,34 @@ export default function ResultadosBusquedaPage() {
       {/* Header */}
       <div className="busqueda-header">
         <h1>Resultados para "{query}"</h1>
-        <p className="busqueda-count">{resultados.total} resultados encontrados</p>
+        <p className="busqueda-count">
+          {resultados.total} resultados encontrados
+        </p>
       </div>
 
       {/* Tabs */}
       <div className="busqueda-tabs">
-        <button 
+        <button
           className={`busqueda-tab ${tabActiva === "todos" ? "activa" : ""}`}
           onClick={() => setTabActiva("todos")}
         >
           Todos ({resultados.total})
         </button>
-        <button 
+        <button
           className={`busqueda-tab ${tabActiva === "usuarios" ? "activa" : ""}`}
           onClick={() => setTabActiva("usuarios")}
         >
-          Usuarios ({usuarios. length})
+          Usuarios ({usuarios.length})
         </button>
-        <button 
-          className={`busqueda-tab ${tabActiva === "categorias" ? "activa" : ""}`}
+        <button
+          className={`busqueda-tab ${
+            tabActiva === "categorias" ? "activa" : ""
+          }`}
           onClick={() => setTabActiva("categorias")}
         >
           Categorías ({categorias.length})
         </button>
-        <button 
+        <button
           className={`busqueda-tab ${tabActiva === "videos" ? "activa" : ""}`}
           onClick={() => setTabActiva("videos")}
         >
@@ -177,21 +187,20 @@ export default function ResultadosBusquedaPage() {
 
       {/* Resultados */}
       <div className="busqueda-resultados">
-        
         {/* Usuarios */}
         {mostrarUsuarios && usuarios.length > 0 && (
           <section className="busqueda-seccion">
             <h2 className="busqueda-seccion-titulo">👤 Usuarios</h2>
             <div className="busqueda-grid usuarios-grid">
               {usuarios.map((usuario) => (
-                <Link 
-                  to={`/canal/${usuario.NombreUsuario}`} 
+                <Link
+                  to={`/canal/${usuario.NombreUsuario}`}
                   key={usuario.ID}
                   className="usuario-card"
                 >
                   <div className="usuario-avatar-container">
-                    <img 
-                      src={usuario. ImagenPerfil || "/default-avatar.png"} 
+                    <img
+                      src={usuario.ImagenPerfil || "/default-avatar.png"}
                       alt={usuario.NombreUsuario}
                       className="usuario-avatar"
                     />
@@ -201,7 +210,9 @@ export default function ResultadosBusquedaPage() {
                   </div>
                   <div className="usuario-info">
                     <h3 className="usuario-nombre">{usuario.NombreUsuario}</h3>
-                    <p className="usuario-nivel">Nivel {usuario.NivelStreams}</p>
+                    <p className="usuario-nivel">
+                      Nivel {usuario.NivelStreams}
+                    </p>
                   </div>
                 </Link>
               ))}
@@ -214,23 +225,21 @@ export default function ResultadosBusquedaPage() {
           <section className="busqueda-seccion">
             <h2 className="busqueda-seccion-titulo">🎮 Categorías</h2>
             <div className="busqueda-grid categorias-grid">
-              {categorias. map((categoria) => (
-                <Link 
-                  to={`/categoria/${categoria.ID_Juego}`} 
+              {categorias.map((categoria) => (
+                <Link
+                  to={`/categoria/${categoria.ID_Juego}`}
                   key={categoria.ID_Juego}
                   className="categoria-card"
                 >
                   <div className="categoria-imagen-container">
-                    {categoria.Imagen ?  (
-                      <img 
-                        src={categoria. Imagen} 
-                        alt={categoria. Nombre}
+                    {categoria.Imagen ? (
+                      <img
+                        src={categoria.Imagen}
+                        alt={categoria.Nombre}
                         className="categoria-imagen"
                       />
                     ) : (
-                      <div className="categoria-placeholder">
-                        🎮
-                      </div>
+                      <div className="categoria-placeholder">🎮</div>
                     )}
                   </div>
                   <div className="categoria-info">
@@ -245,32 +254,38 @@ export default function ResultadosBusquedaPage() {
         {/* Videos */}
         {mostrarVideos && videos.length > 0 && (
           <section className="busqueda-seccion">
-            <h2 className="busqueda-seccion-titulo">🎬 Videos y Transmisiones</h2>
+            <h2 className="busqueda-seccion-titulo">
+              🎬 Videos y Transmisiones
+            </h2>
             <div className="busqueda-grid videos-grid">
               {videos.map((video) => (
-                <Link 
-                  to={`/video/${video. ID_Video}`} 
+                <Link
+                  to={`/video/${video.ID_Video}`}
                   key={video.ID_Video}
                   className="video-card"
                 >
                   <div className="video-thumbnail">
-                    <div className="video-thumbnail-placeholder">
-                      ▶️
-                    </div>
+                    <div className="video-thumbnail-placeholder">▶️</div>
                   </div>
                   <div className="video-info">
                     <h3 className="video-titulo">{video.Titulo}</h3>
                     <div className="video-meta">
-                      <img 
-                        src={video.usuario.ImagenPerfil || "/default-avatar.png"} 
-                        alt={video.usuario. NombreUsuario}
+                      <img
+                        src={
+                          video.usuario.ImagenPerfil || "/default-avatar.png"
+                        }
+                        alt={video.usuario.NombreUsuario}
                         className="video-usuario-avatar"
                       />
-                      <span className="video-usuario-nombre">{video.usuario. NombreUsuario}</span>
+                      <span className="video-usuario-nombre">
+                        {video.usuario.NombreUsuario}
+                      </span>
                     </div>
                     <div className="video-categorias">
                       {video.CategoriaDeVideo.split(", ").map((cat, idx) => (
-                        <span key={idx} className="video-categoria-tag">{cat}</span>
+                        <span key={idx} className="video-categoria-tag">
+                          {cat}
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -279,7 +294,6 @@ export default function ResultadosBusquedaPage() {
             </div>
           </section>
         )}
-
       </div>
     </div>
   );

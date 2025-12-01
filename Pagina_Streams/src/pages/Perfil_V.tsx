@@ -7,13 +7,11 @@ export default function Perfil_V() {
   const user = localStorage.getItem("user");
   const titi: Usuario | null = user ? JSON.parse(user) : null;
   const nombre = titi?.NombreUsuario;
-  let funcion : number | null = null
-  if(titi){
-    funcion = 1 + Math.floor(titi.NivelStreams / 100)
-  } 
-  
+  let funcion: number | null = null;
+  if (titi) {
+    funcion = 1 + Math.floor(titi.NivelStreams / 100);
+  }
 
-  // Estados para los popups
   const [mostrarInfo, setMostrarInfo] = useState(false);
   const [mostrarEstado, setMostrarEstado] = useState(false);
   const [mostrarCanjear, setMostrarCanjear] = useState(false);
@@ -34,9 +32,18 @@ export default function Perfil_V() {
       </h2>
 
       {/* Imagen central con información */}
-      <div style={{ margin: "20px auto", position: "relative", display: "inline-block" }}>
+      <div
+        style={{
+          margin: "20px auto",
+          position: "relative",
+          display: "inline-block",
+        }}
+      >
         <img
-          src={titi?.ImagenPerfil || "https://ui-avatars.com/api/?name=User&background=9147ff&color=fff&size=200"}
+          src={
+            titi?.ImagenPerfil ||
+            "https://ui-avatars.com/api/?name=User&background=9147ff&color=fff&size=200"
+          }
           alt="Streamer"
           style={{
             width: "200px",
@@ -69,8 +76,18 @@ export default function Perfil_V() {
 
       {/* Información del usuario */}
       <div style={{ marginBottom: "30px" }}>
-        <h3 style={{ fontSize: "24px", margin: "10px 0" }}>{nombre || "Usuario"}</h3>
-        <div style={{ display: "flex", justifyContent: "center", gap: "20px", fontSize: "14px", color: "#adadb8" }}>
+        <h3 style={{ fontSize: "24px", margin: "10px 0" }}>
+          {nombre || "Usuario"}
+        </h3>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "20px",
+            fontSize: "14px",
+            color: "#adadb8",
+          }}
+        >
           <span>🎮 Nivel {titi?.NivelStreams || 1}</span>
           <span>⭐ {titi?.Puntos || 0} pts</span>
           <span>🪙 {titi?.Monedas || 0} monedas</span>
@@ -102,8 +119,12 @@ export default function Perfil_V() {
             transition: "0.2s",
             fontSize: "15px",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style. backgroundColor = "#00b7ff")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#1f1f23")}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#00b7ff")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#1f1f23")
+          }
         >
           📋 Información sobre mí
         </button>
@@ -122,8 +143,12 @@ export default function Perfil_V() {
             transition: "0.2s",
             fontSize: "15px",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#00b7ff")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#1f1f23")}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#00b7ff")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#1f1f23")
+          }
         >
           📊 Estado actual
         </button>
@@ -142,8 +167,12 @@ export default function Perfil_V() {
             transition: "0.2s",
             fontSize: "15px",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f59e0b")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#1f1f23")}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#f59e0b")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#1f1f23")
+          }
         >
           💰 Canjear monedas
         </button>
@@ -162,8 +191,12 @@ export default function Perfil_V() {
             transition: "0.2s",
             fontSize: "15px",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#9147ff")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#1f1f23")}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#9147ff")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#1f1f23")
+          }
         >
           🏆 Ver mis logros
         </button>
@@ -182,8 +215,12 @@ export default function Perfil_V() {
             transition: "0.2s",
             fontSize: "15px",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#10b981")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#1f1f23")}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#10b981")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#1f1f23")
+          }
         >
           🎥 Dashboard Streamer
         </button>
@@ -217,16 +254,35 @@ export default function Perfil_V() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ color: "#00b7ff", marginBottom: "20px", fontSize: "22px" }}>
+            <h3
+              style={{
+                color: "#00b7ff",
+                marginBottom: "20px",
+                fontSize: "22px",
+              }}
+            >
               📋 Información del perfil
             </h3>
             <div style={{ textAlign: "left", lineHeight: "1.8" }}>
-              <p><strong>Usuario:</strong> {nombre}</p>
-              <p><strong>Nivel:</strong> {funcion || 1}</p>
-              <p><strong>Puntos:</strong> {titi?.Puntos || 0}</p>
-              <p><strong>Monedas:</strong> {titi?.Monedas || 0}</p>
-              <p><strong>Horas transmitidas:</strong> {titi?.HorasTransmision || 0} horas</p>
-              <p><strong>ID de usuario:</strong> {titi?.ID}</p>
+              <p>
+                <strong>Usuario:</strong> {nombre}
+              </p>
+              <p>
+                <strong>Nivel:</strong> {funcion || 1}
+              </p>
+              <p>
+                <strong>Puntos:</strong> {titi?.Puntos || 0}
+              </p>
+              <p>
+                <strong>Monedas:</strong> {titi?.Monedas || 0}
+              </p>
+              <p>
+                <strong>Horas transmitidas:</strong>{" "}
+                {titi?.HorasTransmision || 0} horas
+              </p>
+              <p>
+                <strong>ID de usuario:</strong> {titi?.ID}
+              </p>
             </div>
             <button
               onClick={() => setMostrarInfo(false)}
@@ -276,41 +332,101 @@ export default function Perfil_V() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ color: "#00b7ff", marginBottom: "20px", fontSize: "22px" }}>
+            <h3
+              style={{
+                color: "#00b7ff",
+                marginBottom: "20px",
+                fontSize: "22px",
+              }}
+            >
               📊 Tu estado actual
             </h3>
             <div style={{ textAlign: "left" }}>
               <div style={{ marginBottom: "20px" }}>
-                <p style={{ marginBottom: "8px" }}>Progreso al siguiente nivel:</p>
-                <div style={{ background: "#0e0e10", borderRadius: "8px", overflow: "hidden", height: "20px" }}>
+                <p style={{ marginBottom: "8px" }}>
+                  Progreso al siguiente nivel:
+                </p>
+                <div
+                  style={{
+                    background: "#0e0e10",
+                    borderRadius: "8px",
+                    overflow: "hidden",
+                    height: "20px",
+                  }}
+                >
                   <div
                     style={{
-                      width: `${Math.min(((titi?. Puntos || 0) / ((titi?.NivelStreams || 1) * 500)) * 100, 100)}%`,
+                      width: `${Math.min(
+                        ((titi?.Puntos || 0) /
+                          ((titi?.NivelStreams || 1) * 500)) *
+                          100,
+                        100
+                      )}%`,
                       height: "100%",
                       background: "linear-gradient(90deg, #9147ff, #00b7ff)",
                     }}
                   />
                 </div>
-                <p style={{ fontSize: "12px", marginTop: "4px", color: "#adadb8" }}>
+                <p
+                  style={{
+                    fontSize: "12px",
+                    marginTop: "4px",
+                    color: "#adadb8",
+                  }}
+                >
                   {titi?.Puntos || 0} / {(titi?.NivelStreams || 1) * 500} puntos
                 </p>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
-                <div style={{ background: "#0e0e10", padding: "15px", borderRadius: "8px", textAlign: "center" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "15px",
+                }}
+              >
+                <div
+                  style={{
+                    background: "#0e0e10",
+                    padding: "15px",
+                    borderRadius: "8px",
+                    textAlign: "center",
+                  }}
+                >
                   <div style={{ fontSize: "28px" }}>🎯</div>
-                  <p style={{ fontSize: "20px", fontWeight: "bold", margin: "8px 0" }}>
+                  <p
+                    style={{
+                      fontSize: "20px",
+                      fontWeight: "bold",
+                      margin: "8px 0",
+                    }}
+                  >
                     {titi?.NivelStreams || 1}
                   </p>
                   <p style={{ fontSize: "12px", color: "#adadb8" }}>Nivel</p>
                 </div>
 
-                <div style={{ background: "#0e0e10", padding: "15px", borderRadius: "8px", textAlign: "center" }}>
+                <div
+                  style={{
+                    background: "#0e0e10",
+                    padding: "15px",
+                    borderRadius: "8px",
+                    textAlign: "center",
+                  }}
+                >
                   <div style={{ fontSize: "28px" }}>⏱️</div>
-                  <p style={{ fontSize: "20px", fontWeight: "bold", margin: "8px 0" }}>
-                    {titi?. HorasTransmision || 0}h
+                  <p
+                    style={{
+                      fontSize: "20px",
+                      fontWeight: "bold",
+                      margin: "8px 0",
+                    }}
+                  >
+                    {titi?.HorasTransmision || 0}h
                   </p>
-                  <p style={{ fontSize: "12px", color: "#adadb8" }}>Transmitidas</p>
+                  <p style={{ fontSize: "12px", color: "#adadb8" }}>
+                    Transmitidas
+                  </p>
                 </div>
               </div>
             </div>
@@ -362,39 +478,116 @@ export default function Perfil_V() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ color: "#f59e0b", marginBottom: "20px", fontSize: "22px" }}>
+            <h3
+              style={{
+                color: "#f59e0b",
+                marginBottom: "20px",
+                fontSize: "22px",
+              }}
+            >
               💰 Canjear monedas
             </h3>
             <div style={{ textAlign: "center", marginBottom: "20px" }}>
-              <p style={{ fontSize: "36px", fontWeight: "bold", color: "#f59e0b" }}>
+              <p
+                style={{
+                  fontSize: "36px",
+                  fontWeight: "bold",
+                  color: "#f59e0b",
+                }}
+              >
                 🪙 {titi?.Monedas || 0}
               </p>
-              <p style={{ fontSize: "14px", color: "#adadb8" }}>Monedas disponibles</p>
+              <p style={{ fontSize: "14px", color: "#adadb8" }}>
+                Monedas disponibles
+              </p>
             </div>
 
             <div style={{ display: "grid", gap: "12px" }}>
-              <div style={{ background: "#0e0e10", padding: "15px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div
+                style={{
+                  background: "#0e0e10",
+                  padding: "15px",
+                  borderRadius: "8px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 <div style={{ textAlign: "left" }}>
-                  <p style={{ fontWeight: "bold", marginBottom: "4px" }}>🎁 Regalo Premium</p>
-                  <p style={{ fontSize: "12px", color: "#adadb8" }}>Desbloquea contenido exclusivo</p>
+                  <p style={{ fontWeight: "bold", marginBottom: "4px" }}>
+                    🎁 Regalo Premium
+                  </p>
+                  <p style={{ fontSize: "12px", color: "#adadb8" }}>
+                    Desbloquea contenido exclusivo
+                  </p>
                 </div>
-                <p style={{ fontSize: "18px", fontWeight: "bold", color: "#f59e0b" }}>500 🪙</p>
+                <p
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    color: "#f59e0b",
+                  }}
+                >
+                  500 🪙
+                </p>
               </div>
 
-              <div style={{ background: "#0e0e10", padding: "15px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div
+                style={{
+                  background: "#0e0e10",
+                  padding: "15px",
+                  borderRadius: "8px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 <div style={{ textAlign: "left" }}>
-                  <p style={{ fontWeight: "bold", marginBottom: "4px" }}>⭐ Destacado en home</p>
-                  <p style={{ fontSize: "12px", color: "#adadb8" }}>Aparece en la página principal</p>
+                  <p style={{ fontWeight: "bold", marginBottom: "4px" }}>
+                    ⭐ Destacado en home
+                  </p>
+                  <p style={{ fontSize: "12px", color: "#adadb8" }}>
+                    Aparece en la página principal
+                  </p>
                 </div>
-                <p style={{ fontSize: "18px", fontWeight: "bold", color: "#f59e0b" }}>1000 🪙</p>
+                <p
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    color: "#f59e0b",
+                  }}
+                >
+                  1000 🪙
+                </p>
               </div>
 
-              <div style={{ background: "#0e0e10", padding: "15px", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div
+                style={{
+                  background: "#0e0e10",
+                  padding: "15px",
+                  borderRadius: "8px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 <div style={{ textAlign: "left" }}>
-                  <p style={{ fontWeight: "bold", marginBottom: "4px" }}>🚀 Boost de canal</p>
-                  <p style={{ fontSize: "12px", color: "#adadb8" }}>Aumenta tu visibilidad x2</p>
+                  <p style={{ fontWeight: "bold", marginBottom: "4px" }}>
+                    🚀 Boost de canal
+                  </p>
+                  <p style={{ fontSize: "12px", color: "#adadb8" }}>
+                    Aumenta tu visibilidad x2
+                  </p>
                 </div>
-                <p style={{ fontSize: "18px", fontWeight: "bold", color: "#f59e0b" }}>2000 🪙</p>
+                <p
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    color: "#f59e0b",
+                  }}
+                >
+                  2000 🪙
+                </p>
               </div>
             </div>
 
@@ -415,7 +608,7 @@ export default function Perfil_V() {
               Cerrar
             </button>
           </div>
-        </div>  
+        </div>
       )}
     </div>
   );

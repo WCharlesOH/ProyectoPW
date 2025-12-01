@@ -15,7 +15,9 @@ interface CategoriaPaginaProps {
   sidebarAbierto?: boolean;
 }
 
-export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPaginaProps) {
+export default function CategoriaPagina({
+  sidebarAbierto = true,
+}: CategoriaPaginaProps) {
   const { categoriaId } = useParams<{ categoriaId: string }>();
   const [canales, setCanales] = useState<Canal[]>([]);
   const [nombreCategoria, setNombreCategoria] = useState<string>("");
@@ -28,7 +30,6 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
     //   .then(data => setCanales(data))
     //   .catch(err => console.error('Error al cargar canales:', err));
 
-    // Datos de prueba
     const categoriasMap: { [key: string]: string } = {
       "1": "Just Chatting",
       "2": "League of Legends",
@@ -42,12 +43,13 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
 
     setNombreCategoria(categoriasMap[categoriaId || "1"] || "Categoría");
 
-    // Canales de prueba
     const canalesPrueba: Canal[] = [
       {
         id: "1",
         nombre: "StreamerPro",
-        titulo: `Jugando ${categoriasMap[categoriaId || "1"]} - ¡Vamos por la victoria!`,
+        titulo: `Jugando ${
+          categoriasMap[categoriaId || "1"]
+        } - ¡Vamos por la victoria!`,
         espectadores: 15420,
         thumbnailUrl: "",
         avatarUrl: "",
@@ -56,7 +58,9 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
       {
         id: "2",
         nombre: "GamerElite",
-        titulo: `${categoriasMap[categoriaId || "1"]} con subs - ! regalos ! sorteo`,
+        titulo: `${
+          categoriasMap[categoriaId || "1"]
+        } con subs - ! regalos ! sorteo`,
         espectadores: 8934,
         thumbnailUrl: "",
         avatarUrl: "",
@@ -65,7 +69,9 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
       {
         id: "3",
         nombre: "LiveMaster",
-        titulo: `Stream nocturno de ${categoriasMap[categoriaId || "1"]} - Chill vibes`,
+        titulo: `Stream nocturno de ${
+          categoriasMap[categoriaId || "1"]
+        } - Chill vibes`,
         espectadores: 5621,
         thumbnailUrl: "",
         avatarUrl: "",
@@ -88,20 +94,27 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
       }}
     >
       <section style={{ marginBottom: "30px" }}>
-        <Link 
-          to="/explorar" 
-          style={{ 
-            color: "#9147ff", 
-            textDecoration: "none", 
+        <Link
+          to="/explorar"
+          style={{
+            color: "#9147ff",
+            textDecoration: "none",
             fontSize: "14px",
             display: "inline-flex",
             alignItems: "center",
-            marginBottom: "10px"
+            marginBottom: "10px",
           }}
         >
           ← Volver a Explorar
         </Link>
-        <h1 style={{ color: "#fff", fontSize: "28px", fontWeight: "bold", marginBottom: "10px" }}>
+        <h1
+          style={{
+            color: "#fff",
+            fontSize: "28px",
+            fontWeight: "bold",
+            marginBottom: "10px",
+          }}
+        >
           {nombreCategoria}
         </h1>
         <p style={{ color: "#adadb8", fontSize: "14px" }}>
@@ -132,10 +145,10 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                   transition: "transform 0.2s",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style. transform = "scale(1.03)";
+                  e.currentTarget.style.transform = "scale(1.03)";
                 }}
                 onMouseLeave={(e) => {
-                  e. currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.transform = "scale(1)";
                 }}
               >
                 <div style={{ position: "relative" }}>
@@ -149,7 +162,8 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                     }}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.src = "https://static-cdn. jtvnw.net/ttv-static/404_preview-320x180.jpg";
+                      target.src =
+                        "https://static-cdn. jtvnw.net/ttv-static/404_preview-320x180.jpg";
                     }}
                   />
                   {canal.enVivo && (
@@ -181,7 +195,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                       fontSize: "12px",
                     }}
                   >
-                    {canal.espectadores. toLocaleString()} espectadores
+                    {canal.espectadores.toLocaleString()} espectadores
                   </div>
                 </div>
 
@@ -196,7 +210,8 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                     }}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      target.src = "https://static-cdn. jtvnw.net/user-default-pictures-uv/13e5fa74-defa-11e9-809c-784f43822e80-profile_image-70x70. png";
+                      target.src =
+                        "https://static-cdn. jtvnw.net/user-default-pictures-uv/13e5fa74-defa-11e9-809c-784f43822e80-profile_image-70x70. png";
                     }}
                   />
                   <div style={{ flex: 1 }}>
@@ -216,7 +231,13 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                     <div style={{ color: "#adadb8", fontSize: "13px" }}>
                       {canal.nombre}
                     </div>
-                    <div style={{ color: "#adadb8", fontSize: "12px", marginTop: "4px" }}>
+                    <div
+                      style={{
+                        color: "#adadb8",
+                        fontSize: "12px",
+                        marginTop: "4px",
+                      }}
+                    >
                       {nombreCategoria}
                     </div>
                   </div>

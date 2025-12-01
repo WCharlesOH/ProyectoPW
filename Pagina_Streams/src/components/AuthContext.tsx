@@ -1,6 +1,9 @@
-// src/auth/AuthContext.tsx
-
-import React, { createContext, useState, useEffect, type ReactNode } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react";
 
 interface AuthContextType {
   isLogged: boolean;
@@ -19,7 +22,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<unknown | null>(null);
   const [isLogged, setIsLogged] = useState(false);
 
-  // Al montar, puedes verificar si hay token en localStorage u otro medio
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {
@@ -27,7 +29,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(parsed);
       setIsLogged(true);
     } else {
-      // Usuario de prueba streamer
       const testUser = { role: "streamer", nombre: "StreamerPrueba" };
       setUser(testUser);
       setIsLogged(true);
@@ -36,12 +37,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   function login(userData: unknown) {
-    // Aquí haces la lógica real (llamada a API, etc.)
     setUser(userData);
     setIsLogged(true);
     localStorage.setItem("user", JSON.stringify(userData));
   }
-  
+
   function logout() {
     setUser(null);
     setIsLogged(false);
@@ -55,7 +55,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = React.useContext(AuthContext);
   if (context === undefined) {

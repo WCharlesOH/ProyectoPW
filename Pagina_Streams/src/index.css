@@ -1,5 +1,3 @@
-/* src/index.css */
-
 :root {
   font-family: system-ui, sans-serif;
   background-color: #000000;
@@ -28,8 +26,10 @@ body {
   color: #333;
 }
 
-h1, h2, h3 {
-  font-family: 'Arial', sans-serif;
+h1,
+h2,
+h3 {
+  font-family: "Arial", sans-serif;
 }
 
 button {
@@ -40,5 +40,3 @@ button {
 button:hover {
   opacity: 0.8;
 }
-
-

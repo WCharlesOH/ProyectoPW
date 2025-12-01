@@ -1,4 +1,3 @@
-
 import Mirkos from "../imagenes/Mirko.jpg";
 import Felipes from "../imagenes/Felipe.jpg";
 import Franciscos from "../imagenes/fancisco.jpg";
@@ -46,16 +45,20 @@ export default function Nosotros() {
         <h1 className="nosotros-title">Nuestro Equipo</h1>
 
         <div className="nosotros-grid">
-        {integrantes.map((persona, index) => (
-          <div key={index} className="nosotros-card" tabIndex={0}>
-            <div className="card-img-container">
-              <img src={persona.imagen} alt={persona.nombre} className="card-img" />
+          {integrantes.map((persona, index) => (
+            <div key={index} className="nosotros-card" tabIndex={0}>
+              <div className="card-img-container">
+                <img
+                  src={persona.imagen}
+                  alt={persona.nombre}
+                  className="card-img"
+                />
+              </div>
+              <h3>{persona.nombre}</h3>
+              <p className="rol">{persona.rol}</p>
+              <div className="descripcion">{persona.descripcion}</div>
             </div>
-            <h3>{persona.nombre}</h3>
-            <p className="rol">{persona.rol}</p>
-            <div className="descripcion">{persona.descripcion}</div>
-          </div>
-        ))}
+          ))}
         </div>
       </div>
     </div>
