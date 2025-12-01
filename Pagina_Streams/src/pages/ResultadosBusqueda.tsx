@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import "./ResultadosBusqueda.css";
+import { API } from "../Comandosllamadas/llamadas"; 
 
 // Interfaces
 interface Usuario {
@@ -52,6 +53,7 @@ export default function ResultadosBusquedaPage() {
 
   // URL de tu API backend
   const API_URL = import.meta.env. VITE_API_URL || "http://localhost:3000";
+  const todo = API
 
   useEffect(() => {
     if (! query) {
@@ -62,6 +64,14 @@ export default function ResultadosBusquedaPage() {
     const buscar = async () => {
       setLoading(true);
       setError(null);
+
+      const data = await todo.BuscarVideos(query)
+      if(!data.success){
+        throw new Error("No se encontro resultado de busqueda")
+      }
+      else{
+        setResultados(data.data)
+      }
 
       try {
         const response = await fetch(`${API_URL}/buscar?q=${encodeURIComponent(query)}`);

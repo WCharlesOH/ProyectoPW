@@ -27,7 +27,8 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
   const [entrada, setEntrada] = useState("");
   const [nivel, setNivel] = useState(1);
   const [progreso, setProgreso] = useState(0);
-  const [streamerID, setStreamerID] = useState<number | null>(null);
+  // 🔑 CORRECCIÓN CLAVE 1: Inicializamos a null para forzar la espera de la API
+  const [streamerID, setStreamerID] = useState<number | null>(null); 
   const [streamerEnVivo, setStreamerEnVivo] = useState(false);
   const [nivelCargado, setNivelCargado] = useState(false);
   
@@ -36,61 +37,73 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
   
   // Obtener datos del usuario
   const usuario = (user as any);
-  const nombreUsuario = usuario?. NombreUsuario || usuario?.name || "Usuario";
+  const nombreUsuario = usuario?.NombreUsuario || usuario?.name || "Usuario";
   const idUsuario = usuario?.ID;
   const avatarUsuario = usuario?.ImagenPerfil || `https://ui-avatars.com/api/?name=${nombreUsuario}&background=9147ff&color=fff&size=40`;
 
-  // Cargar nivel del usuario desde el backend
+  // Cargar nivel del usuario y StreamerID desde el backend
   useEffect(() => {
     const cargarNivel = async () => {
-      if (! streamerName || !idUsuario || nivelCargado) return;
+      // Detenemos la ejecución si falta información esencial o ya está cargado
+      if (!streamerName || !idUsuario || nivelCargado) return;
       
       try {
-        console.log("🔄 [ChatBox] Cargando nivel del usuario...");
+        console.log("🔄 [ChatBox] Cargando nivel y StreamerID...");
         
         // 1. Obtener datos del streamer
         const streamerResult = await API.ObtenerDatosUsuarioNombre(streamerName);
         
-        if (! streamerResult.success || !streamerResult.user) {
+        if (!streamerResult.success || !streamerResult.user) {
           console.error("❌ [ChatBox] Streamer no encontrado");
+          // Si el streamer no existe, establecemos el ID a null y marcamos como cargado
+          setStreamerID(null); 
           setNivelCargado(true);
           return;
         }
 
         const streamerData = streamerResult.user;
-        setStreamerID(streamerData. ID);
+        const loadedStreamerID = streamerData.ID || null; // Aseguramos que sea number o null
+        
+        // 🔑 ACTUALIZACIÓN CLAVE: Guardamos el ID del streamer
+        setStreamerID(loadedStreamerID);
         setStreamerEnVivo(streamerData.EnVivo || false);
         
-        console.log(`✅ [ChatBox] Streamer: ${streamerData.NombreUsuario} (EnVivo: ${streamerData. EnVivo})`);
+        console.log(`✅ [ChatBox] Streamer ID cargado: ${loadedStreamerID}`);
         
-        // 2. Crear o obtener el chat
-        await API.ChatStreamer(streamerData.ID, idUsuario);
-        
-        // 3.  Obtener el nivel guardado del usuario
-        const chatDataResult = await API.ObtenerChatStreamer(streamerData.ID, idUsuario);
-        
-        if (chatDataResult.success && chatDataResult.chat) {
-          const nivelGuardado = chatDataResult.chat.NivelViewer || 1;
-          setNivel(nivelGuardado);
-          console.log(`✅ [ChatBox] Nivel cargado: ${nivelGuardado}`);
+        // 2. Crear o obtener el chat (Solo si hay ID válido)
+        if (loadedStreamerID) {
+          await API.ChatStreamer(loadedStreamerID, idUsuario);
+          
+          // 3. Obtener el nivel guardado del usuario
+          const chatDataResult = await API.ObtenerChatStreamer(loadedStreamerID, idUsuario);
+          
+          if (chatDataResult.success && chatDataResult.chat) {
+            const nivelGuardado = chatDataResult.chat.NivelViewer || 1;
+            setNivel(nivelGuardado);
+            console.log(`✅ [ChatBox] Nivel cargado: ${nivelGuardado}`);
+          } else {
+            setNivel(1);
+            console.log("⚠️ [ChatBox] Nivel inicial: 1");
+          }
+          
+          // 4. Actualizar estado de visualización
+          const enVivoString = streamerData.EnVivo ? "true" : "false";
+          await API.ViendoDirecto(
+            idUsuario,
+            loadedStreamerID,
+            true,
+            enVivoString
+          );
         } else {
-          setNivel(1);
-          console.log("⚠️ [ChatBox] Nivel inicial: 1");
+            // Si el ID es nulo, no se realiza la carga de chat ni nivel
+            console.log("⚠️ [ChatBox] No se cargó chat ni nivel porque el Streamer ID es nulo.");
         }
         
         setNivelCargado(true);
         
-        // 4. Actualizar estado de visualización
-        const enVivoString = streamerData.EnVivo ? "true" : "false";
-        await API.ViendoDirecto(
-          idUsuario,
-          streamerData.ID.toString(),
-          true,
-          enVivoString
-        );
-        
       } catch (error) {
-        console.error("❌ [ChatBox] Error cargando nivel:", error);
+        console.error("❌ [ChatBox] Error cargando nivel o StreamerID:", error);
+        setStreamerID(null);
         setNivelCargado(true);
       }
     };
@@ -100,7 +113,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
 
   // Auto-scroll al final
   useEffect(() => {
-    if (mensajesRef. current) {
+    if (mensajesRef.current) {
       mensajesRef.current.scrollTop = mensajesRef.current.scrollHeight;
     }
   }, [mensajes]);
@@ -108,7 +121,8 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
   // Subir de nivel automáticamente y guardar en el backend
   useEffect(() => {
     const actualizarNivel = async () => {
-      if (progreso >= 100 && idUsuario && streamerID && nivelCargado) {
+      // La condición de guarda ahora también asegura que streamerID NO sea null
+      if (progreso >= 100 && idUsuario && streamerID !== null && nivelCargado) {
         const nuevoNivel = nivel + 1;
         setNivel(nuevoNivel);
         setProgreso(p => p - 100);
@@ -116,19 +130,20 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
         try {
           console.log(`🔄 [ChatBox] Guardando nivel ${nuevoNivel}...`);
           
+          // Asegúrate de que 'streamerID' se pase correctamente 
           const result = await API.ActualizarNivelviewer(idUsuario, nuevoNivel, streamerID);
           
           if (result.success) {
             console.log(`✅ [ChatBox] Nivel ${nuevoNivel} guardado`);
           }
           
-          // Mensaje de sistema local (no se guarda en backend)
+          // Mensaje de sistema local
           const mensajeSistema: Mensaje = {
             id: Date.now().toString(),
             autor: "Sistema",
             nivel: 0,
             texto: `🎉 ${nombreUsuario} subió al nivel ${nuevoNivel}! `,
-            hora: new Date(). toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            hora: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             tipo: "sistema",
           };
           
@@ -143,7 +158,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
   }, [progreso, nivel, idUsuario, streamerID, nombreUsuario, nivelCargado]);
 
   const enviarMensaje = () => {
-    if (! entrada.trim()) return;
+    if (!entrada.trim()) return;
 
     // Mensaje local (no se envía al backend)
     const nuevoMensaje: Mensaje = {
@@ -162,11 +177,14 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e. key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       enviarMensaje();
     }
   };
+  
+  // 🔑 LOG de Depuración: Muestra el ID justo antes de pasarlo al botón.
+  console.log(`Debug ChatBox: Pasando streamerID al BotonRegalo: ${streamerID}`);
 
   return (
     <div
@@ -184,6 +202,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
       }}
     >
       {/* Header del Chat */}
+      {/* ... (Contenido del Header sin cambios) ... */}
       <div
         style={{
           padding: "12px 16px",
@@ -223,6 +242,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
       </div>
 
       {/* Área de mensajes */}
+      {/* ... (Contenido del Área de mensajes sin cambios) ... */}
       <div
         ref={mensajesRef}
         style={{
@@ -234,7 +254,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
           gap: "12px",
         }}
       >
-        {! nivelCargado ?  (
+        {!nivelCargado ?  (
           <div style={{ textAlign: "center", padding: "20px", color: "#adadb8" }}>
             <div
               style={{
@@ -249,7 +269,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
             />
             Cargando nivel...
           </div>
-        ) : mensajes.length === 0 ?  (
+        ) : mensajes.length === 0 ?  (
           <div style={{ textAlign: "center", padding: "20px", color: "#adadb8" }}>
             <div style={{ fontSize: "32px", marginBottom: "8px" }}>💬</div>
             <p>Sé el primero en enviar un mensaje</p>
@@ -265,7 +285,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
                 display: "flex",
                 gap: "10px",
                 padding: msg.tipo === "sistema" ? "8px" : "0",
-                backgroundColor: msg.tipo === "sistema" ?  "rgba(145, 71, 255, 0.1)" : "transparent",
+                backgroundColor: msg.tipo === "sistema" ?  "rgba(145, 71, 255, 0.1)" : "transparent",
                 borderRadius: msg.tipo === "sistema" ? "6px" : "0",
                 borderLeft: msg.tipo === "sistema" ? "3px solid #9147ff" : "none",
               }}
@@ -302,7 +322,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
                         fontSize: "0.75rem",
                       }}
                     >
-                      Lv.  {msg.nivel}
+                      Lv.  {msg.nivel}
                     </span>
                   )}
                   <span style={{ fontSize: "0. 7rem", opacity: 0.6 }}>
@@ -325,6 +345,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
       </div>
 
       {/* Input de mensaje */}
+      {/* ... (Contenido del Input de mensaje sin cambios) ... */}
       <div
         style={{
           padding: "12px",
@@ -354,14 +375,14 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
           />
           <button
             onClick={enviarMensaje}
-            disabled={!entrada.trim() || ! nivelCargado}
+            disabled={!entrada.trim() || !nivelCargado}
             style={{
               padding: "10px 16px",
               border: "none",
               backgroundColor: entrada.trim() && nivelCargado ? "#9147ff" : "#555",
               color: "white",
               borderRadius: "6px",
-              cursor: entrada.trim() && nivelCargado ?  "pointer" : "not-allowed",
+              cursor: entrada.trim() && nivelCargado ?  "pointer" : "not-allowed",
               fontWeight: "bold",
               fontSize: "14px",
               transition: "all 0.2s",
@@ -369,22 +390,29 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
           >
             Enviar
           </button>
-      </div>
-
-      {/* Botones inferiores */}
-      <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "8px",
-          }}
-        >
-          <BotonMonedas monedas={monedas} setMonedas={setMonedas} streamerName={streamerName} />
-          <BotonRegalo monedas={monedas} setMonedas={setMonedas} streamerID={streamerID ?? undefined} disabled={! nivelCargado || streamerID === null} />
-          <BotonNivel nivel={nivel} progreso={progreso} />
         </div>
-      </div>
+
+        {/* Botones inferiores */}
+        <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <BotonMonedas monedas={monedas} setMonedas={setMonedas} streamerName={streamerName} />
+            {/* La prop 'streamerID' ahora se pasa como number | null, y la deshabilitación es correcta */}
+            <BotonRegalo 
+              monedas={monedas} 
+              setMonedas={setMonedas} 
+              streamerID={streamerID} // Valor: number | null
+              // Deshabilitado si aún está cargando O si el ID es null
+              disabled={!nivelCargado || streamerID === null} 
+            />
+            <BotonNivel nivel={nivel} progreso={progreso} />
+          </div>
+        </div>
 
       <style>
         {`
