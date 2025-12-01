@@ -67,7 +67,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
           }
         } else {
           // Si no está logueado, obtener todos los streams activos
-          const response = await fetch("http://localhost:5000/api/streams/live");
+          const response = await fetch("https://proyectobackend-a8nt.onrender.com/api/streams/live");
 
           if (response.ok) {
             const data = await response.json();

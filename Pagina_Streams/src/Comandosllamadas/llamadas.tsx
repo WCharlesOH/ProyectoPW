@@ -3,7 +3,7 @@ import { data } from "react-router-dom";
 export const API = {
     RegistoUsuario: async (name: string, password: string, email: string, imagen: string) => {
         try {
-            const response = await fetch("http://localhost:5000/Registrar_Usuario", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Registrar_Usuario", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -28,7 +28,7 @@ export const API = {
 
     LoginUsuario: async (nombre: string, password: string) => {
         try {
-            const response = await fetch("http://localhost:5000/Validar_Usuario", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Validar_Usuario", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -52,7 +52,7 @@ export const API = {
 
     MisSuscripciones: async (idUsuario: number) => {
         try {
-            const response = await fetch("http://localhost:5000/Suscrito", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Suscrito", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ID_Usuario: idUsuario }),
@@ -73,7 +73,7 @@ export const API = {
 
     SuscripcionesCanal: async (idCanal: number) => {
         try {
-            const response = await fetch("http://localhost:5000/SuscripcioneMias", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/SuscripcioneMias", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ID_Streamer: idCanal }),
@@ -97,7 +97,7 @@ export const API = {
             if(idStreamer == idUsuario){
                 return { success: false, error: "Error al crear nueva suscripción" };
             }
-            const response = await fetch("http://localhost:5000/Crear_Suscripcion", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Crear_Suscripcion", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -120,7 +120,7 @@ export const API = {
 
     EliminarSuscripcion: async (idUsuario: number, idStreamer: number) => {
         try {
-            const response = await fetch("http://localhost:5000/Eliminar_Suscripcion", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Eliminar_Suscripcion", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -146,7 +146,7 @@ export const API = {
             if(idStreamer == idviewer){
                 return { success: false, error: "Error al crear nueva suscripción" };
             }
-            const response = await fetch("http://localhost:5000/Crear_ChatStreamer", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Crear_ChatStreamer", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -170,7 +170,7 @@ export const API = {
 
     ObtenerDatosUsuario: async (idUsuario: number) => {
         try {
-            const response = await fetch("http://localhost:5000/ObtenerDatosUsuario", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/ObtenerDatosUsuario", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -193,7 +193,7 @@ export const API = {
 
     ObtenerDatosUsuarioNombre: async (nombreUsuario: string) => {
         try {
-            const response = await fetch("http://localhost:5000/ObtenerDatosUsuarioNombre", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/ObtenerDatosUsuarioNombre", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -219,7 +219,7 @@ export const API = {
             if(ID_Streamer == idUsuario){
                 return { success: false, error: "Error al crear nueva suscripción" };
             }
-            const response = await fetch("http://localhost:5000/VIendoDirecto", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/VIendoDirecto", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -247,7 +247,7 @@ export const API = {
             if(idStreamer == idviewer){
                 return { success: false, error: "Error al crear nueva suscripción" };
             }
-            const response = await fetch("http://localhost:5000/ObtenerDatosChat", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/ObtenerDatosChat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -271,7 +271,7 @@ export const API = {
 
     ActualizarNivelviewer: async (idViewer: number, nivel: number, idStreamer: number) => {
         try {
-            const response = await fetch("http://localhost:5000/Actualizar_NivelViewer", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Actualizar_NivelViewer", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -295,7 +295,7 @@ export const API = {
 
     ActualizarNivelStreams: async (idStreamer: number, nivel: number) => {
         try {
-            const response = await fetch("http://localhost:5000/Actualizar_NivelStreams", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Actualizar_NivelStreams", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -318,7 +318,7 @@ export const API = {
 
     ActualizarHorasStreaming: async (idStreamer: number, horas: number) => {
         try {
-            const response = await fetch("http://localhost:5000/Actualizar_HorasTransmision", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Actualizar_HorasTransmision", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON. stringify({
@@ -341,7 +341,7 @@ export const API = {
 
     ObtenerRanking: async () => {
         try {
-            const response = await fetch("http://localhost:5000/UsuariosRanking");
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/UsuariosRanking");
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -358,7 +358,7 @@ export const API = {
 
     AsignarLogro: async (idUsuario: number, idLogro: number, completado: boolean) => {
         try {
-            const response = await fetch("http://localhost:5000/Asignar_Logro", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Asignar_Logro", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -382,7 +382,7 @@ export const API = {
 
     ObtenerLogrosUsuario: async (idUsuario: number) => {
         try {
-            const response = await fetch("http://localhost:5000/LogrosUsuario", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/LogrosUsuario", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -405,7 +405,7 @@ export const API = {
 
     ObtenerTodosLogros: async () => {
         try {
-            const response = await fetch("http://localhost:5000/LogrosPlantilla");
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/LogrosPlantilla");
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -422,7 +422,7 @@ export const API = {
 
     Actualizar_Logros: async (idLogro: number, idusuario: string, completado: boolean) => {
         try {
-            const response = await fetch("http://localhost:5000/Actualizar_Logro", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Actualizar_Logro", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -446,7 +446,7 @@ export const API = {
 
     Ver_logrosMios: async (idUsuario: number) => {
         try {
-            const response = await fetch("http://localhost:5000/Todos_Los_Logros", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Todos_Los_Logros", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -469,7 +469,7 @@ export const API = {
 
     MasVistos: async () => {
         try {
-            const response = await fetch("http://localhost:5000/Mas_Vistos");
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Mas_Vistos");
 
             if (!response.ok) {
                 const errorData = await response. json();
@@ -486,7 +486,7 @@ export const API = {
 
     SeguidosEnVIvo: async (idUsuario: number) => {
         try {
-            const response = await fetch("http://localhost:5000/SeguidosEnVIvo", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/SeguidosEnVIvo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -509,7 +509,7 @@ export const API = {
 
     ActualizarEnVivo: async (idStreamer: number, EnVIvo: string) => {
         try {
-            const response = await fetch("http://localhost:5000/Actualizar_Estado_EnVivo", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Actualizar_Estado_EnVivo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -532,7 +532,7 @@ export const API = {
 
     ActualizarMonedas: async (idStreamer: number, nuevasMonedas: number) => {
         try {
-            const response = await fetch("http://localhost:5000/Actualizar_Monedas", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Actualizar_Monedas", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -555,7 +555,7 @@ export const API = {
     
     DatosdelStream: async (idusuario: number) => {
         try{
-            const response = await fetch("http://localhost:5000/datos_Stream",{
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/datos_Stream",{
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -584,7 +584,7 @@ export const API = {
         ID_Usuario: number
     ) => {
         try{
-            const response = await fetch("http://localhost:5000/Crear_VIdeo", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Crear_VIdeo", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -616,7 +616,7 @@ export const API = {
         ID_Video: number
     ) => {
         try {
-            const response = await fetch("http://localhost:5000/Vincular_Juego_Video", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Vincular_Juego_Video", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -647,7 +647,7 @@ export const API = {
         categoriaDeVideo: string[]
     ) => {
         try {
-            const response = await fetch("http://localhost:5000/Actualizar_Video", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Actualizar_Video", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -677,7 +677,7 @@ export const API = {
         ID_Video: number
     ) => {
         try {
-            const response = await fetch("http://localhost:5000/Eliminar_Video", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Eliminar_Video", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -710,7 +710,7 @@ export const API = {
     idStreamer: number
 ) => {
     try {
-        const response = await fetch("http://localhost:5000/regalos/crear", {
+        const response = await fetch("https://proyectobackend-a8nt.onrender.com/regalos/crear", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -739,7 +739,7 @@ export const API = {
 
     EliminarRegalo: async (nombre: string) => {
         try {
-            const response = await fetch(`http://localhost:5000/regalos/eliminar? nombre=${encodeURIComponent(nombre)}`);
+            const response = await fetch(`https://proyectobackend-a8nt.onrender.com/regalos/eliminar? nombre=${encodeURIComponent(nombre)}`);
 
             if (!response. ok) {
                 const errorData = await response.json();
@@ -762,7 +762,7 @@ export const API = {
         icono: string
     ) => {
         try {
-            const response = await fetch("http://localhost:5000/regalos/actualizar", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/regalos/actualizar", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -792,7 +792,7 @@ export const API = {
 
   ObtenerRegalosGestionar: async (ID: number) => {
     try {
-        const response = await fetch(`http://localhost:5000/regalosbyMirko?ID=${ID}`);
+        const response = await fetch(`https://proyectobackend-a8nt.onrender.com/regalosbyMirko?ID=${ID}`);
 
         if (!response.ok) {
             const errorData = await response.json();
@@ -810,7 +810,7 @@ export const API = {
 
     ObtenerRegalos: async (ID: number) => {
         try {
-            const response = await fetch(`http://localhost:5000/regalos`,{
+            const response = await fetch(`https://proyectobackend-a8nt.onrender.com/regalos`,{
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -836,7 +836,7 @@ export const API = {
 
     BuscarVideos: async (texto: string) => {
         try {
-            const response = await fetch(`http://localhost:5000/videos/buscar?q=${encodeURIComponent(texto)}`);
+            const response = await fetch(`https://proyectobackend-a8nt.onrender.com/videos/buscar?q=${encodeURIComponent(texto)}`);
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -854,7 +854,7 @@ export const API = {
 
     MasVisto : async () => {
         try {
-            const response = await fetch("http://localhost:5000/Mas_Visto");
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Mas_Visto");
             if (!response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
@@ -869,7 +869,7 @@ export const API = {
 
     ContarEspectadoresActuales: async (idStreamer: number) => {
     try {
-        const response = await fetch("http://localhost:5000/Contar_Espectadores_Actuales", {
+        const response = await fetch("https://proyectobackend-a8nt.onrender.com/Contar_Espectadores_Actuales", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -892,7 +892,7 @@ export const API = {
 
     ContarSeguidoresTotales: async (idStreamer: number) => {
         try {
-            const response = await fetch("http://localhost:5000/Contar_Seguidores_Totales", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Contar_Seguidores_Totales", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -915,7 +915,7 @@ export const API = {
 
     EstadisticasStreamer: async (idStreamer: number) => {
         try {
-            const response = await fetch("http://localhost:5000/Estadisticas_Streamer", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Estadisticas_Streamer", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -942,7 +942,7 @@ export const API = {
 
     ListaEspectadoresActuales: async (idStreamer: number) => {
         try {
-            const response = await fetch("http://localhost:5000/Lista_Espectadores_Actuales", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Lista_Espectadores_Actuales", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -969,7 +969,7 @@ export const API = {
 
     TopStreamersPorEspectadores: async () => {
         try {
-            const response = await fetch("http://localhost:5000/Top_Streamers_Por_Espectadores");
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/Top_Streamers_Por_Espectadores");
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -990,7 +990,7 @@ export const API = {
 
     ObtenerJuegos: async () => {
     try {
-        const response = await fetch("http://localhost:5000/ObtenerJuegos");
+        const response = await fetch("https://proyectobackend-a8nt.onrender.com/ObtenerJuegos");
 
         if (!response.ok) {
             const errorData = await response.json();
@@ -1007,7 +1007,7 @@ export const API = {
 
     StreamersPorJuego: async (nombreJuego: string) => {
         try {
-            const response = await fetch("http://localhost:5000/StreamersPorJuego", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/StreamersPorJuego", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -1035,7 +1035,7 @@ export const API = {
     // Crear/Obtener sala de streaming para un streamer
     CrearSalaStreaming: async (streamerName: string, password?: string) => {
         try {
-            const response = await fetch("http://localhost:5000/api/stream/room", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/api/stream/room", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -1067,7 +1067,7 @@ export const API = {
     // Iniciar transmisión en vivo
     IniciarStream: async (streamerName: string, title?: string, category?: string) => {
         try {
-            const response = await fetch("http://localhost:5000/api/stream/start", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/api/stream/start", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -1097,7 +1097,7 @@ export const API = {
     // Detener transmisión en vivo
     DetenerStream: async (streamerName: string) => {
         try {
-            const response = await fetch("http://localhost:5000/api/stream/stop", {
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/api/stream/stop", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -1124,7 +1124,7 @@ export const API = {
     // Obtener estado del stream de un streamer
     ObtenerEstadoStream: async (streamerName: string) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/stream/status/${streamerName}`);
+            const response = await fetch(`https://proyectobackend-a8nt.onrender.com/api/stream/status/${streamerName}`);
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -1152,7 +1152,7 @@ export const API = {
     // Listar todos los streams activos
     ObtenerStreamsActivos: async () => {
         try {
-            const response = await fetch("http://localhost:5000/api/streams/live");
+            const response = await fetch("https://proyectobackend-a8nt.onrender.com/api/streams/live");
 
             if (!response.ok) {
                 const errorData = await response.json();
