@@ -85,7 +85,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
         await API.ViendoDirecto(
           idUsuario,
           streamerData.ID.toString(),
-          "true",
+          true,
           enVivoString
         );
         
@@ -369,10 +369,10 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
           >
             Enviar
           </button>
-        </div>
+      </div>
 
-        {/* Botones inferiores */}
-        <div
+      {/* Botones inferiores */}
+      <div
           style={{
             display: "flex",
             justifyContent: "space-between",
@@ -380,8 +380,8 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
             gap: "8px",
           }}
         >
-          <BotonMonedas monedas={monedas} setMonedas={setMonedas} />
-          <BotonRegalo monedas={monedas} setMonedas={setMonedas} />
+          <BotonMonedas monedas={monedas} setMonedas={setMonedas} streamerName={streamerName} />
+          <BotonRegalo monedas={monedas} setMonedas={setMonedas} streamerID={streamerID ?? undefined} disabled={! nivelCargado || streamerID === null} />
           <BotonNivel nivel={nivel} progreso={progreso} />
         </div>
       </div>
