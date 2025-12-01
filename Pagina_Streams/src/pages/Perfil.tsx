@@ -60,7 +60,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
         setStreamer({
           ID: result.user. ID,
           NombreUsuario: result.user.NombreUsuario,
-          ImagenPerfil: result.user. ImagenPerfil,
+          ImagenPerfil: result.user.ImagenPerfil,
           NivelStreams: result.user.NivelStreams || 1,
           HorasTransmision: result.user.HorasTransmision || 0,
           EnVivo: result. user.EnVivo || false,
@@ -77,7 +77,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
     fetchStreamerInfo();
   }, [username]);
 
-  // Verificar si el usuario está siguiendo al streamer usando API.MisSuscripciones
+  // Verificar si el usuario está siguiendo al streamer usando API.SeguidosEnVIvo
   useEffect(() => {
     const checkFollowing = async () => {
       if (!isLogged || !streamer) return;
@@ -86,13 +86,27 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
       if (! userData?. ID) return;
 
       try {
-        // Usar la función MisSuscripciones que ya existe
-        const result = await API. MisSuscripciones(userData.ID);
+        // Obtener todos los seguidos en vivo del usuario
+        const resultEnVivo = await API.SeguidosEnVIvo(userData.ID);
         
-        if (result.success && result.subscriptions) {
-          // Verificar si el streamer está en la lista de suscripciones
-          const siguiendo = result.subscriptions.some(
-            (sub: any) => sub.ID_Streamer === streamer.ID
+        if (resultEnVivo.success && resultEnVivo.streamers) {
+          // Verificar si el streamer actual está en la lista
+          const siguiendoEnVivo = resultEnVivo.streamers.some(
+            (item: any) => item.streamer?. NombreUsuario === streamer. NombreUsuario
+          );
+          
+          if (siguiendoEnVivo) {
+            setIsFollowing(true);
+            return;
+          }
+        }
+
+        // Si no está en vivo o no está siguiendo, verificar con SuscripcionesCanal
+        const resultSubs = await API.SuscripcionesCanal(streamer.ID);
+        
+        if (resultSubs.success && resultSubs.subscriptions) {
+          const siguiendo = resultSubs.subscriptions. some(
+            (sub: any) => sub.ID_Viewer === userData.ID
           );
           setIsFollowing(siguiendo);
         }
@@ -122,7 +136,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
     try {
       let result;
       if (isFollowing) {
-        // Usar la función EliminarSuscripcion que ya existe
+        // Usar la función EliminarSuscripcion
         result = await API.EliminarSuscripcion(userData.ID, streamer.ID);
         if (result.success) {
           setIsFollowing(false);
@@ -130,8 +144,8 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
           alert(result.error || "Error al dejar de seguir al streamer");
         }
       } else {
-        // Usar la función NuevaSuscripcion que ya existe
-        result = await API.NuevaSuscripcion(userData.ID, streamer.ID);
+        // Usar la función NuevaSuscripcion
+        result = await API. NuevaSuscripcion(userData.ID, streamer.ID);
         if (result.success) {
           setIsFollowing(true);
         } else {
@@ -255,7 +269,11 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
 
       {/* Chat */}
       <div style={{ width: "340px", flexShrink: 0 }}>
-        <ChatBox monedas={monedas} setMonedas={setMonedas} />
+        <ChatBox 
+          monedas={monedas} 
+          setMonedas={setMonedas} 
+          streamerName={streamer.NombreUsuario}
+        />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import BotonMonedas from "./BotonMonedas";
 import BotonNivel from "./BotonNivel";
 import BotonRegalo from "./botonregalo";
 import { useAuth } from "./AuthContext";
+import { API } from "../Comandosllamadas/llamadas";
 
 interface Mensaje {
   id: string;
@@ -26,65 +27,50 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
   const [entrada, setEntrada] = useState("");
   const [nivel, setNivel] = useState(5);
   const [progreso, setProgreso] = useState(60);
-  const [conectado, setConectado] = useState(false);
-  const [cargandoMensajes, setCargandoMensajes] = useState(true);
+  const [streamerID, setStreamerID] = useState<number | null>(null);
+  const [chatCreado, setChatCreado] = useState(false);
   
   const mensajesRef = useRef<HTMLDivElement>(null);
-  const intervalRef = useRef<number | null>(null);
   const { user } = useAuth();
   
   // Obtener datos del usuario
   const usuario = (user as any);
   const nombreUsuario = usuario?. NombreUsuario || usuario?.name || "Usuario";
-  const avatarUsuario = usuario?.ImagenPerfil || `https://ui-avatars.com/api/? name=${nombreUsuario}&background=9147ff&color=fff&size=40`;
+  const idUsuario = usuario?.ID;
+  const avatarUsuario = usuario?.ImagenPerfil || `https://ui-avatars.com/api/?name=${nombreUsuario}&background=9147ff&color=fff&size=40`;
 
-  // Cargar mensajes iniciales del backend
+  // Obtener ID del streamer y crear chat usando API. ObtenerDatosUsuarioNombre y API.ChatStreamer
   useEffect(() => {
-    cargarMensajesIniciales();
-  }, [streamerName]);
-
-  const cargarMensajesIniciales = async () => {
-    if (!streamerName) {
-      setCargandoMensajes(false);
-      return;
-    }
-
-    try {
-      const response = await fetch(`http://localhost:5000/api/chat/${streamerName}/mensajes`);
-      if (response.ok) {
-        const data = await response.json();
-        setMensajes(data. mensajes || []);
-        setConectado(true);
-      }
-    } catch (error) {
-      console.error("Error al cargar mensajes:", error);
-    } finally {
-      setCargandoMensajes(false);
-    }
-  };
-
-  // Polling para obtener nuevos mensajes cada 2 segundos
-  useEffect(() => {
-    if (! streamerName || !conectado) return;
-
-    intervalRef.current = window.setInterval(async () => {
+    const initChat = async () => {
+      if (! streamerName || !idUsuario || chatCreado) return;
+      
       try {
-        const response = await fetch(`http://localhost:5000/api/chat/${streamerName}/mensajes`);
-        if (response.ok) {
-          const data = await response.json();
-          setMensajes(data. mensajes || []);
+        // Obtener datos del streamer
+        const result = await API.ObtenerDatosUsuarioNombre(streamerName);
+        if (result.success && result.user) {
+          setStreamerID(result.user.ID);
+          
+          // Crear o obtener el chat del usuario con el streamer
+          const chatResult = await API.ChatStreamer(result.user.ID, idUsuario);
+          if (chatResult.success) {
+            setChatCreado(true);
+            
+            // Actualizar que está viendo el directo usando API. ViendoDirecto
+            await API. ViendoDirecto(
+              idUsuario,
+              result.user.ID. toString(),
+              "true",
+              result.user.EnVivo ?  "true" : "false"
+            );
+          }
         }
       } catch (error) {
-        console.error("Error al actualizar mensajes:", error);
-      }
-    }, 2000);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef. current);
+        console.error("Error inicializando chat:", error);
       }
     };
-  }, [streamerName, conectado]);
+
+    initChat();
+  }, [streamerName, idUsuario, chatCreado]);
 
   // Auto-scroll al final
   useEffect(() => {
@@ -93,47 +79,40 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
     }
   }, [mensajes]);
 
-  // Subir de nivel automáticamente
+  // Subir de nivel automáticamente y actualizar en el backend usando API.ActualizarNivelviewer
   useEffect(() => {
-    if (progreso >= 100) {
-      const nuevoNivel = nivel + 1;
-      setNivel(nuevoNivel);
-      setProgreso(p => p - 100);
-      
-      const mensajeSistema: Mensaje = {
-        id: Date.now().toString(),
-        autor: "Sistema",
-        nivel: 0,
-        texto: `🎉 ${nombreUsuario} subió al nivel ${nuevoNivel}!`,
-        hora: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        tipo: "sistema",
-      };
-      
-      enviarMensajeAlBackend(mensajeSistema);
-    }
-  }, [progreso, nivel]);
-
-  const enviarMensajeAlBackend = async (mensaje: Mensaje) => {
-    if (!streamerName) return;
-
-    try {
-      const response = await fetch(`http://localhost:5000/api/chat/${streamerName}/mensaje`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(mensaje),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        // El mensaje se actualizará automáticamente con el polling
+    const actualizarNivel = async () => {
+      if (progreso >= 100 && idUsuario && streamerID) {
+        const nuevoNivel = nivel + 1;
+        setNivel(nuevoNivel);
+        setProgreso(p => p - 100);
+        
+        // Actualizar nivel en el backend
+        try {
+          await API.ActualizarNivelviewer(idUsuario, nuevoNivel, streamerID);
+          
+          // Agregar mensaje de sistema local
+          const mensajeSistema: Mensaje = {
+            id: Date.now().toString(),
+            autor: "Sistema",
+            nivel: 0,
+            texto: `🎉 ${nombreUsuario} subió al nivel ${nuevoNivel}! `,
+            hora: new Date(). toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            tipo: "sistema",
+          };
+          
+          setMensajes(prev => [...prev, mensajeSistema]);
+        } catch (error) {
+          console.error("Error actualizando nivel:", error);
+        }
       }
-    } catch (error) {
-      console.error("Error al enviar mensaje:", error);
-    }
-  };
+    };
+
+    actualizarNivel();
+  }, [progreso, nivel, idUsuario, streamerID, nombreUsuario]);
 
   const enviarMensaje = () => {
-    if (!entrada.trim()) return;
+    if (! entrada.trim()) return;
 
     const nuevoMensaje: Mensaje = {
       id: Date.now().toString(),
@@ -145,18 +124,15 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
       tipo: "usuario",
     };
 
-    // Agregar localmente
+    // Agregar mensaje localmente (sin backend para mensajes de chat en tiempo real)
     setMensajes(prev => [...prev, nuevoMensaje]);
-    
-    // Enviar al backend
-    enviarMensajeAlBackend(nuevoMensaje);
 
     // Limpiar y progresar
     setEntrada("");
     setProgreso(p => p + 5);
   };
 
-  const handleKeyPress = (e: React. KeyboardEvent) => {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e. key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       enviarMensaje();
@@ -205,11 +181,11 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
               width: 8,
               height: 8,
               borderRadius: "50%",
-              background: conectado ? "#10b981" : "#ef4444",
+              background: chatCreado ? "#10b981" : "#ef4444",
             }}
           />
           <span style={{ fontSize: "12px", color: "#adadb8" }}>
-            {conectado ? "Conectado" : "Desconectado"}
+            {chatCreado ? "Conectado" : "Desconectado"}
           </span>
         </div>
       </div>
@@ -226,22 +202,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
           gap: "12px",
         }}
       >
-        {cargandoMensajes ? (
-          <div style={{ textAlign: "center", padding: "20px", color: "#adadb8" }}>
-            <div
-              style={{
-                width: "30px",
-                height: "30px",
-                border: "3px solid #333",
-                borderTop: "3px solid #9147ff",
-                borderRadius: "50%",
-                animation: "spin 1s linear infinite",
-                margin: "0 auto 12px",
-              }}
-            />
-            Cargando mensajes...
-          </div>
-        ) : mensajes.length === 0 ?  (
+        {mensajes.length === 0 ? (
           <div style={{ textAlign: "center", padding: "20px", color: "#adadb8" }}>
             <div style={{ fontSize: "32px", marginBottom: "8px" }}>💬</div>
             <p>Sé el primero en enviar un mensaje</p>
@@ -291,7 +252,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
                         fontSize: "0.75rem",
                       }}
                     >
-                      Lv. {msg.nivel}
+                      Lv.  {msg.nivel}
                     </span>
                   )}
                   <span style={{ fontSize: "0.7rem", opacity: 0.6 }}>
@@ -372,15 +333,6 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
           <BotonNivel nivel={nivel} progreso={progreso} />
         </div>
       </div>
-
-      <style>
-        {`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}
-      </style>
     </div>
   );
 }
