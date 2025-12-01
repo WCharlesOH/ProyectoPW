@@ -185,6 +185,29 @@ export const API = {
         }
     },
 
+    ObtenerDatosUsuarioNombre: async (nombreUsuario: string) => {
+        try {
+            const response = await fetch("http://localhost:5000/ObtenerDatosUsuarioNombre", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    NombreUsuario: nombreUsuario,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error };
+            }
+
+            const data = await response.json();
+            return { success: true, user: data };
+        } catch (error) {
+            console.error("Error al obtener datos del usuario:", error);
+            return { success: false, error: "Error al obtener datos del usuario" };
+        }
+    },
+
     ViendoDirecto: async (idUsuario: number, ID_Streamer: string, viendo: string, EnVIvo: string) => {
         try {
             const response = await fetch("http://localhost:5000/VIendoDirecto", {
