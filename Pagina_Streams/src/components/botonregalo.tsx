@@ -6,6 +6,7 @@ interface BotonRegaloProps {
   monedas?: number;
   setMonedas?: (nuevas: number) => void;
   streamerID?: number;
+  disabled?: boolean;
 }
 
 type Regalo = {
@@ -16,7 +17,7 @@ type Regalo = {
   icono: string;
 };
 
-export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: BotonRegaloProps) {
+export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disabled = false }: BotonRegaloProps) {
   const [abierto, setAbierto] = useState(false);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
   const botonRef = useRef<HTMLButtonElement | null>(null);
@@ -39,7 +40,7 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
       try {
         console.log("🔄 [BotonRegalo] Cargando regalos...");
         
-        const result = await API.ObtenerRegalos();
+        const result = await API.ObtenerRegalos(idUsuario);
         
         if (result.success && result.data) {
           setRegalosList(result.data);
@@ -177,7 +178,7 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
         ref={botonRef}
         onClick={() => setAbierto((v) => !v)}
         aria-expanded={abierto}
-        disabled={cargandoRegalos}
+        disabled={cargandoRegalos || disabled || !streamerID}
         style={{
           backgroundColor: "#1f1f23",
           color: "white",
