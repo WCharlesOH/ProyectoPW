@@ -363,7 +363,7 @@ export const API = {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ID_Usuario: idUsuario,
-                    ID_Logro: idLogro,
+                    ID_LogroPlantilla: idLogro,
                     Completado: completado,
                 }),
             });
