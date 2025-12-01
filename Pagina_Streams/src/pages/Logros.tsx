@@ -61,10 +61,10 @@ export default function Logros() {
     // Variable auxiliar con el valor real inmediato
     const nuevoTotal = xpTotal + xp; 
     
-    // Actualiza la UI
+
     setXpTotal(nuevoTotal); 
     
-    // Actualiza la base de datos con el valor calculado
+    
     ActualizarNivel(nuevoTotal); 
   };
 

@@ -682,38 +682,47 @@ export const API = {
             return { success: false, error: "Error eliminando video" };
         }
     },
+
+    
+    
     CrearRegalo: async (
-        NombreRegalo: string,
-        PrecioRegalo: number,
-        DescripcionRegalo: string,
-        icono: string
-    ) => {
-        try {
-            const response = await fetch("http://localhost:5000/regalos/crear", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    NombreRegalo,
-                    PrecioRegalo,
-                    DescripcionRegalo,
-                    icono
-                })
-            });
+    NombreRegalo: string,
+    PrecioRegalo: number,
+    DescripcionRegalo: string,
+    icono: string,
+    idStreamer: number // <--- NUEVO: Necesitamos tu ID aquí
+) => {
+    try {
+        const response = await fetch("http://localhost:5000/regalos/crear", {
+            method: "POST", // <--- OBLIGATORIO: Cambiar GET a POST
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                NombreRegalo,
+                PrecioRegalo,
+                DescripcionRegalo,
+                icono,
+                ID_Streamer: idStreamer // <--- Enviamos tu ID al backend
+            })
+        });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                return { success: false, error: errorData.error };
-            }
-
-            return { success: true };
-
-        } catch (error) {
-            console.error("Error al crear regalo:", error);
-            return { success: false, error: "Error creando regalo" };
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { success: false, error: errorData.error };
         }
-    },
+
+        return { success: true };
+
+    } catch (error) {
+        console.error("Error al crear regalo:", error);
+        return { success: false, error: "Error de conexión" };
+    }
+},
+
+// Asegúrate de que tu función de OBTENER envíe el ID así:
+
+
     EliminarRegalo: async (nombre: string) => {
         try {
             const response = await fetch(`http://localhost:5000/regalos/eliminar?nombre=${encodeURIComponent(nombre)}`);
@@ -764,23 +773,12 @@ export const API = {
             return { success: false, error: "Error actualizando regalo" };
         }
     },
-    ObtenerRegalos: async () => {
-        try {
-            const response = await fetch("http://localhost:5000/regalos");
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                return { success: false, error: errorData.error };
-            }
-
-            const datos = await response.json();
-            return { success: true, data: datos };
-
-        } catch (error) {
-            console.error("Error obteniendo regalos:", error);
-            return { success: false, error: "Error obteniendo regalos" };
-        }
-    },
+   ObtenerRegalos: async (id: number) => {
+    // Fíjate en el "?ID="
+    const response = await fetch(`http://localhost:5000/regalos?ID=${id}`);
+    const data = await response.json();
+    return { success: true, data: data }; // Ajusta según tu estructura de respuesta
+},
     BuscarVideos: async (texto: string) => {
         try {
             const response = await fetch(`http://localhost:5000/videos/buscar?q=${encodeURIComponent(texto)}`);
