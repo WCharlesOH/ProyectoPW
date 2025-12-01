@@ -52,7 +52,7 @@ export default function Usuario() {
               <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg, #7c3aed, #5b21b6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>
                 🎁
               </div>
-              <h3 style={{ margin: 0, fontSize: 18 }}>Gestión de Regalos</h3>
+              <h3 style={{ margin: 0, fontSize: 18 }}>Gestion de Regalos</h3>
             </div>
             <p style={{ opacity: 0.8, fontSize: 14, marginBottom: 16, lineHeight: 1.5 }}>
               Administra los obsequios que recibes durante tus transmisiones en vivo.
