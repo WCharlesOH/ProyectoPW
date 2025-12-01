@@ -55,7 +55,7 @@ export default function Usuario() {
               <h3 style={{ margin: 0, fontSize: 18 }}>Gestión de Regalos</h3>
             </div>
             <p style={{ opacity: 0.8, fontSize: 14, marginBottom: 16, lineHeight: 1.5 }}>
-              Administra los regalos que recibes durante tus transmisiones.
+              Administra los regalos que recibes durante tus transmisiones en vivo.
             </p>
             <Link to="/gestion-regalos" style={{ background: "#7c3aed", color: "white", padding: "10px 16px", borderRadius: 8, textDecoration: "none", fontWeight: 600, display: "inline-block", fontSize: 14 }}>
               Gestionar Regalos
