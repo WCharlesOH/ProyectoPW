@@ -20,6 +20,7 @@ import Ajustes from './pages/Ajustes'
 import Usuario from './pages/Usuario'
 import PaginaStreamer from './pages/PaginaStreamer'
 import ResultadosBusqueda from "./pages/ResultadosBusqueda";
+import CategoriaPagina from './pages/CategoriaPagina';
 import { AuthProvider } from "./components/AuthContext";
 
 import { useState } from 'react'
@@ -61,6 +62,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/explorar" element={<Explorar />} />
+              <Route path="/categoria/:categoriaId" element={<CategoriaPagina sidebarAbierto={sidebarOpen} />} />
               <Route path="/buscar" element={<ResultadosBusqueda />} />
               <Route path="/perfil/:username" element={<Perfil monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/perfilv/:username" element={<Perfil_V />} />
