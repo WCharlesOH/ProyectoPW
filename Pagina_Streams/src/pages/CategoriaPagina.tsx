@@ -20,7 +20,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
   const [streamers, setStreamers] = useState<Streamer[]>([]);
   const [nombreCategoria, setNombreCategoria] = useState<string>("");
   const [cargando, setCargando] = useState(true);
-  const paddingLeft = sidebarAbierto ? "0px" : "60px";
+  const paddingLeft = sidebarAbierto ?  "0px" : "60px";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,14 +34,12 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
     
     setCargando(true);
     
-    // Decodificar el nombre del juego desde la URL
     const nombreJuego = decodeURIComponent(categoriaId);
     setNombreCategoria(nombreJuego);
     
-    // Llamar al backend para obtener streamers con ese juego
     const resultado = await API.StreamersPorJuego(nombreJuego);
     
-    if (resultado.success && resultado.streamers) {
+    if (resultado. success && resultado.streamers) {
       setStreamers(resultado.streamers);
     } else {
       console.error("Error al cargar streamers:", resultado.error);
@@ -91,7 +89,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
         color: "#fff",
         background: "#18181b",
         minHeight: "100vh",
-        transition: "padding-left 0. 3s ease",
+        transition: "padding-left 0.3s ease",
       }}
     >
       <section style={{ marginBottom: "30px" }}>
@@ -107,10 +105,10 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
             transition: "color 0.2s",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget. style.color = "#b794f6";
+            e.currentTarget.style.color = "#b794f6";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.color = "#9147ff";
+            e.currentTarget.style. color = "#9147ff";
           }}
         >
           ← Volver a Explorar
@@ -120,8 +118,8 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
         </h1>
         <p style={{ color: "#adadb8", fontSize: "14px" }}>
           {streamers.length === 0
-            ?  "No hay canales transmitiendo en este momento"
-            : `${streamers.length} ${streamers.length === 1 ?  "canal transmitiendo" : "canales transmitiendo"} en vivo`}
+            ? "No hay canales transmitiendo en este momento"
+            : `${streamers.length} ${streamers.length === 1 ? "canal transmitiendo" : "canales transmitiendo"} en vivo`}
         </p>
       </section>
 
@@ -142,7 +140,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
               No hay canales transmitiendo en este momento
             </h2>
             <p style={{ fontSize: "14px" }}>
-              No hay transmisiones activas en <strong>{nombreCategoria}</strong> ahora mismo. 
+              No hay transmisiones activas en <strong>{nombreCategoria}</strong> ahora mismo.
             </p>
             <p style={{ fontSize: "13px", marginTop: "8px" }}>
               Intenta explorar otras categorías o vuelve más tarde
@@ -159,7 +157,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
             {streamers.map((streamer) => (
               <div
                 key={streamer.ID}
-                onClick={() => navigate(`/${streamer.NombreUsuario}`)}
+                onClick={() => navigate(`/perfil/${streamer.NombreUsuario}`)}
                 style={{
                   background: "#0e0e10",
                   borderRadius: "8px",
@@ -169,17 +167,16 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                   border: "1px solid #333",
                 }}
                 onMouseEnter={(e) => {
-                  e. currentTarget.style.transform = "translateY(-5px)";
-                  e.currentTarget.style.border = "1px solid #9147ff";
-                  e.currentTarget.style.boxShadow = "0 8px 16px rgba(145, 71, 255, 0. 3)";
+                  e.currentTarget.style.transform = "translateY(-5px)";
+                  e. currentTarget.style.border = "1px solid #9147ff";
+                  e.currentTarget.style.boxShadow = "0 8px 16px rgba(145, 71, 255, 0.3)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.border = "1px solid #333";
-                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget. style.transform = "translateY(0)";
+                  e. currentTarget.style.border = "1px solid #333";
+                  e.currentTarget.style. boxShadow = "none";
                 }}
               >
-                {/* Thumbnail/Preview del stream */}
                 <div style={{ position: "relative" }}>
                   <div
                     style={{
@@ -194,7 +191,6 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                     <span style={{ fontSize: "60px" }}>🎮</span>
                   </div>
 
-                  {/* Badge EN VIVO */}
                   <div
                     style={{
                       position: "absolute",
@@ -223,13 +219,12 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                     EN VIVO
                   </div>
 
-                  {/* Nivel del streamer */}
                   <div
                     style={{
                       position: "absolute",
                       bottom: "10px",
                       right: "10px",
-                      background: "rgba(0, 0, 0, 0. 8)",
+                      background: "rgba(0, 0, 0, 0.8)",
                       color: "#00b7ff",
                       padding: "4px 8px",
                       borderRadius: "4px",
@@ -244,10 +239,8 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                   </div>
                 </div>
 
-                {/* Información del canal */}
                 <div style={{ padding: "12px", display: "flex", gap: "10px" }}>
-                  {/* Avatar */}
-                  {streamer. ImagenPerfil ?  (
+                  {streamer.ImagenPerfil ?  (
                     <img
                       src={streamer.ImagenPerfil}
                       alt={streamer.NombreUsuario}
@@ -262,7 +255,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none";
                         if (target.nextElementSibling) {
-                          (target.nextElementSibling as HTMLElement). style.display = "flex";
+                          (target.nextElementSibling as HTMLElement).style.display = "flex";
                         }
                       }}
                     />
@@ -273,7 +266,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                       height: "40px",
                       borderRadius: "50%",
                       background: "#9147ff",
-                      display: streamer.ImagenPerfil ?  "none" : "flex",
+                      display: streamer.ImagenPerfil ? "none" : "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       fontSize: "18px",
@@ -283,9 +276,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                     👤
                   </div>
 
-                  {/* Detalles */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    {/* Título del stream */}
                     <div
                       style={{
                         color: "#fff",
@@ -300,7 +291,6 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                       {streamer.TituloStream || "Sin título"}
                     </div>
 
-                    {/* Nombre del streamer */}
                     <div
                       style={{
                         color: "#adadb8",
@@ -311,10 +301,9 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                       {streamer.NombreUsuario}
                     </div>
 
-                    {/* Categoría/Tags */}
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
                       {streamer.Categoria ? (
-                        streamer. Categoria.split(",")
+                        streamer.Categoria.split(",")
                           .slice(0, 2)
                           .map((cat, idx) => (
                             <span

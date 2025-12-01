@@ -32,13 +32,9 @@ export default function CategoriaDetalle() {
     if (resultado.success) {
       setStreamers(resultado.streamers || []);
     } else {
-      console.error("Error al cargar streamers:", resultado.error);
+      console.error("Error al cargar streamers:", resultado. error);
     }
     setCargando(false);
-  };
-
-  const irAPerfil = (nombreUsuario: string) => {
-    navigate(`/${nombreUsuario}`);
   };
 
   if (cargando) {
@@ -62,7 +58,7 @@ export default function CategoriaDetalle() {
             animation: "spin 1s linear infinite",
             margin: "0 auto 16px"
           }}></div>
-          <p style={{ color: "#adadb8" }}>Cargando streams...</p>
+          <p style={{ color: "#adadb8" }}>Cargando streams... </p>
         </div>
       </div>
     );
@@ -95,7 +91,7 @@ export default function CategoriaDetalle() {
           e.currentTarget.style.background = "#353539";
         }}
         onMouseLeave={(e) => {
-          e. currentTarget.style.background = "#2a2a2e";
+          e.currentTarget.style.background = "#2a2a2e";
         }}
       >
         ← Volver a Explorar
@@ -109,7 +105,7 @@ export default function CategoriaDetalle() {
         <p style={{ color: "#adadb8", fontSize: "14px" }}>
           {streamers.length === 0 
             ? "No hay streamers en vivo en este momento" 
-            : `${streamers.length} ${streamers.length === 1 ? "streamer en vivo" : "streamers en vivo"}`
+            : `${streamers.length} ${streamers. length === 1 ? "streamer en vivo" : "streamers en vivo"}`
           }
         </p>
       </div>
@@ -143,23 +139,23 @@ export default function CategoriaDetalle() {
           {streamers.map((streamer) => (
             <div
               key={streamer.ID}
-              onClick={() => irAPerfil(streamer.NombreUsuario)}
+              onClick={() => navigate(`/perfil/${streamer.NombreUsuario}`)}
               style={{
                 background: "#0e0e10",
                 borderRadius: "8px",
                 overflow: "hidden",
                 border: "1px solid #333",
                 cursor: "pointer",
-                transition: "transform 0.2s, border-color 0.2s, box-shadow 0.2s"
+                transition: "transform 0.2s, border-color 0.2s, box-shadow 0. 2s"
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style. transform = "translateY(-5px)";
+                e.currentTarget. style. transform = "translateY(-5px)";
                 e.currentTarget.style.borderColor = "#9147ff";
                 e.currentTarget.style.boxShadow = "0 8px 16px rgba(145, 71, 255, 0.3)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e. currentTarget.style.borderColor = "#333";
+                e.currentTarget.style. transform = "translateY(0)";
+                e.currentTarget. style.borderColor = "#333";
                 e.currentTarget.style.boxShadow = "none";
               }}
             >
@@ -177,7 +173,7 @@ export default function CategoriaDetalle() {
                   position: "absolute",
                   top: "10px",
                   left: "10px",
-                  background: "rgba(255, 0, 0, 0.9)",
+                  background: "rgba(255, 0, 0, 0. 9)",
                   color: "white",
                   padding: "4px 8px",
                   borderRadius: "4px",
@@ -204,7 +200,7 @@ export default function CategoriaDetalle() {
               <div style={{ padding: "12px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
                   {/* Avatar */}
-                  {streamer.ImagenPerfil ?  (
+                  {streamer.ImagenPerfil ? (
                     <img
                       src={streamer.ImagenPerfil}
                       alt={streamer.NombreUsuario}
@@ -217,7 +213,7 @@ export default function CategoriaDetalle() {
                       }}
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.style. display = "none";
+                        target.style.display = "none";
                         if (target.nextElementSibling) {
                           (target.nextElementSibling as HTMLElement).style.display = "flex";
                         }
@@ -280,7 +276,7 @@ export default function CategoriaDetalle() {
                 {/* Categoría/Tags */}
                 {streamer.Categoria && (
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
-                    {streamer.Categoria.split(",").slice(0, 2).map((cat, idx) => (
+                    {streamer.Categoria.split(",").slice(0, 2). map((cat, idx) => (
                       <span
                         key={idx}
                         style={{
