@@ -3,6 +3,7 @@ import ChatBox from "../components/ChatBox";
 import LivePlayer from "../components/LivePlayer";
 import { useEffect, useState } from "react";
 import { useAuth } from "../components/AuthContext";
+import type { Usuario } from "../components/types";
 
 interface PerfilProps {
   monedas: number;
@@ -10,85 +11,176 @@ interface PerfilProps {
 }
 
 interface StreamerInfo {
-  username: string;
-  descripcion: string;
-  categoria: string;
-  seguidores: number;
-  imagenUrl: string;
+  ID: number;
+  NombreUsuario: string;
+  ImagenPerfil?: string;
+  NivelStreams: number;
+  HorasTransmision: number;
+  EnVivo: boolean;
 }
-
-const STREAMERS: StreamerInfo[] = [
-  {
-    username: "Vegeta",
-    descripcion: "Streamer de juegos retro y charlas casuales.",
-    categoria: "Retro Gaming",
-    seguidores: 2500,
-    imagenUrl: "https://placehold.co/800x450?text=Vegeta+Live",
-  },
-  {
-    username: "Frok",
-    descripcion: "Directos de arte y música en vivo 🎨🎵",
-    categoria: "Arte y Música",
-    seguidores: 1800,
-    imagenUrl: "https://placehold.co/800x450?text=Frok+En+Vivo",
-  },
-  {
-    username: "Zak",
-    descripcion: "Speedruns y desafíos épicos",
-    categoria: "Speedrunning",
-    seguidores: 3200,
-    imagenUrl: "https://placehold.co/800x450?text=Zak+Streaming",
-  },
-];
 
 export default function Perfil({ monedas, setMonedas }: PerfilProps) {
   const { username } = useParams<{ username: string }>();
-  const streamer = STREAMERS.find(
-    (s) => s.username.toLowerCase() === username?.toLowerCase()
-  );
-
-  // Estado local para seguimiento
   const { isLogged } = useAuth();
+  
+  const [streamer, setStreamer] = useState<StreamerInfo | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!streamer) return;
+  // Obtener datos del usuario logueado
+  const getUserData = (): Usuario | null => {
     try {
-      const stored = localStorage.getItem("following");
-      const following: string[] = stored ? JSON.parse(stored) : [];
-      setIsFollowing(following.includes(streamer.username));
+      const user = localStorage.getItem("user");
+      return user ? JSON.parse(user) : null;
     } catch {
-      setIsFollowing(false);
+      return null;
     }
-  }, [streamer]);
+  };
 
-  const toggleFollow = () => {
-    if (! isLogged) {
+  // Obtener información del streamer desde el backend
+  useEffect(() => {
+    const fetchStreamerInfo = async () => {
+      if (!username) return;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        // Buscar el usuario por nombre
+        const response = await fetch(
+          `http://localhost:3000/buscar/usuarios? q=${encodeURIComponent(username)}`
+        );
+
+        if (! response.ok) {
+          throw new Error("Error al buscar el streamer");
+        }
+
+        const usuarios = await response.json();
+        const streamerData = usuarios.find(
+          (u: any) => u.NombreUsuario. toLowerCase() === username.toLowerCase()
+        );
+
+        if (! streamerData) {
+          setError("Streamer no encontrado");
+          setStreamer(null);
+          return;
+        }
+
+        setStreamer({
+          ID: streamerData. ID,
+          NombreUsuario: streamerData.NombreUsuario,
+          ImagenPerfil: streamerData. ImagenPerfil,
+          NivelStreams: streamerData.NivelStreams || 1,
+          HorasTransmision: streamerData.HorasTransmision || 0,
+          EnVivo: streamerData.EnVivo || false,
+        });
+      } catch (err) {
+        console.error("Error obteniendo información del streamer:", err);
+        setError("Error al cargar el perfil del streamer");
+        setStreamer(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStreamerInfo();
+  }, [username]);
+
+  // Verificar si el usuario está siguiendo al streamer
+  useEffect(() => {
+    const checkFollowing = async () => {
+      if (!isLogged || !streamer) return;
+
+      const userData = getUserData();
+      if (! userData?. ID) return;
+
+      try {
+        const response = await fetch("http://localhost:3000/Suscrito", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ID_Usuario: userData.ID,
+          }),
+        });
+
+        if (response.ok) {
+          const suscripciones = await response.json();
+          const siguiendo = suscripciones. some(
+            (sub: any) => sub.ID_Streamer === streamer.ID
+          );
+          setIsFollowing(siguiendo);
+        }
+      } catch (err) {
+        console.error("Error verificando seguimiento:", err);
+      }
+    };
+
+    checkFollowing();
+  }, [isLogged, streamer]);
+
+  // Seguir/Dejar de seguir al streamer
+  const toggleFollow = async () => {
+    if (!isLogged) {
       alert("Debes iniciar sesión para seguir a un streamer");
       return;
     }
 
-    if (! streamer) return;
+    if (!streamer) return;
+
+    const userData = getUserData();
+    if (!userData?.ID) {
+      alert("Error: No se pudo obtener información del usuario");
+      return;
+    }
 
     try {
-      const stored = localStorage. getItem("following");
-      const following: string[] = stored ? JSON.parse(stored) : [];
-
       if (isFollowing) {
-        const updated = following.filter((u) => u !== streamer.username);
-        localStorage.setItem("following", JSON.stringify(updated));
-        setIsFollowing(false);
+        // Dejar de seguir
+        const response = await fetch("http://localhost:3000/Eliminar_Suscripcion", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON. stringify({
+            ID_Streamer: streamer.ID,
+            ID_Viewer: userData.ID,
+          }),
+        });
+
+        if (response.ok) {
+          setIsFollowing(false);
+        } else {
+          alert("Error al dejar de seguir al streamer");
+        }
       } else {
-        const updated = [...following, streamer.username];
-        localStorage.setItem("following", JSON.stringify(updated));
-        setIsFollowing(true);
+        // Seguir
+        const response = await fetch("http://localhost:3000/Crear_Suscripcion", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ID_Streamer: streamer.ID,
+            ID_Viewer: userData.ID,
+          }),
+        });
+
+        if (response.ok) {
+          setIsFollowing(true);
+        } else {
+          alert("Error al seguir al streamer");
+        }
       }
     } catch (err) {
       console.error("Error al actualizar seguimiento:", err);
+      alert("Error de conexión con el servidor");
     }
   };
 
-  if (! streamer) {
+  if (loading) {
     return (
       <div
         style={{
@@ -97,7 +189,21 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
           padding: "2rem",
         }}
       >
-        <h2>Streamer no encontrado</h2>
+        <h2>Cargando perfil...</h2>
+      </div>
+    );
+  }
+
+  if (error || !streamer) {
+    return (
+      <div
+        style={{
+          color: "white",
+          textAlign: "center",
+          padding: "2rem",
+        }}
+      >
+        <h2>{error || "Streamer no encontrado"}</h2>
       </div>
     );
   }
@@ -109,7 +215,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
         minHeight: "calc(100vh - 60px)",
         backgroundColor: "#0e0e10",
         color: "white",
-        transition: "margin-left 0. 3s ease",
+        transition: "margin-left 0.3s ease",
         padding: "20px",
         width: "100%",
         boxSizing: "border-box",
@@ -118,15 +224,16 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
       {/* Contenido principal */}
       <div style={{ flex: 1, paddingRight: "20px" }}>
         <div style={{ marginBottom: "20px" }}>
-          {/* 🎥 LivePlayer ahora usa VDO.Ninja con sala personalizada por streamer */}
-          <LivePlayer 
-            fallbackImage={streamer.imagenUrl} 
-            streamerName={streamer.username}
+          <LivePlayer
+            fallbackImage={
+              streamer.ImagenPerfil || "https://placehold.co/800x450?text=Stream"
+            }
+            streamerName={streamer.NombreUsuario}
           />
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <h1 style={{ margin: 0 }}>{streamer.username}</h1>
+          <h1 style={{ margin: 0 }}>{streamer.NombreUsuario}</h1>
           <button
             onClick={toggleFollow}
             style={{
@@ -149,11 +256,20 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
           >
             {isFollowing ? "✔ Siguiendo" : "+ Seguir"}
           </button>
+          {streamer.EnVivo && (
+            <span
+              style={{
+                padding: "4px 12px",
+                background: "#e91916",
+                borderRadius: "4px",
+                fontSize: "12px",
+                fontWeight: "bold",
+              }}
+            >
+              🔴 EN VIVO
+            </span>
+          )}
         </div>
-
-        <p style={{ color: "#aaa", marginTop: "10px" }}>
-          {streamer.descripcion}
-        </p>
 
         <div
           style={{
@@ -164,10 +280,11 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
           }}
         >
           <span>
-            <strong>Categoría:</strong> {streamer. categoria}
+            <strong>Nivel:</strong> {streamer.NivelStreams}
           </span>
           <span>
-            <strong>Seguidores:</strong> {streamer.seguidores. toLocaleString()}
+            <strong>Horas de transmisión:</strong>{" "}
+            {streamer.HorasTransmision. toLocaleString()}h
           </span>
         </div>
       </div>

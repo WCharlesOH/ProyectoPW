@@ -1,37 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
+import type { Usuario } from "./types";
 
-import vegeta from "../imagenes/Mirko.jpg";
-import fork from "../imagenes/fork.jpg";
-import grefg from "../imagenes/grefg.jpg";
+const DEFAULT_AVATAR = "https://placehold.co/40x40? text=User";
 
-const DEFAULT_AVATAR = vegeta;
-
-type Seguido = {
-  id: string;
-  name: string;
-  avatarUrl?: string;
+type StreamerEnVivo = {
+  ID?: number;
+  NombreUsuario: string;
+  ImagenPerfil?: string;
+  EnVivo?: boolean;
 };
 
 interface SidebarProps {
   onToggle?: (isOpen: boolean) => void;
 }
 
-
-// 🔹 IDs corregidos y nombres únicos
-const SEGUIDOS: Seguido[] = [
-  { id: "1", name: "Vegeta", avatarUrl: vegeta },
-  { id: "2", name: "Frok", avatarUrl: fork },
-  { id: "3", name: "Zak", avatarUrl: grefg },
-  { id: "4", name: "Staxx", avatarUrl: grefg },
-  { id: "5", name: "AuronPlay", avatarUrl: grefg },
-  { id: "6", name: "Grefg", avatarUrl: grefg },
-];
-
 export default function Sidebar({ onToggle }: SidebarProps) {
   const { isLogged } = useAuth();
   const [isOpen, setIsOpen] = useState(true);
+  const [streamersEnVivo, setStreamersEnVivo] = useState<StreamerEnVivo[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const toggleSidebar = () => {
     const newState = !isOpen;
@@ -39,25 +28,95 @@ export default function Sidebar({ onToggle }: SidebarProps) {
     onToggle?.(newState);
   };
 
-  const titulo = isLogged ? "Seguidos" : "Canales en vivo";
+  // Obtener usuario logueado
+  const getUserData = (): Usuario | null => {
+    try {
+      const user = localStorage.getItem("user");
+      return user ? JSON. parse(user) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  // Obtener streamers en vivo
+  useEffect(() => {
+    const fetchStreamersEnVivo = async () => {
+      setLoading(true);
+      try {
+        const userData = getUserData();
+        
+        if (isLogged && userData?. ID) {
+          // Si está logueado, obtener seguidos en vivo
+          const response = await fetch("http://localhost:3000/SeguidosEnVIvo", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              ID_Usuario: userData.ID,
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response. json();
+            // Mapear la respuesta del backend
+            const seguidos = data.map((item: any) => ({
+              ID: item.streamer?. ID,
+              NombreUsuario: item.streamer?.NombreUsuario,
+              ImagenPerfil: item.streamer?. ImagenPerfil,
+              EnVivo: true,
+            }));
+            setStreamersEnVivo(seguidos);
+          }
+        } else {
+          // Si no está logueado, obtener todos los streams activos
+          const response = await fetch("http://localhost:3000/api/streams/live");
+
+          if (response.ok) {
+            const data = await response. json();
+            const streams = data.streams?. map((stream: any) => ({
+              NombreUsuario: stream.streamerName,
+              ImagenPerfil: undefined,
+              EnVivo: true,
+            })) || [];
+            setStreamersEnVivo(streams);
+          }
+        }
+      } catch (error) {
+        console.error("Error obteniendo streamers en vivo:", error);
+        setStreamersEnVivo([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStreamersEnVivo();
+    
+    // Refrescar cada 30 segundos
+    const interval = setInterval(fetchStreamersEnVivo, 30000);
+    
+    return () => clearInterval(interval);
+  }, [isLogged]);
+
+  const titulo = isLogged ? "Seguidos en vivo" : "Canales en vivo";
 
   return (
     <div style={{ display: "flex" }}>
       <div
         style={{
-     width: isOpen ? 250 : 40,
-      transition: "width 0.3s",
-      backgroundColor: "#0e0e10",
-      color: "white",
-      height: "calc(100vh - 60px)",
-      overflow: "hidden",
-      position: "fixed", 
-      top: 60,              
-      left: 0,
-      zIndex: 100,
-  }}
+          width: isOpen ? 250 : 40,
+          transition: "width 0.3s",
+          backgroundColor: "#0e0e10",
+          color: "white",
+          height: "calc(100vh - 60px)",
+          overflow: "hidden",
+          position: "fixed",
+          top: 60,
+          left: 0,
+          zIndex: 100,
+        }}
       >
-        {/* 🔹 Encabezado del sidebar */}
+        {/* Encabezado del sidebar */}
         <div
           style={{
             padding: "12px",
@@ -85,48 +144,66 @@ export default function Sidebar({ onToggle }: SidebarProps) {
           )}
         </div>
 
-        {/* 🔹 Lista de streamers seguidos */}
+        {/* Lista de streamers en vivo */}
         {isOpen && (
           <div style={{ padding: "12px" }}>
-            <ul
-              style={{
-                listStyle: "none",
-                padding: 0,
-                marginTop: "12px",
-              }}
-            >
-              {SEGUIDOS.map((s) => (
-                <li
-                  key={s.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "10px",
-                  }}
-                >
-                  <img
-                    src={s.avatarUrl || DEFAULT_AVATAR}
-                    alt={s.name}
+            {loading ? (
+              <p style={{ color: "#aaa", fontSize: "14px" }}>Cargando... </p>
+            ) : streamersEnVivo.length === 0 ? (
+              <p style={{ color: "#aaa", fontSize: "14px" }}>
+                {isLogged ? "No hay seguidos en vivo" : "No hay canales en vivo"}
+              </p>
+            ) : (
+              <ul
+                style={{
+                  listStyle: "none",
+                  padding: 0,
+                  marginTop: "12px",
+                }}
+              >
+                {streamersEnVivo.map((streamer, index) => (
+                  <li
+                    key={streamer.ID || index}
                     style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <Link
-                    to={`/perfil/${s.name}`}
-                    style={{
-                      color: "white",
-                      marginLeft: "10px",
-                      textDecoration: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "10px",
                     }}
                   >
-                    {s.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                    <img
+                      src={streamer.ImagenPerfil || DEFAULT_AVATAR}
+                      alt={streamer.NombreUsuario}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <Link
+                      to={`/perfil/${streamer.NombreUsuario}`}
+                      style={{
+                        color: "white",
+                        marginLeft: "10px",
+                        textDecoration: "none",
+                      }}
+                    >
+                      {streamer.NombreUsuario}
+                    </Link>
+                    <span
+                      style={{
+                        marginLeft: "auto",
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        backgroundColor: "#e91916",
+                      }}
+                      title="En vivo"
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
       </div>
