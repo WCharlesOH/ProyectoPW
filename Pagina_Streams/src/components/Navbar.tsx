@@ -101,8 +101,8 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {
       className={`navbar ${isVisible ? "navbar--visible" : "navbar--hidden"}`}
     >
       <div className="navbar__group">
-        <h2 className="navbar__brand">
-          <Link to="/">Tinamo</Link>
+        <h2 className="navbar__brand" style={{ color: "#00b7ff" }}>
+          <Link to="/" style={linkStyle} >Tinamo</Link>
         </h2>
         <nav className="navbar__links">
           <NavLink to="/explorar" style={linkStyle}>
