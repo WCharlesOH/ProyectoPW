@@ -9,7 +9,7 @@ export default function Terminos() {
     <div className="t-wrapper">
       <button className="t-back" onClick={() => navigate(-1)}>← Regresar</button>
 
-      <h1 className="t-title">Términos y Condiciones</h1>
+      <h1 className="t-title">Terminos y Condiciones</h1>
 
       <article className="t-card">
         <img src={banner} alt="Términos" className="t-banner" />
