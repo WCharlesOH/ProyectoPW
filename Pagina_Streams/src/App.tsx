@@ -28,7 +28,6 @@ import Perfil_V from './pages/Perfil_V'
 import GestionRegalos from './pages/GestionRegalos'
 import Logros from './pages/Logros'
 
-import {API} from './Comandosllamadas/llamadas'
 import type { Usuario } from './components/types'
 import CategoriaDetalle from './pages/CategoriaDetalle'
 //Comentario para probar el deploy
