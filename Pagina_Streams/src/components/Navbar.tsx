@@ -1,5 +1,5 @@
 // Navbar.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import MonedasMenu from "./MonedasMenu";
@@ -21,10 +21,26 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {
   const [lastScrollY, setLastScrollY] = useState(0);
   const navigate = useNavigate();
 
+  const moreRef = useRef<HTMLDivElement | null>(null);
+
+  // Cerrar el submenu si se hace click fuera
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setDropOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const linkStyle: React.CSSProperties = {
     textDecoration: "none",
     color: "inherit",
-    margin: "0 8px"
+    margin: "0 8px",
   };
 
   // Control dinámico del navbar con scroll
@@ -37,11 +53,11 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {
       // Si estamos en el tope (primeros 50px), siempre mostrar
       if (currentScrollY < 50) {
         setIsVisible(true);
-      } 
+      }
       // Si scrolleamos hacia abajo más de 5px
       else if (currentScrollY > lastScrollY + 5) {
         setIsVisible(false);
-      } 
+      }
       // Si scrolleamos hacia arriba más de 5px
       else if (currentScrollY < lastScrollY - 5) {
         setIsVisible(true);
@@ -69,7 +85,7 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/buscar? q=${encodeURIComponent(searchQuery. trim())}`);
+      navigate(`/buscar? q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
@@ -81,7 +97,9 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {
   };
 
   return (
-    <header className={`navbar ${isVisible ? 'navbar--visible' : 'navbar--hidden'}`}>
+    <header
+      className={`navbar ${isVisible ? "navbar--visible" : "navbar--hidden"}`}
+    >
       <div className="navbar__group">
         <h2 className="navbar__brand">
           <Link to="/">Tinamo</Link>
@@ -90,19 +108,39 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {
           <NavLink to="/explorar" style={linkStyle}>
             Explorar
           </NavLink>
-          <div
-            className="navbar__more"
-            onMouseEnter={() => setDropOpen(true)}
-            onMouseLeave={() => setDropOpen(false)}
-          >
-            <button style={{ fontWeight: dropOpen ?  "bold" : "normal" }}>
+          <div className="navbar__more" ref={moreRef}>
+            <button
+              style={{ fontWeight: dropOpen ? "bold" : "normal" }}
+              onClick={() => setDropOpen(!dropOpen)}
+            >
               Más
             </button>
             {dropOpen && (
               <div className="navbar__more-menu">
-                <Link to="/nosotros">Nosotros</Link>
-                <Link to="/terminos">Términos</Link>
-                <Link to="/usuario">Centro de usuario</Link>
+                <Link
+                  to="/nosotros"
+                  onClick={() => {
+                    setDropOpen(false);
+                  }}
+                >
+                  Nosotros
+                </Link>
+                <Link
+                  to="/terminos"
+                  onClick={() => {
+                    setDropOpen(false);
+                  }}
+                >
+                  Términos
+                </Link>
+                <Link
+                  to="/usuario"
+                  onClick={() => {
+                    setDropOpen(false);
+                  }}
+                >
+                  Centro de usuario
+                </Link>
               </div>
             )}
           </div>
@@ -127,12 +165,20 @@ export default function Navbar({ monedas, setMonedas }: NavbarProps) {
       </form>
 
       <div className="navbar__actions">
-        {! isLogged ? (
+        {!isLogged ? (
           <>
-            <NavLink to="/login" style={linkStyle} className="navbar__button-link">
+            <NavLink
+              to="/login"
+              style={linkStyle}
+              className="navbar__button-link"
+            >
               Login
             </NavLink>
-            <NavLink to="/registro" style={linkStyle} className="navbar__button-link">
+            <NavLink
+              to="/registro"
+              style={linkStyle}
+              className="navbar__button-link"
+            >
               Register
             </NavLink>
           </>
