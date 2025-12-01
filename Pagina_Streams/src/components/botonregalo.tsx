@@ -6,6 +6,7 @@ interface BotonRegaloProps {
   monedas?: number;
   setMonedas?: (nuevas: number) => void;
   streamerID?: number;
+  disabled?: boolean;
 }
 
 type Regalo = {
@@ -16,11 +17,7 @@ type Regalo = {
   icono: string;
 };
 
-export default function BotonRegalo({
-  monedas = 0,
-  setMonedas,
-  streamerID,
-}: BotonRegaloProps) {
+export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disabled = false }: BotonRegaloProps) {
   const [abierto, setAbierto] = useState(false);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(
     null
@@ -56,6 +53,18 @@ export default function BotonRegalo({
           );
         } else {
           setRegalosList([]);
+        if(streamerID != null){
+          const result = await API.ObtenerRegalos(streamerID);
+
+          if (result.success && result.data) {
+            setRegalosList(result.data);
+            console.log(`✅ [BotonRegalo] ${result.data.length} regalos cargados`);
+          } else {
+            setRegalosList([]);
+          }
+        }
+        else{
+          console.log("no hay streamer id")
         }
       } catch (error) {
         console.error("❌ [BotonRegalo] Error:", error);
@@ -209,7 +218,7 @@ export default function BotonRegalo({
         ref={botonRef}
         onClick={() => setAbierto((v) => !v)}
         aria-expanded={abierto}
-        disabled={cargandoRegalos}
+        disabled={cargandoRegalos || disabled || !streamerID}
         style={{
           backgroundColor: "#1f1f23",
           color: "white",

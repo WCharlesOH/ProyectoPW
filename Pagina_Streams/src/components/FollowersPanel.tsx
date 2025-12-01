@@ -1,7 +1,26 @@
 import React, { useState } from 'react';
 
-const FollowersPanel: React.FC = () => {
+interface Seguidor {
+  ID_Viewer: number;
+  NombreUsuario: string;
+  ImagenPerfil: string;
+  NivelViewer: number;
+  Habilitado: boolean;
+}
+
+interface FollowersPanelProps {
+  seguidores: Seguidor[];
+  seguidoresTotales: number;
+}
+
+const FollowersPanel: React.FC<FollowersPanelProps> = ({ seguidores, seguidoresTotales }) => {
   const [showSeguidoresModal, setShowSeguidoresModal] = useState(false);
+  const [busqueda, setBusqueda] = useState('');
+
+  // Filtrar seguidores por búsqueda
+  const seguidoresFiltrados = seguidores. filter((seg) =>
+    seg.NombreUsuario.toLowerCase().includes(busqueda.toLowerCase())
+  );
 
   return (
     <>
@@ -22,7 +41,7 @@ const FollowersPanel: React.FC = () => {
               transition: 'all 0. 2s',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget. style.background = '#9147ff';
+              e.currentTarget.style.background = '#9147ff';
               e.currentTarget.style.color = '#fff';
             }}
             onMouseLeave={(e) => {
@@ -33,11 +52,61 @@ const FollowersPanel: React.FC = () => {
             Ver todos
           </button>
         </div>
-        <div style={{ color: '#adadb8', fontSize: 14, textAlign: 'center', paddingTop: 80 }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>👥</div>
-          <p>Tus seguidores aparecerán aquí</p>
-          <p style={{ fontSize: 12, marginTop: 8 }}>Haz click en "Ver todos" para ver la lista completa</p>
-        </div>
+
+        {seguidores.length === 0 ? (
+          <div style={{ color: '#adadb8', fontSize: 14, textAlign: 'center', paddingTop: 80 }}>
+            <div style={{ fontSize: 48, marginBottom: 12 }}>👥</div>
+            <p>Tus seguidores aparecerán aquí</p>
+            <p style={{ fontSize: 12, marginTop: 8 }}>Consigue tus primeros seguidores transmitiendo</p>
+          </div>
+        ) : (
+          <div>
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '40px 20px',
+              }}
+            >
+              <div style={{ fontSize: 64, marginBottom: 12, color: '#9147ff' }}>{seguidoresTotales}</div>
+              <p style={{ fontSize: 16, fontWeight: 600, margin: '0 0 8px 0' }}>Seguidores totales</p>
+              <p style={{ fontSize: 13, color: '#adadb8' }}>Haz click en "Ver todos" para ver la lista completa</p>
+            </div>
+
+            {/* Preview de últimos 3 seguidores */}
+            <div style={{ marginTop: 16 }}>
+              <p style={{ fontSize: 12, color: '#adadb8', marginBottom: 12 }}>Últimos seguidores:</p>
+              {seguidores.slice(0, 3).map((seg) => (
+                <div
+                  key={seg.ID_Viewer}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    padding: '8px 12px',
+                    background: '#0e0e10',
+                    borderRadius: 6,
+                    marginBottom: 8,
+                  }}
+                >
+                  <img
+                    src={seg. ImagenPerfil}
+                    alt={seg.NombreUsuario}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600 }}>{seg.NombreUsuario}</div>
+                    <div style={{ fontSize: 11, color: '#adadb8' }}>Nivel {seg.NivelViewer}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Modal de Seguidores */}
@@ -82,7 +151,9 @@ const FollowersPanel: React.FC = () => {
                 borderBottom: '1px solid #2e2e35',
               }}
             >
-              <h3 style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>👥 Mis Seguidores (1,234)</h3>
+              <h3 style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>
+                👥 Mis Seguidores ({seguidoresTotales})
+              </h3>
               <button
                 onClick={() => setShowSeguidoresModal(false)}
                 style={{
@@ -103,6 +174,8 @@ const FollowersPanel: React.FC = () => {
               <input
                 type="text"
                 placeholder="Buscar seguidor..."
+                value={busqueda}
+                onChange={(e) => setBusqueda(e. target.value)}
                 style={{
                   width: '100%',
                   padding: '10px 12px',
@@ -123,11 +196,70 @@ const FollowersPanel: React.FC = () => {
                 padding: '16px 24px',
               }}
             >
-              <div style={{ textAlign: 'center', color: '#adadb8', paddingTop: 60 }}>
-                <div style={{ fontSize: 64, marginBottom: 16 }}>👥</div>
-                <p style={{ fontSize: 16, marginBottom: 8 }}>No hay seguidores aún</p>
-                <p style={{ fontSize: 13 }}>Los seguidores que consigas aparecerán aquí</p>
-              </div>
+              {seguidoresFiltrados.length === 0 ? (
+                <div style={{ textAlign: 'center', color: '#adadb8', paddingTop: 60 }}>
+                  <div style={{ fontSize: 64, marginBottom: 16 }}>🔍</div>
+                  <p style={{ fontSize: 16, marginBottom: 8 }}>No se encontraron seguidores</p>
+                  <p style={{ fontSize: 13 }}>Intenta con otro término de búsqueda</p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {seguidoresFiltrados.map((seg) => (
+                    <div
+                      key={seg. ID_Viewer}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        padding: '12px',
+                        background: seg. Habilitado ? '#0e0e10' : 'rgba(235, 4, 0, 0.05)',
+                        borderRadius: 8,
+                        border: seg. Habilitado ? 'none' : '1px solid rgba(235, 4, 0, 0.2)',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget. style.background = seg.Habilitado
+                          ? '#1a1a1d'
+                          : 'rgba(235, 4, 0, 0.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = seg.Habilitado
+                          ? '#0e0e10'
+                          : 'rgba(235, 4, 0, 0.05)';
+                      }}
+                    >
+                      <img
+                        src={seg.ImagenPerfil}
+                        alt={seg.NombreUsuario}
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: '50%',
+                          objectFit: 'cover',
+                        }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 14, fontWeight: 600 }}>{seg.NombreUsuario}</div>
+                        <div style={{ fontSize: 12, color: '#adadb8' }}>Nivel {seg. NivelViewer} en tu chat</div>
+                      </div>
+                      {! seg.Habilitado && (
+                        <div
+                          style={{
+                            padding: '4px 8px',
+                            background: '#eb0400',
+                            borderRadius: 4,
+                            fontSize: 11,
+                            fontWeight: 600,
+                          }}
+                        >
+                          Bloqueado
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Footer del Modal */}
