@@ -799,4 +799,19 @@ export const API = {
         }
     },
 
+    MasVisto : async () => {
+        try {
+            const response = await fetch("http://localhost:5000/Mas_Visto");
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error };
+            }
+            const datos = await response.json();
+            return { success: true, data: datos };
+        } catch (error) {   
+            console.error("Error obteniendo videos más vistos:", error);
+            return { success: false, error: "Error obteniendo videos más vistos" };
+        }
+    }       
+
 };
