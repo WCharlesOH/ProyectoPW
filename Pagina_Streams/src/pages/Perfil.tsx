@@ -258,7 +258,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
           }}
         >
           <span>
-            <strong>Nivel:</strong> {streamer.NivelStreams}
+            <strong>Nivel:</strong> {1 + Math.floor(streamer.NivelStreams/ 100)}
           </span>
           <span>
             <strong>Horas de transmisión:</strong>{" "}
