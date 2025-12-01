@@ -30,7 +30,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
   }, [categoriaId]);
 
   const cargarStreamers = async () => {
-    if (!categoriaId) return;
+    if (! categoriaId) return;
     
     setCargando(true);
     
@@ -41,18 +41,14 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
     // Llamar al backend para obtener streamers con ese juego
     const resultado = await API.StreamersPorJuego(nombreJuego);
     
-    if (resultado.success) {
-      setStreamers(resultado.streamers || []);
+    if (resultado.success && resultado.streamers) {
+      setStreamers(resultado.streamers);
     } else {
       console.error("Error al cargar streamers:", resultado.error);
       setStreamers([]);
     }
     
     setCargando(false);
-  };
-
-  const irAPerfil = (nombreUsuario: string) => {
-    navigate(`/${nombreUsuario}`);
   };
 
   if (cargando) {
@@ -114,7 +110,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
             e.currentTarget. style.color = "#b794f6";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style. color = "#9147ff";
+            e.currentTarget.style.color = "#9147ff";
           }}
         >
           ← Volver a Explorar
@@ -124,8 +120,8 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
         </h1>
         <p style={{ color: "#adadb8", fontSize: "14px" }}>
           {streamers.length === 0
-            ? "No hay canales transmitiendo en este momento"
-            : `${streamers.length} ${streamers.length === 1 ? "canal transmitiendo" : "canales transmitiendo"} en vivo`}
+            ?  "No hay canales transmitiendo en este momento"
+            : `${streamers.length} ${streamers.length === 1 ?  "canal transmitiendo" : "canales transmitiendo"} en vivo`}
         </p>
       </section>
 
@@ -146,7 +142,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
               No hay canales transmitiendo en este momento
             </h2>
             <p style={{ fontSize: "14px" }}>
-              No hay transmisiones activas en <strong>{nombreCategoria}</strong> ahora mismo.
+              No hay transmisiones activas en <strong>{nombreCategoria}</strong> ahora mismo. 
             </p>
             <p style={{ fontSize: "13px", marginTop: "8px" }}>
               Intenta explorar otras categorías o vuelve más tarde
@@ -163,7 +159,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
             {streamers.map((streamer) => (
               <div
                 key={streamer.ID}
-                onClick={() => irAPerfil(streamer.NombreUsuario)}
+                onClick={() => navigate(`/${streamer.NombreUsuario}`)}
                 style={{
                   background: "#0e0e10",
                   borderRadius: "8px",
@@ -174,12 +170,12 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                 }}
                 onMouseEnter={(e) => {
                   e. currentTarget.style.transform = "translateY(-5px)";
-                  e.currentTarget.style. border = "1px solid #9147ff";
-                  e.currentTarget.style.boxShadow = "0 8px 16px rgba(145, 71, 255, 0.3)";
+                  e.currentTarget.style.border = "1px solid #9147ff";
+                  e.currentTarget.style.boxShadow = "0 8px 16px rgba(145, 71, 255, 0. 3)";
                 }}
                 onMouseLeave={(e) => {
-                  e. currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style. border = "1px solid #333";
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.border = "1px solid #333";
                   e.currentTarget.style.boxShadow = "none";
                 }}
               >
@@ -251,7 +247,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                 {/* Información del canal */}
                 <div style={{ padding: "12px", display: "flex", gap: "10px" }}>
                   {/* Avatar */}
-                  {streamer.ImagenPerfil ?  (
+                  {streamer. ImagenPerfil ?  (
                     <img
                       src={streamer.ImagenPerfil}
                       alt={streamer.NombreUsuario}
@@ -266,7 +262,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none";
                         if (target.nextElementSibling) {
-                          (target.nextElementSibling as HTMLElement).style.display = "flex";
+                          (target.nextElementSibling as HTMLElement). style.display = "flex";
                         }
                       }}
                     />
@@ -277,7 +273,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                       height: "40px",
                       borderRadius: "50%",
                       background: "#9147ff",
-                      display: streamer.ImagenPerfil ? "none" : "flex",
+                      display: streamer.ImagenPerfil ?  "none" : "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       fontSize: "18px",
@@ -318,7 +314,7 @@ export default function CategoriaPagina({ sidebarAbierto = true }: CategoriaPagi
                     {/* Categoría/Tags */}
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
                       {streamer.Categoria ? (
-                        streamer.Categoria.split(",")
+                        streamer. Categoria.split(",")
                           .slice(0, 2)
                           .map((cat, idx) => (
                             <span
