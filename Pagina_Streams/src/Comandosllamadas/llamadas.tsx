@@ -778,7 +778,7 @@ export const API = {
     },
     ObtenerRegalos: async (ID: number) => {
         try {
-            const response = await fetch(`http://localhost:5000/regalos?${ID}`);
+            const response = await fetch(`http://localhost:5000/regalos?ID=${ID}`);
 
             if (!response.ok) {
                 const errorData = await response.json();

@@ -39,14 +39,18 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID, disab
       setCargandoRegalos(true);
       try {
         console.log("🔄 [BotonRegalo] Cargando regalos...");
-        
-        const result = await API.ObtenerRegalos(idUsuario);
-        
-        if (result.success && result.data) {
-          setRegalosList(result.data);
-          console.log(`✅ [BotonRegalo] ${result.data.length} regalos cargados`);
-        } else {
-          setRegalosList([]);
+        if(streamerID != null){
+          const result = await API.ObtenerRegalos(streamerID);
+
+          if (result.success && result.data) {
+            setRegalosList(result.data);
+            console.log(`✅ [BotonRegalo] ${result.data.length} regalos cargados`);
+          } else {
+            setRegalosList([]);
+          }
+        }
+        else{
+          console.log("no hay streamer id")
         }
       } catch (error) {
         console.error("❌ [BotonRegalo] Error:", error);
