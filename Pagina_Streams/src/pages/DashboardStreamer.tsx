@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { canalActividad, canalStream, emitirActividad, emitirStream } from '../datos/sincronizacion';
+import { emitirActividad, emitirStream, suscribirActividad, suscribirStream } from '../datos/sincronizacion';
+import { useAuth } from '../components/AuthContext';
 
 interface Stat {
   label: string;
@@ -37,45 +38,56 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
   const [actividades, setActividades] = useState<Array<{id: string; text: string; time: string}>>([]);
   const timerRef = useRef<number | null>(null);
   
-  // 🎥 Estados para VDO. Ninja
+  // Estados para VDO.Ninja
   const [broadcasterUrl, setBroadcasterUrl] = useState<string>("");
   const [viewerUrl, setViewerUrl] = useState<string>("");
-  const [showPreviewPopup, setShowPreviewPopup] = useState(false);
+  const [roomId, setRoomId] = useState<string>("");
+  const [showStreamPreview, setShowStreamPreview] = useState(false);
+  const [streamTitle, setStreamTitle] = useState("");
+  const [streamCategory, setStreamCategory] = useState("Just Chatting");
   const broadcasterWindowRef = useRef<Window | null>(null);
 
-  const [mostrarPopupRegalos, setMostrarPopupRegalos] = useState(false);
+  // Usuario actual
+  const { user } = useAuth();
+  const nombreUsuario = (user as any)?.NombreUsuario || (user as any)?.name || "StreamerPrueba";
 
   const stats: Stat[] = [
     { label: 'Espectadores actuales', value: isLive ? '23' : '0', color: '#9147ff' },
     { label: 'Seguidores totales', value: '1,234', color: '#00b7ff' },
     { label: 'Monedas', value: monedas, hint: '💰 Ganadas de regalos', color: '#f59e0b' },
-    { label: 'Tiempo transmitido (hoy)', value: formatearTiempo(tiempoTransmision), color: '#10b981' },
+    { label: 'Tiempo transmitido', value: formatearTiempo(tiempoTransmision), color: '#10b981' },
   ];
 
-  // 🎥 Cargar URLs de VDO.Ninja al montar el componente
-  useEffect(() => {
-    const cargarUrlsVDO = async () => {
-      try {
-        // Obtener URL del broadcaster
-        const respBroadcaster = await fetch("http://localhost:5000/api/live-broadcaster");
-        if (respBroadcaster.ok) {
-          const dataBroadcaster = await respBroadcaster.json();
-          setBroadcasterUrl(dataBroadcaster.broadcasterUrl);
-        }
+  // Crear/Obtener sala del streamer
+  const obtenerSalaStreamer = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/stream/room", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          streamerName: nombreUsuario,
+        }),
+      });
 
-        // Obtener URL del viewer
-        const respViewer = await fetch("http://localhost:5000/api/live-url");
-        if (respViewer.ok) {
-          const dataViewer = await respViewer. json();
-          setViewerUrl(dataViewer.url);
-        }
-      } catch (error) {
-        console. error("Error al cargar URLs de VDO.Ninja:", error);
+      if (response.ok) {
+        const data = await response.json();
+        setBroadcasterUrl(data. broadcasterUrl);
+        setViewerUrl(data.viewerUrl);
+        setRoomId(data.roomId);
+        return data;
+      } else {
+        throw new Error("Error al obtener sala");
       }
-    };
+    } catch (error) {
+      console.error("Error al obtener sala:", error);
+      return null;
+    }
+  };
 
-    cargarUrlsVDO();
-  }, []);
+  // Cargar sala al montar componente
+  useEffect(() => {
+    obtenerSalaStreamer();
+  }, [nombreUsuario]);
 
   // Timer de transmisión
   useEffect(() => {
@@ -96,40 +108,34 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
     };
   }, [isLive]);
 
-  // Canal de actividades
+  // Suscripción a actividades
   useEffect(() => {
-    const handleActividadMessage = (event: MessageEvent) => {
-      const mensaje = event.data;
+    const subscription = suscribirActividad((mensaje: string) => {
       const nueva = {
-        id: Date.now().toString(),
+        id: Date.now(). toString(),
         text: mensaje,
         time: new Date().toLocaleTimeString(),
       };
-      setActividades((prev) => [nueva, ...prev].slice(0, 10));
-    };
-
-    canalActividad.addEventListener('message', handleActividadMessage);
+      setActividades((prev) => [nueva, ...prev]. slice(0, 10));
+    });
 
     return () => {
-      canalActividad.removeEventListener('message', handleActividadMessage);
+      subscription.unsubscribe();
     };
   }, []);
 
-  // Canal de stream para recibir regalos
+  // Suscripción a eventos del stream
   useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      const datos = event.data;
-      if (datos && datos.tipo === 'regalo') {
+    const subscription = suscribirStream((datos: any) => {
+      if (datos.tipo === 'regalo') {
         const ganancia = datos.valor || 0;
         setMonedas((prev) => prev + ganancia);
         emitirActividad(`💝 Regalo recibido: ${datos.nombre} (+${ganancia} monedas)`);
       }
-    };
-
-    canalStream.addEventListener('message', handleMessage);
+    });
 
     return () => {
-      canalStream.removeEventListener('message', handleMessage);
+      subscription.unsubscribe();
     };
   }, [setMonedas]);
 
@@ -142,46 +148,64 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
 
   const toggleLive = async () => {
     if (! isLive) {
-      // Iniciar transmisión
+      // INICIAR transmisión
       try {
-        const resp = await fetch("http://localhost:5000/api/live", {
+        // Asegurar que tenemos la sala
+        let salaData = broadcasterUrl ?  { broadcasterUrl, viewerUrl, roomId } : await obtenerSalaStreamer();
+        
+        if (!salaData) {
+          alert("Error al obtener la sala de transmisión");
+          return;
+        }
+
+        // Notificar al backend que iniciamos
+        const resp = await fetch("http://localhost:5000/api/stream/start", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
-            streamerName: "NombreStreamer",
-            title: "Mi transmisión en vivo" 
+            streamerName: nombreUsuario,
+            title: streamTitle || `Stream de ${nombreUsuario}`,
+            category: streamCategory,
           }),
         });
 
         if (resp.ok) {
           setIsLive(true);
-          emitirStream(true);
+          emitirStream({ tipo: 'estado', en_vivo: true });
           emitirActividad('🔴 Transmisión iniciada');
           
-          // Mostrar popup con preview
-          setShowPreviewPopup(true);
-          
           // Abrir ventana del broadcaster
-          if (broadcasterUrl) {
+          if (salaData.broadcasterUrl) {
             broadcasterWindowRef.current = window.open(
-              broadcasterUrl,
+              salaData.broadcasterUrl,
               'VDO_Broadcaster',
               'width=1280,height=720,menubar=no,toolbar=no,location=no,status=no'
             );
           }
+
+          // Mostrar preview después de 2 segundos
+          setTimeout(() => {
+            setShowStreamPreview(true);
+          }, 2000);
         }
       } catch (error) {
         console.error("Error al iniciar stream:", error);
+        alert("Error al iniciar la transmisión");
       }
     } else {
-      // Detener transmisión
+      // DETENER transmisión
       try {
-        await fetch("http://localhost:5000/api/live", { method: "DELETE" });
+        await fetch("http://localhost:5000/api/stream/stop", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ streamerName: nombreUsuario }),
+        });
+
         setIsLive(false);
         setTiempoTransmision(0);
-        emitirStream(false);
+        emitirStream({ tipo: 'estado', en_vivo: false });
         emitirActividad('⚫ Transmisión finalizada');
-        setShowPreviewPopup(false);
+        setShowStreamPreview(false);
         
         // Cerrar ventana del broadcaster
         if (broadcasterWindowRef.current && ! broadcasterWindowRef.current.closed) {
@@ -195,7 +219,9 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
 
   return (
     <div style={{ padding: 30, color: '#fff', background: '#0e0e10', minHeight: '100vh' }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 20 }}>Dashboard del Streamer</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 20 }}>
+        Dashboard - {nombreUsuario}
+      </h1>
 
       {/* Estadísticas */}
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 30 }}>
@@ -203,6 +229,67 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
           <StatCard key={i} stat={stat} />
         ))}
       </div>
+
+      {/* Configuración del Stream */}
+      {! isLive && (
+        <div style={{ 
+          background: '#18181b', 
+          padding: 24, 
+          borderRadius: 8, 
+          marginBottom: 20,
+          border: '1px solid #333'
+        }}>
+          <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>
+            ⚙️ Configuración del Stream
+          </h2>
+          <div style={{ display: 'grid', gap: 16, maxWidth: 600 }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>
+                Título del stream
+              </label>
+              <input
+                type="text"
+                value={streamTitle}
+                onChange={(e) => setStreamTitle(e.target.value)}
+                placeholder={`Stream de ${nombreUsuario}`}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#0e0e10',
+                  border: '1px solid #444',
+                  borderRadius: 6,
+                  color: '#fff',
+                  fontSize: 14,
+                }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: 14 }}>
+                Categoría
+              </label>
+              <select
+                value={streamCategory}
+                onChange={(e) => setStreamCategory(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: '#0e0e10',
+                  border: '1px solid #444',
+                  borderRadius: 6,
+                  color: '#fff',
+                  fontSize: 14,
+                }}
+              >
+                <option value="Just Chatting">Just Chatting</option>
+                <option value="Gaming">Gaming</option>
+                <option value="Music">Music</option>
+                <option value="Creative">Creative</option>
+                <option value="IRL">IRL</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Controles de Transmisión */}
       <div style={{ 
@@ -213,13 +300,13 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
         border: isLive ? '2px solid #eb0400' : '2px solid #333'
       }}>
         <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>
-          Control de Transmisión
+          🎥 Control de Transmisión
         </h2>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
           <button
             onClick={toggleLive}
             style={{
-              padding: '12px 24px',
+              padding: '14px 28px',
               fontSize: 16,
               fontWeight: 600,
               borderRadius: 6,
@@ -242,7 +329,7 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
           {isLive && (
             <>
               <div style={{
-                padding: '8px 16px',
+                padding: '10px 18px',
                 background: '#eb0400',
                 borderRadius: 6,
                 fontSize: 14,
@@ -262,7 +349,7 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
               </div>
               
               <button
-                onClick={() => setShowPreviewPopup(true)}
+                onClick={() => setShowStreamPreview(true)}
                 style={{
                   padding: '12px 24px',
                   fontSize: 14,
@@ -276,13 +363,26 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
               >
                 👁️ Ver Preview
               </button>
+
+              <div style={{ fontSize: 13, color: '#adadb8', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span>🆔 {roomId}</span>
+              </div>
             </>
           )}
         </div>
+
+        {roomId && (
+          <div style={{ marginTop: 16, padding: 12, background: '#0e0e10', borderRadius: 6, fontSize: 13 }}>
+            <p style={{ margin: '0 0 8px 0', color: '#adadb8' }}>
+              <strong>Viewer URL:</strong>
+            </p>
+            <code style={{ color: '#9147ff', wordBreak: 'break-all' }}>{viewerUrl}</code>
+          </div>
+        )}
       </div>
 
-      {/* Popup de Preview del Stream */}
-      {showPreviewPopup && isLive && viewerUrl && (
+      {/* Ventana Emergente Preview */}
+      {showStreamPreview && isLive && (
         <div
           style={{
             position: 'fixed',
@@ -290,32 +390,39 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(0, 0, 0, 0.85)',
+            background: 'rgba(0, 0, 0, 0.9)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 9999,
           }}
-          onClick={() => setShowPreviewPopup(false)}
+          onClick={() => setShowStreamPreview(false)}
         >
           <div
             style={{
               background: '#18181b',
               borderRadius: 12,
-              padding: 20,
-              maxWidth: '90%',
-              maxHeight: '90%',
-              width: '1280px',
+              padding: 0,
+              maxWidth: '95%',
+              maxHeight: '95%',
+              width: '1400px',
               boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5)',
+              overflow: 'hidden',
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ fontSize: 20, fontWeight: 600 }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              padding: '20px 24px',
+              borderBottom: '1px solid #2e2e35'
+            }}>
+              <h3 style={{ fontSize: 20, fontWeight: 600, margin: 0 }}>
                 🎥 Preview de tu Stream
               </h3>
               <button
-                onClick={() => setShowPreviewPopup(false)}
+                onClick={() => setShowStreamPreview(false)}
                 style={{
                   background: 'transparent',
                   border: 'none',
@@ -328,31 +435,58 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
                 ✕
               </button>
             </div>
+
             <div style={{ 
               width: '100%', 
-              height: '720px',
-              background: '#000',
-              borderRadius: 8,
-              overflow: 'hidden',
+              height: '800px',
+              background: '#0e0e10',
+              position: 'relative',
             }}>
               <iframe
-                src={viewerUrl}
+                src={`/perfil/${nombreUsuario}`}
                 style={{
                   width: '100%',
                   height: '100%',
                   border: 'none',
                 }}
-                allow="camera; microphone; display-capture"
                 title="Stream Preview"
               />
             </div>
+
             <div style={{ 
-              marginTop: 12, 
-              fontSize: 13, 
-              color: '#adadb8',
-              textAlign: 'center' 
+              padding: '16px 24px', 
+              borderTop: '1px solid #2e2e35',
+              background: '#1a1a1d'
             }}>
-              Esto es lo que tus espectadores están viendo
+              <div style={{ 
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontSize: 13, 
+                color: '#adadb8',
+              }}>
+                <div>
+                  Vista de espectador: <strong style={{ color: '#9147ff' }}>/perfil/{nombreUsuario}</strong>
+                </div>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 6,
+                    color: '#10b981'
+                  }}>
+                    <div style={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: '50%',
+                      background: '#10b981',
+                      animation: 'pulse 2s infinite',
+                    }}></div>
+                    Transmitiendo
+                  </div>
+                  <div>⏱️ {formatearTiempo(tiempoTransmision)}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -361,10 +495,10 @@ const DashboardStreamer: React. FC<DashboardStreamerProps> = ({ monedas, setMone
       {/* Actividades Recientes */}
       <div style={{ background: '#18181b', padding: 24, borderRadius: 8 }}>
         <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 16 }}>
-          Actividad Reciente
+          📋 Actividad Reciente
         </h2>
         <div style={{ maxHeight: 300, overflowY: 'auto' }}>
-          {actividades.length === 0 ? (
+          {actividades.length === 0 ?  (
             <p style={{ color: '#adadb8', fontSize: 14 }}>
               No hay actividad reciente
             </p>
