@@ -3,7 +3,6 @@ import ChatBox from "../components/ChatBox";
 import LivePlayer from "../components/LivePlayer";
 import { useEffect, useState } from "react";
 import { useAuth } from "../components/AuthContext";
-import { API } from "../Comandosllamadas/llamadas";
 import type { Usuario } from "../components/types";
 
 interface PerfilProps {
@@ -48,21 +47,33 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
       setError(null);
 
       try {
-        const result = await API.BuscarUsuarioPorNombre(username);
+        // Buscar el usuario por nombre
+        const response = await fetch(
+          `http://localhost:3000/buscar/usuarios? q=${encodeURIComponent(username)}`
+        );
 
-        if (! result.success || !result.user) {
+        if (! response.ok) {
+          throw new Error("Error al buscar el streamer");
+        }
+
+        const usuarios = await response.json();
+        const streamerData = usuarios.find(
+          (u: any) => u.NombreUsuario. toLowerCase() === username.toLowerCase()
+        );
+
+        if (! streamerData) {
           setError("Streamer no encontrado");
           setStreamer(null);
           return;
         }
 
         setStreamer({
-          ID: result.user. ID,
-          NombreUsuario: result.user.NombreUsuario,
-          ImagenPerfil: result.user. ImagenPerfil,
-          NivelStreams: result.user.NivelStreams || 1,
-          HorasTransmision: result.user.HorasTransmision || 0,
-          EnVivo: result. user.EnVivo || false,
+          ID: streamerData. ID,
+          NombreUsuario: streamerData.NombreUsuario,
+          ImagenPerfil: streamerData. ImagenPerfil,
+          NivelStreams: streamerData.NivelStreams || 1,
+          HorasTransmision: streamerData.HorasTransmision || 0,
+          EnVivo: streamerData.EnVivo || false,
         });
       } catch (err) {
         console.error("Error obteniendo información del streamer:", err);
@@ -85,9 +96,22 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
       if (! userData?. ID) return;
 
       try {
-        const result = await API.VerificarSiSigue(userData.ID, streamer. ID);
-        if (result.success) {
-          setIsFollowing(result.isFollowing);
+        const response = await fetch("http://localhost:3000/Suscrito", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ID_Usuario: userData.ID,
+          }),
+        });
+
+        if (response.ok) {
+          const suscripciones = await response.json();
+          const siguiendo = suscripciones. some(
+            (sub: any) => sub.ID_Streamer === streamer.ID
+          );
+          setIsFollowing(siguiendo);
         }
       } catch (err) {
         console.error("Error verificando seguimiento:", err);
@@ -104,7 +128,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
       return;
     }
 
-    if (! streamer) return;
+    if (!streamer) return;
 
     const userData = getUserData();
     if (!userData?.ID) {
@@ -113,20 +137,41 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
     }
 
     try {
-      let result;
       if (isFollowing) {
-        result = await API.EliminarSuscripcion(userData.ID, streamer.ID);
-        if (result.success) {
+        // Dejar de seguir
+        const response = await fetch("http://localhost:3000/Eliminar_Suscripcion", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON. stringify({
+            ID_Streamer: streamer.ID,
+            ID_Viewer: userData.ID,
+          }),
+        });
+
+        if (response.ok) {
           setIsFollowing(false);
         } else {
-          alert(result.error || "Error al dejar de seguir al streamer");
+          alert("Error al dejar de seguir al streamer");
         }
       } else {
-        result = await API.NuevaSuscripcion(userData.ID, streamer.ID);
-        if (result.success) {
+        // Seguir
+        const response = await fetch("http://localhost:3000/Crear_Suscripcion", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ID_Streamer: streamer.ID,
+            ID_Viewer: userData.ID,
+          }),
+        });
+
+        if (response.ok) {
           setIsFollowing(true);
         } else {
-          alert(result.error || "Error al seguir al streamer");
+          alert("Error al seguir al streamer");
         }
       }
     } catch (err) {
@@ -181,7 +226,7 @@ export default function Perfil({ monedas, setMonedas }: PerfilProps) {
         <div style={{ marginBottom: "20px" }}>
           <LivePlayer
             fallbackImage={
-              streamer.ImagenPerfil || "https://placehold.co/800x450? text=Stream"
+              streamer.ImagenPerfil || "https://placehold.co/800x450?text=Stream"
             }
             streamerName={streamer.NombreUsuario}
           />

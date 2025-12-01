@@ -39,7 +39,7 @@ export const API = {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                return { success: false, error: errorData. error };
+                return { success: false, error: errorData.error };
             }
 
             const data = await response.json();
@@ -66,61 +66,8 @@ export const API = {
             const data = await response.json();
             return { success: true, subscriptions: data };
         } catch (error) {
-            console. error("Error al obtener suscripciones:", error);
+            console.error("Error al obtener suscripciones:", error);
             return { success: false, error: "Error al obtener suscripciones" };
-        }
-    },
-
-    // Nueva función para verificar si un usuario sigue a un streamer específico
-    VerificarSiSigue: async (idUsuario: number, idStreamer: number) => {
-        try {
-            const response = await fetch("http://localhost:5000/Suscrito", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ID_Usuario: idUsuario }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                return { success: false, error: errorData.error, isFollowing: false };
-            }
-
-            const suscripciones = await response.json();
-            const isFollowing = suscripciones.some(
-                (sub: any) => sub.ID_Streamer === idStreamer
-            );
-            
-            return { success: true, isFollowing };
-        } catch (error) {
-            console.error("Error al verificar seguimiento:", error);
-            return { success: false, error: "Error al verificar seguimiento", isFollowing: false };
-        }
-    },
-
-    BuscarUsuarioPorNombre: async (nombreUsuario: string) => {
-        try {
-            const response = await fetch(
-                `http://localhost:5000/buscar/usuarios?q=${encodeURIComponent(nombreUsuario)}`
-            );
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                return { success: false, error: errorData. error };
-            }
-
-            const usuarios = await response.json();
-            const usuario = usuarios.find(
-                (u: any) => u.NombreUsuario. toLowerCase() === nombreUsuario.toLowerCase()
-            );
-
-            if (!usuario) {
-                return { success: false, error: "Usuario no encontrado" };
-            }
-
-            return { success: true, user: usuario };
-        } catch (error) {
-            console. error("Error al buscar usuario:", error);
-            return { success: false, error: "Error al buscar usuario" };
         }
     },
 
@@ -202,7 +149,7 @@ export const API = {
                 }),
             });
 
-            if (!response. ok) {
+            if (!response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
@@ -252,7 +199,7 @@ export const API = {
             });
 
             if (!response.ok) {
-                const errorData = await response. json();
+                const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
 
@@ -299,7 +246,7 @@ export const API = {
                 }),
             });
 
-            if (! response.ok) {
+            if (!response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
@@ -323,13 +270,13 @@ export const API = {
             });
 
             if (!response.ok) {
-                const errorData = await response. json();
+                const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
 
             return { success: true };
         } catch (error) {
-            console. error("Error al actualizar nivel del streamer:", error);
+            console.error("Error al actualizar nivel del streamer:", error);
             return { success: false, error: "Error al actualizar nivel del streamer" };
         }
     },
@@ -339,13 +286,13 @@ export const API = {
             const response = await fetch("http://localhost:5000/Actualizar_HorasTransmision", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON. stringify({
+                body: JSON.stringify({
                     ID_Usuario: idStreamer,
                     NuevasHoras: horas,
                 }),
             });
 
-            if (! response.ok) {
+            if (!response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
@@ -363,7 +310,7 @@ export const API = {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                return { success: false, error: errorData. error };
+                return { success: false, error: errorData.error };
             }
 
             const data = await response.json();
@@ -425,12 +372,12 @@ export const API = {
         try {
             const response = await fetch("http://localhost:5000/LogrosPlantilla");
 
-            if (!response. ok) {
+            if (!response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
 
-            const data = await response. json();
+            const data = await response.json();
             return { success: true, logros: data };
         } catch (error) {
             console.error("Error al obtener todos los logros:", error);
@@ -450,7 +397,7 @@ export const API = {
                 }),
             });
 
-            if (!response. ok) {
+            if (!response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
@@ -473,7 +420,7 @@ export const API = {
             });
 
             if (!response.ok) {
-                const errorData = await response. json();
+                const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
 
@@ -490,14 +437,14 @@ export const API = {
             const response = await fetch("http://localhost:5000/Mas_Vistos");
 
             if (!response.ok) {
-                const errorData = await response. json();
+                const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
 
             const data = await response.json();
             return { success: true, streamers: data };
         } catch (error) {
-            console. error("Error al obtener los streamers más vistos:", error);
+            console.error("Error al obtener los streamers más vistos:", error);
             return { success: false, error: "Error al obtener los streamers más vistos" };
         }
     },
@@ -520,7 +467,7 @@ export const API = {
             const data = await response.json();
             return { success: true, streamers: data };
         } catch (error) {
-            console. error("Error al obtener los streamers seguidos:", error);
+            console.error("Error al obtener los streamers seguidos:", error);
             return { success: false, error: "Error al obtener los streamers seguidos" };
         }
     },
@@ -536,7 +483,7 @@ export const API = {
                 }),
             });
 
-            if (! response.ok) {
+            if (!response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
@@ -582,7 +529,7 @@ export const API = {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                return { success: false, error: errorData. error };
+                return { success: false, error: errorData.error };
             }
 
             const data = await response.json()
@@ -644,7 +591,7 @@ export const API = {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                return { success: false, error: errorData. error };
+                return { success: false, error: errorData.error };
             }
 
             return { success: true };
@@ -724,7 +671,7 @@ export const API = {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON. stringify({
+                body: JSON.stringify({
                     NombreRegalo,
                     PrecioRegalo,
                     DescripcionRegalo,
@@ -733,22 +680,22 @@ export const API = {
             });
 
             if (!response.ok) {
-                const errorData = await response. json();
+                const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
 
             return { success: true };
 
         } catch (error) {
-            console. error("Error al crear regalo:", error);
+            console.error("Error al crear regalo:", error);
             return { success: false, error: "Error creando regalo" };
         }
     },
     EliminarRegalo: async (nombre: string) => {
         try {
-            const response = await fetch(`http://localhost:5000/regalos/eliminar? nombre=${encodeURIComponent(nombre)}`);
+            const response = await fetch(`http://localhost:5000/regalos/eliminar?nombre=${encodeURIComponent(nombre)}`);
 
-            if (!response. ok) {
+            if (!response.ok) {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
