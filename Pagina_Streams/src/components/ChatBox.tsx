@@ -28,6 +28,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
   const [nivel, setNivel] = useState(1);
   const [progreso, setProgreso] = useState(0);
   const [streamerID, setStreamerID] = useState<number | null>(null);
+  const [streamerEnVivo, setStreamerEnVivo] = useState(false);
   const [chatCreado, setChatCreado] = useState(false);
   const [nivelCargado, setNivelCargado] = useState(false);
   
@@ -40,42 +41,67 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
   const idUsuario = usuario?.ID;
   const avatarUsuario = usuario?.ImagenPerfil || `https://ui-avatars.com/api/? name=${nombreUsuario}&background=9147ff&color=fff&size=40`;
 
-  // Obtener ID del streamer y crear/cargar chat usando API. ObtenerDatosUsuarioNombre, API.ChatStreamer y API.ObtenerChatStreamer
+  // Inicializar chat y cargar nivel del backend
   useEffect(() => {
     const initChat = async () => {
-      if (! streamerName || !idUsuario || chatCreado) return;
+      if (!streamerName || !idUsuario || chatCreado) return;
       
       try {
-        // Obtener datos del streamer
-        const result = await API.ObtenerDatosUsuarioNombre(streamerName);
-        if (result.success && result.user) {
-          setStreamerID(result.user.ID);
-          
-          // Crear o obtener el chat del usuario con el streamer
-          const chatResult = await API.ChatStreamer(result.user.ID, idUsuario);
-          if (chatResult.success) {
-            setChatCreado(true);
-            
-            // Obtener datos del chat para cargar el nivel guardado
-            const chatDataResult = await API.ObtenerChatStreamer(result.user.ID, idUsuario);
-            if (chatDataResult.success && chatDataResult.chat) {
-              // Cargar el nivel desde el backend
-              const nivelGuardado = chatDataResult.chat.NivelViewer || 1;
-              setNivel(nivelGuardado);
-              setNivelCargado(true);
-            }
-            
-            // Actualizar que está viendo el directo usando API. ViendoDirecto
-            await API.ViendoDirecto(
-              idUsuario,
-              result.user.ID. toString(),
-              "true",
-              result.user.EnVivo ?  "true" : "false"
-            );
-          }
+        console.log("🔄 [ChatBox] Iniciando chat.. .");
+        
+        // 1. Obtener datos del streamer usando API. ObtenerDatosUsuarioNombre
+        const streamerResult = await API.ObtenerDatosUsuarioNombre(streamerName);
+        
+        if (! streamerResult.success || !streamerResult.user) {
+          console.error("❌ [ChatBox] Streamer no encontrado");
+          return;
         }
+
+        const streamerData = streamerResult.user;
+        setStreamerID(streamerData. ID);
+        setStreamerEnVivo(streamerData.EnVivo || false);
+        
+        console.log(`✅ [ChatBox] Streamer encontrado: ${streamerData.NombreUsuario} (ID: ${streamerData. ID}, EnVivo: ${streamerData.EnVivo})`);
+        
+        // 2.  Crear o obtener el chat usando API.ChatStreamer
+        const chatResult = await API.ChatStreamer(streamerData.ID, idUsuario);
+        
+        if (!chatResult.success) {
+          console.error("❌ [ChatBox] Error creando chat");
+          return;
+        }
+        
+        console.log("✅ [ChatBox] Chat creado/obtenido");
+        setChatCreado(true);
+        
+        // 3. Obtener datos del chat para cargar el nivel guardado usando API.ObtenerChatStreamer
+        const chatDataResult = await API.ObtenerChatStreamer(streamerData.ID, idUsuario);
+        
+        if (chatDataResult.success && chatDataResult.chat) {
+          const nivelGuardado = chatDataResult.chat.NivelViewer || 1;
+          setNivel(nivelGuardado);
+          setNivelCargado(true);
+          console.log(`✅ [ChatBox] Nivel cargado desde BD: ${nivelGuardado}`);
+        } else {
+          // Si no hay datos, inicializar con nivel 1
+          setNivel(1);
+          setNivelCargado(true);
+          console.log("⚠️ [ChatBox] Sin datos previos, nivel inicial: 1");
+        }
+        
+        // 4. Actualizar que está viendo el directo usando API. ViendoDirecto
+        const enVivoString = streamerData.EnVivo ? "true" : "false";
+        await API.ViendoDirecto(
+          idUsuario,
+          streamerData.ID. toString(),
+          "true",
+          enVivoString
+        );
+        
+        console.log("✅ [ChatBox] Estado 'Viendo' actualizado");
+        
       } catch (error) {
-        console.error("Error inicializando chat:", error);
+        console.error("❌ [ChatBox] Error inicializando chat:", error);
       }
     };
 
@@ -89,7 +115,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
     }
   }, [mensajes]);
 
-  // Subir de nivel automáticamente y actualizar en el backend usando API.ActualizarNivelviewer
+  // Subir de nivel automáticamente y guardar en el backend usando API.ActualizarNivelviewer
   useEffect(() => {
     const actualizarNivel = async () => {
       if (progreso >= 100 && idUsuario && streamerID && nivelCargado) {
@@ -99,9 +125,14 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
         
         // Actualizar nivel en el backend
         try {
+          console.log(`🔄 [ChatBox] Actualizando nivel a ${nuevoNivel}...`);
+          
           const result = await API.ActualizarNivelviewer(idUsuario, nuevoNivel, streamerID);
+          
           if (result.success) {
-            console.log(`✅ Nivel actualizado a ${nuevoNivel} en el backend`);
+            console.log(`✅ [ChatBox] Nivel ${nuevoNivel} guardado en BD`);
+          } else {
+            console.error("❌ [ChatBox] Error guardando nivel");
           }
           
           // Agregar mensaje de sistema local
@@ -109,14 +140,14 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
             id: Date.now().toString(),
             autor: "Sistema",
             nivel: 0,
-            texto: `🎉 ${nombreUsuario} subió al nivel ${nuevoNivel}!`,
-            hora: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            texto: `🎉 ${nombreUsuario} subió al nivel ${nuevoNivel}! `,
+            hora: new Date(). toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
             tipo: "sistema",
           };
           
           setMensajes(prev => [...prev, mensajeSistema]);
         } catch (error) {
-          console.error("Error actualizando nivel:", error);
+          console.error("❌ [ChatBox] Error actualizando nivel:", error);
         }
       }
     };
@@ -185,6 +216,9 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
           {streamerName && (
             <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "#adadb8" }}>
               Chat de {streamerName}
+              {streamerEnVivo && (
+                <span style={{ marginLeft: "8px", color: "#e91916" }}>🔴 EN VIVO</span>
+              )}
             </p>
           )}
         </div>
@@ -264,7 +298,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
                 <div
                   style={{
                     fontSize: "0.85rem",
-                    color: msg. tipo === "sistema" ? "#9147ff" : "#b3b3b3",
+                    color: msg.tipo === "sistema" ? "#9147ff" : "#b3b3b3",
                     marginBottom: "4px",
                     display: "flex",
                     alignItems: "center",
@@ -336,7 +370,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
             style={{
               padding: "10px 16px",
               border: "none",
-              backgroundColor: entrada.trim() && nivelCargado ?  "#9147ff" : "#555",
+              backgroundColor: entrada.trim() && nivelCargado ? "#9147ff" : "#555",
               color: "white",
               borderRadius: "6px",
               cursor: entrada.trim() && nivelCargado ?  "pointer" : "not-allowed",
