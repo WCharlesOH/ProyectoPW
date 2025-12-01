@@ -104,19 +104,6 @@ export default function UserMenu() {
               </Link>
             </li>
             <li>
-              <Link
-                to="/ajustes"
-                style={{
-                  display: "block",
-                  padding: "8px 12px",
-                  textDecoration: "none",
-                  color: "white",
-                }}
-              >
-                Ajustes
-              </Link>
-            </li>
-            <li>
               <button
                 onClick={() => {
                   logout();
@@ -138,37 +125,6 @@ export default function UserMenu() {
             </li>
           </ul>
 
-          {/* Opciones adicionales */}
-          <div style={{ borderTop: "1px solid #333", marginTop: "8px" }}>
-            <button
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "8px 12px",
-                background: "none",
-                border: "none",
-                textAlign: "left",
-                color: "white",
-                cursor: "pointer",
-              }}
-            >
-              Cambiar idioma
-            </button>
-            <button
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "8px 12px",
-                background: "none",
-                border: "none",
-                textAlign: "left",
-                color: "white",
-                cursor: "pointer",
-              }}
-            >
-              Cambiar aspecto
-            </button>
-          </div>
         </div>
       )}
     </div>

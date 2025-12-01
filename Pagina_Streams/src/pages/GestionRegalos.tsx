@@ -47,7 +47,7 @@ const GestionRegalos: React.FC = () => {
 
     setCargando(true);
     console.log('Cargando regalos para usuario ID:', idUsuario);
-    const data = await API.ObtenerRegalos(idUsuario);
+    const data = await API.ObtenerRegalosGestionar(idUsuario);
     console.log('Respuesta de ObtenerRegalos:', data);
     
     if (data.success && data.data) {

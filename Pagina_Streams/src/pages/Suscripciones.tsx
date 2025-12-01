@@ -105,21 +105,7 @@ export default function Suscripciones() {
                   Beneficios: Emotes exclusivos, insignias, sin anuncios
                 </p>
               </div>
-              <button
-                style={{
-                  width: "100%",
-                  background: "#9147ff",
-                  border: "none",
-                  color: "white",
-                  padding: "10px 12px",
-                  borderRadius: 8,
-                  cursor: "pointer",
-                  fontWeight: 700,
-                  fontSize: 14,
-                }}
-              >
-                Enviar un regalo ahora
-              </button>
+              
             </article>
           ))
         )}

@@ -16,7 +16,7 @@ import NotFound from './pages/NotFound'
 import Sidebar from './components/Sidebar'
 import PanelControl from './pages/PanelControl'
 import Suscripciones from './pages/Suscripciones'
-import Ajustes from './pages/Ajustes'
+
 import Usuarios from './pages/Usuario'
 import PaginaStreamer from './pages/PaginaStreamer'
 import ResultadosBusqueda from "./pages/ResultadosBusqueda";
@@ -27,7 +27,6 @@ import { useEffect, useState } from 'react'
 import Perfil_V from './pages/Perfil_V'
 import GestionRegalos from './pages/GestionRegalos'
 import Logros from './pages/Logros'
-import SeleccionarLogros from './pages/SeleccionarLogros'
 
 import {API} from './Comandosllamadas/llamadas'
 import type { Usuario } from './components/types'
@@ -88,12 +87,10 @@ export default function App() {
               <Route path="/dashboard" element={<DashboardStreamer monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/panel" element={<PanelControl monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/suscripciones" element={<Suscripciones />} />
-              <Route path="/ajustes" element={<Ajustes />} />
               <Route path="/usuario" element={<Usuarios />} />
               <Route path="/canal/:id" element={<PaginaStreamer />} />
               <Route path="/gestion-regalos" element={<GestionRegalos />} />
               <Route path="/logros/:username" element={<Logros />} />
-              <Route path="/seleccionar-logros/:username" element={<SeleccionarLogros />} />
               <Route path="/live-start" element={<LiveStart monedas={monedas} setMonedas={setMonedas} />} />
               
               <Route path="*" element={<NotFound />} />

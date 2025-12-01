@@ -128,25 +128,7 @@ export default function Perfil_V() {
           📊 Estado actual
         </button>
 
-        <button
-          onClick={() => setMostrarCanjear(true)}
-          style={{
-            width: "300px",
-            padding: "14px",
-            backgroundColor: "#1f1f23",
-            border: "2px solid #f59e0b",
-            borderRadius: "8px",
-            color: "white",
-            fontWeight: "bold",
-            cursor: "pointer",
-            transition: "0.2s",
-            fontSize: "15px",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f59e0b")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#1f1f23")}
-        >
-          💰 Canjear monedas
-        </button>
+  
 
         <button
           onClick={() => navigate(`/Logros/${nombre}`)}

@@ -786,6 +786,24 @@ export const API = {
             return { success: false, error: "Error actualizando regalo" };
         }
     },
+  ObtenerRegalosGestionar: async (ID: number) => {
+    try {
+        // ✅ URL CORRECTA + ✅ SEGURIDAD
+        const response = await fetch(`http://localhost:5000/regalosbyMirko?ID=${ID}`);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { success: false, error: errorData.error };
+        }
+
+        const datos = await response.json();
+        return { success: true, data: datos };
+
+    } catch (error) {
+        console.error("Error obteniendo regalos:", error);
+        return { success: false, error: "Error obteniendo regalos" };
+    }
+},
     ObtenerRegalos: async (ID: number) => {
         try {
             const response = await fetch(`http://localhost:5000/regalos`,{
