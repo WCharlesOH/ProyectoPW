@@ -773,11 +773,23 @@ export const API = {
             return { success: false, error: "Error actualizando regalo" };
         }
     },
-   ObtenerRegalos: async (id: number) => {
-    // Fíjate en el "?ID="
-    const response = await fetch(`http://localhost:5000/regalos?ID=${id}`);
-    const data = await response.json();
-    return { success: true, data: data }; // Ajusta según tu estructura de respuesta
+  ObtenerRegalosGestionar: async (ID: number) => {
+    try {
+        // ✅ URL CORRECTA + ✅ SEGURIDAD
+        const response = await fetch(`http://localhost:5000/regalosbyMirko?ID=${ID}`);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { success: false, error: errorData.error };
+        }
+
+        const datos = await response.json();
+        return { success: true, data: datos };
+
+    } catch (error) {
+        console.error("Error obteniendo regalos:", error);
+        return { success: false, error: "Error obteniendo regalos" };
+    }
 },
     BuscarVideos: async (texto: string) => {
         try {
