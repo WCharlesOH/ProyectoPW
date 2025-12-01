@@ -26,19 +26,18 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
   const [notificacion, setNotificacion] = useState<string | null>(null);
   const [toastCoords, setToastCoords] = useState<{ top: number; left: number } | null>(null);
 
-  // Cargar regalos desde el backend usando API. ObtenerRegalos
   const [regalosList, setRegalosList] = useState<Regalo[]>([]);
   const [cargandoRegalos, setCargandoRegalos] = useState(true);
 
   const usuario = (user as any);
-  const idUsuario = usuario?. ID;
+  const idUsuario = usuario?.ID;
 
-  // Cargar regalos del backend al montar el componente
+  // Cargar regalos del backend
   useEffect(() => {
     const cargarRegalos = async () => {
       setCargandoRegalos(true);
       try {
-        console.log("🔄 [BotonRegalo] Cargando regalos desde el backend...");
+        console.log("🔄 [BotonRegalo] Cargando regalos...");
         
         const result = await API.ObtenerRegalos();
         
@@ -46,7 +45,6 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
           setRegalosList(result.data);
           console.log(`✅ [BotonRegalo] ${result.data.length} regalos cargados`);
         } else {
-          console.error("❌ [BotonRegalo] Error al cargar regalos");
           setRegalosList([]);
         }
       } catch (error) {
@@ -60,12 +58,11 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
     cargarRegalos();
   }, []);
 
-  // Colocar menú en posición fija cerca del botón
   const posicionarMenu = () => {
-    const btn = botonRef.current;
+    const btn = botonRef. current;
     if (!btn) return setCoords(null);
     const r = btn.getBoundingClientRect();
-    setCoords({ top: r.top - 8, left: r. left + r.width / 2 });
+    setCoords({ top: r.top - 8, left: r.left + r.width / 2 });
   };
 
   useEffect(() => {
@@ -76,14 +73,13 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
     }
   }, [abierto]);
 
-  // Cerrar al hacer clic fuera
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
       const target = e.target as Node | null;
       if (!target) return;
       if (
         botonRef.current &&
-        (botonRef.current.contains(target as Node) || menuRef.current?.contains(target as Node))
+        (botonRef.current.contains(target as Node) || menuRef.current?. contains(target as Node))
       ) {
         return;
       }
@@ -94,56 +90,51 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
     window.addEventListener("resize", posicionarMenu);
     return () => {
       window.removeEventListener("mousedown", onDown);
-      window. removeEventListener("scroll", posicionarMenu, true);
+      window.removeEventListener("scroll", posicionarMenu, true);
       window.removeEventListener("resize", posicionarMenu);
     };
   }, []);
 
   const comprarRegalo = async (regalo: Regalo) => {
-    // Validar que el usuario tenga suficientes monedas
     if (monedas < regalo.PrecioRegalo) {
-      setNotificacion("No tienes suficientes monedas para ese regalo.");
+      setNotificacion("No tienes suficientes monedas.");
       const rect = botonRef.current?.getBoundingClientRect();
-      if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
+      if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect. top - 48 });
       setTimeout(() => setNotificacion(null), 2200);
       return;
     }
 
-    // Validar que haya un streamer para enviar el regalo
-    if (!streamerID || !idUsuario) {
-      setNotificacion("Error: No se pudo identificar al streamer o al usuario.");
-      const rect = botonRef.current?.getBoundingClientRect();
+    if (! streamerID || !idUsuario) {
+      setNotificacion("Error: No se pudo identificar al streamer.");
+      const rect = botonRef.current?. getBoundingClientRect();
       if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
       setTimeout(() => setNotificacion(null), 2200);
       return;
     }
 
     try {
-      console.log(`🔄 [BotonRegalo] Enviando regalo ${regalo.NombreRegalo}...`);
+      console.log(`🔄 [BotonRegalo] Enviando ${regalo.NombreRegalo}...`);
 
-      // 1. Descontar monedas del usuario que envía usando API.ActualizarMonedas
-      const nuevasMonedasUsuario = monedas - regalo.PrecioRegalo;
-      const resultUsuario = await API.ActualizarMonedas(idUsuario, nuevasMonedasUsuario);
+      // 1. Descontar monedas del usuario
+      const nuevasMonedasUsuario = monedas - regalo. PrecioRegalo;
+      const resultUsuario = await API. ActualizarMonedas(idUsuario, nuevasMonedasUsuario);
 
       if (! resultUsuario.success) {
         setNotificacion("Error al actualizar tus monedas.");
         return;
       }
 
-      console.log(`✅ [BotonRegalo] Monedas del usuario actualizadas: ${nuevasMonedasUsuario}`);
-
-      // 2. Obtener monedas actuales del streamer
+      // 2. Obtener y actualizar monedas del streamer
       const streamerDataResult = await API.ObtenerDatosUsuario(streamerID);
 
-      if (!streamerDataResult. success || !streamerDataResult.user) {
+      if (!streamerDataResult.success || !streamerDataResult.user) {
         setNotificacion("Error al obtener datos del streamer.");
         return;
       }
 
-      const monedasStreamer = streamerDataResult.user. Monedas || 0;
+      const monedasStreamer = streamerDataResult.user.Monedas || 0;
       const nuevasMonedasStreamer = monedasStreamer + regalo.PrecioRegalo;
 
-      // 3. Agregar monedas al streamer usando API.ActualizarMonedas
       const resultStreamer = await API.ActualizarMonedas(streamerID, nuevasMonedasStreamer);
 
       if (!resultStreamer.success) {
@@ -151,22 +142,28 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
         return;
       }
 
-      console.log(`✅ [BotonRegalo] Monedas del streamer actualizadas: ${nuevasMonedasStreamer}`);
-
-      // 4. Actualizar monedas localmente
+      // 3. Actualizar localStorage y estado local
       if (setMonedas) setMonedas(nuevasMonedasUsuario);
+      
+      // Actualizar usuario en localStorage
+      const userStorage = localStorage.getItem("user");
+      if (userStorage) {
+        const userData = JSON.parse(userStorage);
+        userData. Monedas = nuevasMonedasUsuario;
+        localStorage.setItem("user", JSON. stringify(userData));
+      }
 
-      // 5.  Mostrar notificación de éxito
-      setNotificacion(`Has enviado ${regalo.icono} ${regalo.NombreRegalo} por ${regalo.PrecioRegalo} monedas.`);
-      const rect = botonRef.current?. getBoundingClientRect();
+      console.log(`✅ [BotonRegalo] Regalo enviado, localStorage actualizado`);
+
+      // 4. Mostrar notificación
+      setNotificacion(`Has enviado ${regalo.icono} ${regalo.NombreRegalo} por ${regalo.PrecioRegalo} monedas. `);
+      const rect = botonRef.current?.getBoundingClientRect();
       if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
       setTimeout(() => setNotificacion(null), 2200);
       setAbierto(false);
 
-      console.log(`✅ [BotonRegalo] Regalo enviado exitosamente`);
-
     } catch (error) {
-      console.error("❌ [BotonRegalo] Error al enviar regalo:", error);
+      console.error("❌ [BotonRegalo] Error:", error);
       setNotificacion("Error al enviar el regalo.");
       const rect = botonRef.current?.getBoundingClientRect();
       if (rect) setToastCoords({ left: rect.left + rect.width / 2 - 120, top: rect.top - 48 });
@@ -195,7 +192,7 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
           opacity: cargandoRegalos ? 0.5 : 1,
         }}
       >
-        🎁 {cargandoRegalos ? "Cargando..." : "Regalos"}
+        🎁 {cargandoRegalos ? "..." : "Regalos"}
       </button>
 
       {abierto && coords && ! cargandoRegalos && (
@@ -222,7 +219,6 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
             <button
               onClick={() => setAbierto(false)}
               style={{ background: "transparent", border: "none", color: "#aaa", cursor: "pointer" }}
-              aria-label="Cerrar menú de regalos"
             >
               ✖
             </button>
@@ -252,14 +248,14 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
                     <div>
                       <div style={{ fontWeight: 700 }}>{r.NombreRegalo}</div>
                       <div style={{ fontSize: 12, color: "#b3b3b3" }}>
-                        {r.DescripcionRegalo || "Envía un gesto al streamer"}
+                        {r. DescripcionRegalo || "Envía un gesto"}
                       </div>
                     </div>
                   </div>
 
                   <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                     <div style={{ fontWeight: 800 }}>
-                      {r.PrecioRegalo} <span style={{ fontSize: 12 }}>monedas</span>
+                      {r.PrecioRegalo} <span style={{ fontSize: 12 }}>💰</span>
                     </div>
                     <button
                       onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
@@ -286,7 +282,6 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
         </div>
       )}
 
-      {/* Toast de notificación */}
       {notificacion && (
         <div
           role="status"
@@ -299,7 +294,7 @@ export default function BotonRegalo({ monedas = 0, setMonedas, streamerID }: Bot
             color: "white",
             padding: "10px 14px",
             borderRadius: 8,
-            boxShadow: "0 6px 18px rgba(0,0,0,0.6)",
+            boxShadow: "0 6px 18px rgba(0,0,0,0. 6)",
             zIndex: 10001,
             textAlign: "center",
           }}
