@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import {API} from "../Comandosllamadas/llamadas"
+import type { Usuario } from "./types";
 
 interface MonedasMenuProps {
   monedas: number;
@@ -22,6 +24,11 @@ export default function MonedasMenu({
   const [procesando, setProcesando] = useState(false);
   const [error, setError] = useState("");
   const [monedasPersonalizadas, setMonedasPersonalizadas] = useState<number>(0);
+  const info : Usuario | null = JSON.parse(localStorage.getItem("user") || "null")
+  const id = info?.ID
+
+  const todo = API
+
 
   const paquetes = [
     { monto: 100, precioUSD: 1.4, descuento: null },
@@ -44,10 +51,21 @@ export default function MonedasMenu({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setAbierto]);
 
+  const meterdatos = async (monto: number) => {
+    if (!id) {
+      console.log("no hay usuario")
+    }
+    else {
+      await todo.ActualizarMonedas(id, monto)
+      const nuevadata = await todo.ObtenerDatosUsuario(id)
+      localStorage.setItem("user", JSON.stringify(nuevadata.user));
+    }
+  }
+
   const comprar = (paquete: { monto: number; precioUSD: number }) => {
     setCompra(paquete);
     setMostrarPago(true);
-    setError(""); // limpiar error al abrir
+    setError("");
   };
 
   const confirmarPago = (e: React.FormEvent) => {
@@ -60,11 +78,21 @@ export default function MonedasMenu({
     }
 
     setProcesando(true);
+
+
+    const montoComprado = compra?.monto ?? 0;
+
+    const nuevoTotalMonedas = monedas + montoComprado;
+
+
+
     setTimeout(() => {
       setProcesando(false);
       setMostrarPago(false);
       setMostrarRecibo(true);
-      setMonedas(monedas + (compra?.monto ?? 0));
+      setMonedas(nuevoTotalMonedas);
+
+      meterdatos(nuevoTotalMonedas); 
       setMonedasPersonalizadas(0);
     }, 1500);
   };

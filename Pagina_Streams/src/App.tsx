@@ -17,27 +17,39 @@ import Sidebar from './components/Sidebar'
 import PanelControl from './pages/PanelControl'
 import Suscripciones from './pages/Suscripciones'
 import Ajustes from './pages/Ajustes'
-import Usuario from './pages/Usuario'
+import Usuarios from './pages/Usuario'
 import PaginaStreamer from './pages/PaginaStreamer'
 
 import { AuthProvider } from "./components/AuthContext";
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Perfil_V from './pages/Perfil_V'
 import GestionRegalos from './pages/GestionRegalos'
 import Logros from './pages/Logros'
 
 import {API} from './Comandosllamadas/llamadas'
+import type { Usuario } from './components/types'
 
 export default function App() {
 
-  const [monedas, setMonedas] = useState(120);
+  const [monedas, setMonedas] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(true); 
 
   const location = useLocation();
   const hideSidebar = location.pathname === '/dashboard';
 
   const todo = API
+
+  const datos: Usuario | null = JSON.parse(localStorage.getItem("user") || "null")
+
+  useEffect(()=>{
+    if(datos){
+      setMonedas(datos?.Monedas)
+    }
+    else{
+      setMonedas(0)
+    }
+  }, [])
 
   return (
     <AuthProvider>
@@ -72,7 +84,7 @@ export default function App() {
               <Route path="/panel" element={<PanelControl monedas={monedas} setMonedas={setMonedas} />} />
               <Route path="/suscripciones" element={<Suscripciones />} />
               <Route path="/ajustes" element={<Ajustes />} />
-              <Route path="/usuario" element={<Usuario />} />
+              <Route path="/usuario" element={<Usuarios />} />
               <Route path="/canal/:id" element={<PaginaStreamer />} />
               <Route path="/gestion-regalos" element={<GestionRegalos />} />
               <Route path="/logros/:username" element={<Logros />} />

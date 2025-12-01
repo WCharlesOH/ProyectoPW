@@ -12,7 +12,7 @@ export default function Logros() {
   
   const info: Usuario | null = JSON.parse(localStorage.getItem("user") || "null");
   const id = info ? Number(info.ID) : null;
-
+  const nivels = info ? Number(info.NivelStreams) : null
   const todo = API;
 
   const SacarLogros = async () => {
@@ -39,27 +39,40 @@ export default function Logros() {
     setRankingUsuarios(data.ranking); // <-- AHORA SI RENDERIZA
   };
 
-  const ActualizarNivel = async () => {
+  const ActualizarNivel = async (totalParaGuardar: number) => { // <--- Recibe parámetro
     if(!id){
-      console.error("ID inválido, no se puede actualizar info del usuario");
+      console.error("ID inválido...");
       return;
     }
-    await todo.ActualizarNivelStreams(id, xpTotal)
-    actualizarInfoUsuario()
+    // Usamos el parámetro totalParaGuardar en vez de xpTotal
+    await todo.ActualizarNivelStreams(id, totalParaGuardar); 
+    
+    // IMPORTANTE: Espera a que se guarde el nivel antes de pedir la info actualizada
+    await actualizarInfoUsuario(); 
   }
+
+  // ... (tus useEffects)
+
+  const reclamar = (xp: number) => {
+    // Variable auxiliar con el valor real inmediato
+    const nuevoTotal = xpTotal + xp; 
+    
+    // Actualiza la UI
+    setXpTotal(nuevoTotal); 
+    
+    // Actualiza la base de datos con el valor calculado
+    ActualizarNivel(nuevoTotal); 
+  };
 
   useEffect(() => {
     SacarLogros();
     SacarRanking();
+    if(!nivels){
+      console.error("No hay datos de nivel, no se puede actualizar info del usuario");
+      return;
+    }
+    setXpTotal(nivels)
   }, []);
-
-
-
-  const reclamar = (xp: number) => {
-    setXpTotal(prev => prev + xp);
-    ActualizarNivel()
-    actualizarInfoUsuario()
-  };
 
   // Calcular nivel actual
   const nivel = 1 + Math.floor(xpTotal / 100);

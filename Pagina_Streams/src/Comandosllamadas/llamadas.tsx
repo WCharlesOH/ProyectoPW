@@ -1,3 +1,5 @@
+import { data } from "react-router-dom";
+
 export const API = {
     RegistoUsuario: async (name: string, password: string, email: string, imagen: string) => {
         try {
@@ -16,8 +18,8 @@ export const API = {
                 const errorData = await response.json();
                 return { success: false, error: errorData.error };
             }
-
-            return { success: true };
+            const data = await response.json();
+            return { success: true , data: data};
         } catch (error) {
             console.error("Error al registrar usuario:", error);
             return { success: false, error: "Error al registrar usuario" };

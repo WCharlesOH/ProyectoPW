@@ -29,3 +29,21 @@ export interface ranking {
   NivelStreams: number,
   ImagenPerfil: string,
 }
+
+export interface registro {
+  NombreUsuario: string,
+  Contraseña: string,
+  email: string,
+  ImagenPerfil: string,
+}
+
+export interface datacompleta {
+  NombreUsuario: string,
+  Contraseña: string,
+  email: string,
+  ImagenPerfil: string,
+  HorasTransmision: Number,
+  Monedas: Number,
+  NivelStreams: Number,
+  Puntos: Number
+}
