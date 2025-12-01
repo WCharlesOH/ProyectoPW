@@ -24,7 +24,7 @@ export default function CategoriaDetalle() {
   }, [nombreJuego]);
 
   const cargarStreamers = async () => {
-    if (!nombreJuego) return;
+    if (! nombreJuego) return;
     
     setCargando(true);
     const resultado = await API.StreamersPorJuego(decodeURIComponent(nombreJuego));
@@ -85,31 +85,53 @@ export default function CategoriaDetalle() {
           borderRadius: "6px",
           cursor: "pointer",
           marginBottom: "20px",
-          fontSize: "14px"
+          fontSize: "14px",
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          transition: "all 0.2s"
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "#353539";
+        }}
+        onMouseLeave={(e) => {
+          e. currentTarget.style.background = "#2a2a2e";
         }}
       >
         ← Volver a Explorar
       </button>
 
-      <h1 style={{ fontSize: "28px", fontWeight: "bold", marginBottom: "10px" }}>
-        {nombreJuego ?  decodeURIComponent(nombreJuego) : "Categoría"}
-      </h1>
-      
-      <p style={{ color: "#adadb8", fontSize: "14px", marginBottom: "30px" }}>
-        {streamers.length} {streamers.length === 1 ? "streamer en vivo" : "streamers en vivo"}
-      </p>
+      <div style={{ marginBottom: "30px" }}>
+        <h1 style={{ fontSize: "28px", fontWeight: "bold", marginBottom: "10px" }}>
+          {nombreJuego ?  decodeURIComponent(nombreJuego) : "Categoría"}
+        </h1>
+        
+        <p style={{ color: "#adadb8", fontSize: "14px" }}>
+          {streamers.length === 0 
+            ? "No hay streamers en vivo en este momento" 
+            : `${streamers.length} ${streamers.length === 1 ? "streamer en vivo" : "streamers en vivo"}`
+          }
+        </p>
+      </div>
 
       {streamers.length === 0 ? (
         <div style={{ 
           textAlign: "center", 
           padding: "60px 20px",
-          color: "#adadb8"
+          color: "#adadb8",
+          background: "#0e0e10",
+          borderRadius: "12px",
+          border: "1px solid #333"
         }}>
-          <p style={{ fontSize: "18px", marginBottom: "10px" }}>
-            No hay streamers en vivo en esta categoría
+          <div style={{ fontSize: "60px", marginBottom: "20px" }}>📺</div>
+          <p style={{ fontSize: "18px", marginBottom: "10px", fontWeight: "bold", color: "#fff" }}>
+            No hay streamers en vivo
           </p>
           <p style={{ fontSize: "14px" }}>
-            Vuelve más tarde para ver streams
+            No hay transmisiones activas en <strong>{nombreJuego ?  decodeURIComponent(nombreJuego) : "esta categoría"}</strong> en este momento. 
+          </p>
+          <p style={{ fontSize: "13px", marginTop: "8px" }}>
+            Vuelve más tarde o explora otras categorías
           </p>
         </div>
       ) : (
@@ -128,17 +150,20 @@ export default function CategoriaDetalle() {
                 overflow: "hidden",
                 border: "1px solid #333",
                 cursor: "pointer",
-                transition: "transform 0.2s, border-color 0.2s"
+                transition: "transform 0.2s, border-color 0.2s, box-shadow 0.2s"
               }}
               onMouseEnter={(e) => {
-                e. currentTarget.style.transform = "translateY(-5px)";
+                e.currentTarget.style. transform = "translateY(-5px)";
                 e.currentTarget.style.borderColor = "#9147ff";
+                e.currentTarget.style.boxShadow = "0 8px 16px rgba(145, 71, 255, 0.3)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style. borderColor = "#333";
+                e. currentTarget.style.borderColor = "#333";
+                e.currentTarget.style.boxShadow = "none";
               }}
             >
+              {/* Thumbnail/Preview */}
               <div style={{
                 height: "170px",
                 background: "linear-gradient(135deg, #1f1f23 0%, #2a2a2e 100%)",
@@ -147,6 +172,7 @@ export default function CategoriaDetalle() {
                 justifyContent: "center",
                 position: "relative"
               }}>
+                {/* Badge EN VIVO */}
                 <div style={{
                   position: "absolute",
                   top: "10px",
@@ -156,15 +182,28 @@ export default function CategoriaDetalle() {
                   padding: "4px 8px",
                   borderRadius: "4px",
                   fontSize: "12px",
-                  fontWeight: "bold"
+                  fontWeight: "bold",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px"
                 }}>
-                  🔴 EN VIVO
+                  <span style={{ 
+                    width: "8px", 
+                    height: "8px", 
+                    background: "white", 
+                    borderRadius: "50%",
+                    animation: "pulse 2s infinite"
+                  }}></span>
+                  EN VIVO
                 </div>
+                
                 <span style={{ fontSize: "60px" }}>🎮</span>
               </div>
 
+              {/* Información del streamer */}
               <div style={{ padding: "12px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                  {/* Avatar */}
                   {streamer.ImagenPerfil ?  (
                     <img
                       src={streamer.ImagenPerfil}
@@ -173,61 +212,88 @@ export default function CategoriaDetalle() {
                         width: "40px",
                         height: "40px",
                         borderRadius: "50%",
-                        objectFit: "cover"
+                        objectFit: "cover",
+                        border: "2px solid #9147ff"
+                      }}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style. display = "none";
+                        if (target.nextElementSibling) {
+                          (target.nextElementSibling as HTMLElement).style.display = "flex";
+                        }
                       }}
                     />
-                  ) : (
-                    <div style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
-                      background: "#9147ff",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "18px"
-                    }}>
-                      👤
-                    </div>
-                  )}
-                  <div>
+                  ) : null}
+                  <div style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "50%",
+                    background: "#9147ff",
+                    display: streamer.ImagenPerfil ? "none" : "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "18px",
+                    border: "2px solid #9147ff"
+                  }}>
+                    👤
+                  </div>
+                  
+                  {/* Nombre y nivel */}
+                  <div style={{ flex: 1 }}>
                     <div style={{ 
                       color: "#fff", 
                       fontWeight: "bold", 
-                      fontSize: "14px" 
+                      fontSize: "14px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis"
                     }}>
                       {streamer.NombreUsuario}
                     </div>
                     <div style={{ 
                       color: "#adadb8", 
-                      fontSize: "12px" 
+                      fontSize: "12px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px"
                     }}>
-                      Nivel {streamer.NivelStreams}
+                      ⭐ Nivel {streamer.NivelStreams}
                     </div>
                   </div>
                 </div>
 
+                {/* Título del stream */}
                 <div style={{
                   color: "#e0e0e0",
                   fontSize: "13px",
-                  marginBottom: "6px",
-                  whiteSpace: "nowrap",
+                  marginBottom: "8px",
+                  height: "38px",
                   overflow: "hidden",
-                  textOverflow: "ellipsis"
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  lineHeight: "1.4"
                 }}>
                   {streamer.TituloStream || "Sin título"}
                 </div>
 
+                {/* Categoría/Tags */}
                 {streamer.Categoria && (
-                  <div style={{
-                    fontSize: "11px",
-                    color: "#adadb8",
-                    background: "#2e2e35",
-                    padding: "4px 8px",
-                    borderRadius: "4px",
-                    display: "inline-block"
-                  }}>
-                    {streamer.Categoria}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                    {streamer.Categoria.split(",").slice(0, 2).map((cat, idx) => (
+                      <span
+                        key={idx}
+                        style={{
+                          fontSize: "11px",
+                          color: "#adadb8",
+                          background: "#2e2e35",
+                          padding: "4px 8px",
+                          borderRadius: "4px"
+                        }}
+                      >
+                        {cat. trim()}
+                      </span>
+                    ))}
                   </div>
                 )}
               </div>
@@ -240,6 +306,11 @@ export default function CategoriaDetalle() {
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
         }
       `}</style>
     </div>

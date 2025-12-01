@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { API } from "../Comandosllamadas/llamadas";
 
 interface Juego {
@@ -15,7 +15,7 @@ export default function Explorar({ sidebarAbierto = true }: ExplorarProps) {
   const [juegos, setJuegos] = useState<Juego[]>([]);
   const [cargando, setCargando] = useState(true);
   const navigate = useNavigate();
-  const paddingLeft = sidebarAbierto ? "0px" : "60px";
+  const paddingLeft = sidebarAbierto ?  "0px" : "60px";
 
   useEffect(() => {
     cargarJuegos();
@@ -34,6 +34,7 @@ export default function Explorar({ sidebarAbierto = true }: ExplorarProps) {
   };
 
   const handleCategoriaClick = (nombreJuego: string) => {
+    // Redirigir a la página de categoría con el nombre del juego
     navigate(`/categoria/${encodeURIComponent(nombreJuego)}`);
   };
 
@@ -109,7 +110,7 @@ export default function Explorar({ sidebarAbierto = true }: ExplorarProps) {
           }}>
             {juegos.map((juego) => (
               <div 
-                key={juego. ID_Juego}
+                key={juego.ID_Juego}
                 onClick={() => handleCategoriaClick(juego.Nombre)}
                 style={{ 
                   background: "#0e0e10", 
@@ -125,7 +126,7 @@ export default function Explorar({ sidebarAbierto = true }: ExplorarProps) {
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "scale(1)";
-                  e. currentTarget.style.borderColor = "#333";
+                  e.currentTarget.style.borderColor = "#333";
                 }}
               >
                 <div style={{ 
@@ -161,14 +162,24 @@ export default function Explorar({ sidebarAbierto = true }: ExplorarProps) {
                     overflow: "hidden",
                     textOverflow: "ellipsis"
                   }}>
-                    {juego. Nombre}
+                    {juego.Nombre}
                   </div>
                   <div style={{ 
                     color: "#adadb8", 
                     fontSize: "13px", 
                     marginBottom: "8px" 
                   }}>
-                    Haz clic para ver streams
+                    Ver streams en vivo
+                  </div>
+                  <div style={{
+                    fontSize: "11px",
+                    color: "#9147ff",
+                    background: "rgba(145, 71, 255, 0.2)",
+                    padding: "4px 8px",
+                    borderRadius: "4px",
+                    display: "inline-block"
+                  }}>
+                    Categoría
                   </div>
                 </div>
               </div>
