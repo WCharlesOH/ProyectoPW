@@ -965,4 +965,44 @@ export const API = {
         }
     },
 
+    ObtenerJuegos: async () => {
+    try {
+        const response = await fetch("http://localhost:5000/ObtenerJuegos");
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { success: false, error: errorData. error };
+        }
+
+        const data = await response.json();
+        return { success: true, juegos: data };
+    } catch (error) {
+        console.error("Error al obtener juegos:", error);
+        return { success: false, error: "Error al obtener juegos" };
+    }
+},
+
+    StreamersPorJuego: async (nombreJuego: string) => {
+        try {
+            const response = await fetch("http://localhost:5000/StreamersPorJuego", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    NombreJuego: nombreJuego,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error };
+            }
+
+            const data = await response.json();
+            return { success: true, streamers: data. streamers, total: data.totalStreamers };
+        } catch (error) {
+            console.error("Error al obtener streamers por juego:", error);
+            return { success: false, error: "Error al obtener streamers por juego" };
+        }
+    },
+
 };
