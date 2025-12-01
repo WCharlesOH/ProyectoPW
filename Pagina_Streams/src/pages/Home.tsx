@@ -22,7 +22,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
   const [cargandoRecomendados, setCargandoRecomendados] = useState(true);
 
   // Ajustar el padding según si el sidebar está abierto o cerrado
-  const paddingLeft = sidebarAbierto ? "0px" : "60px";
+  const paddingLeft = sidebarAbierto ?  "0px" : "60px";
 
   // Cargar streamer más visto desde el backend
   useEffect(() => {
@@ -33,9 +33,20 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
         
         const result = await API.MasVisto();
         
-        if (result.success && result.data && result.data.length > 0) {
-          setStreamerDestacado(result. data[0]);
-          console. log(`✅ [Home] Streamer destacado: ${result.data[0].NombreUsuario}`);
+        if (result.success && result.data) {
+          // Verificar si result.data es un array
+          if (Array. isArray(result.data) && result.data.length > 0) {
+            setStreamerDestacado(result.data[0]);
+            console.log(`✅ [Home] Streamer destacado: ${result.data[0].NombreUsuario}`);
+          } 
+          // Si result.data es un objeto directamente
+          else if (! Array.isArray(result.data) && result.data.NombreUsuario) {
+            setStreamerDestacado(result. data);
+            console.log(`✅ [Home] Streamer destacado: ${result.data.NombreUsuario}`);
+          } else {
+            console.log("⚠️ [Home] No hay streamers en vivo");
+            setStreamerDestacado(null);
+          }
         } else {
           console.log("⚠️ [Home] No hay streamers en vivo");
           setStreamerDestacado(null);
@@ -62,7 +73,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
         
         if (result.success && result.streamers) {
           setStreamersRecomendados(result.streamers);
-          console.log(`✅ [Home] ${result.streamers.length} streamers cargados`);
+          console. log(`✅ [Home] ${result.streamers.length} streamers cargados`);
         } else {
           console.log("⚠️ [Home] No hay streamers disponibles");
           setStreamersRecomendados([]);
@@ -158,7 +169,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
                     </div>
                   </div>
                   <Link 
-                    to={`/canal/${streamerDestacado.NombreUsuario}`}
+                    to={`/perfil? user=${encodeURIComponent(streamerDestacado.NombreUsuario)}`}
                     style={{
                       display: "inline-block",
                       marginTop: "12px",
@@ -171,9 +182,9 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
                       transition: "transform 0.2s",
                     }}
                     onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.05)"}
-                    onMouseOut={(e) => e.currentTarget.style. transform = "scale(1)"}
+                    onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
                   >
-                    Ver stream →
+                    Ver perfil →
                   </Link>
                 </div>
               </div>
@@ -194,32 +205,37 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
 
         {streamerDestacado && (
           <div className="hero-grid__card">
-            <div className="hero-grid__card-top">
-              <img
-                src={streamerDestacado.ImagenPerfil || `https://ui-avatars. com/api/?name=${streamerDestacado.NombreUsuario}&background=random&size=50`}
-                alt={streamerDestacado.NombreUsuario}
-                className="hero-grid__avatar"
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  borderRadius: "50%",
-                }}
-              />
-              <div>
-                <div style={{ color: "#00b7ff", fontWeight: "bold", fontSize: "16px" }}>
-                  {streamerDestacado.NombreUsuario}
-                </div>
-                <div style={{ color: "#e91916", fontSize: "14px", fontWeight: "600" }}>
-                  🔴 EN VIVO
-                </div>
-                <div style={{ color: "#aaa", fontSize: "13px" }}>
-                  {streamerDestacado.ViendoCount} espectadores
-                </div>
-                <div style={{ color: "#aaa", fontSize: "12px" }}>
-                  Nivel {streamerDestacado. NivelStreams}
+            <Link 
+              to={`/perfil?user=${encodeURIComponent(streamerDestacado. NombreUsuario)}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <div className="hero-grid__card-top">
+                <img
+                  src={streamerDestacado.ImagenPerfil || `https://ui-avatars.com/api/?name=${streamerDestacado.NombreUsuario}&background=random&size=50`}
+                  alt={streamerDestacado.NombreUsuario}
+                  className="hero-grid__avatar"
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                  }}
+                />
+                <div>
+                  <div style={{ color: "#00b7ff", fontWeight: "bold", fontSize: "16px" }}>
+                    {streamerDestacado.NombreUsuario}
+                  </div>
+                  <div style={{ color: "#e91916", fontSize: "14px", fontWeight: "600" }}>
+                    🔴 EN VIVO
+                  </div>
+                  <div style={{ color: "#aaa", fontSize: "13px" }}>
+                    {streamerDestacado.ViendoCount} espectadores
+                  </div>
+                  <div style={{ color: "#aaa", fontSize: "12px" }}>
+                    Nivel {streamerDestacado. NivelStreams}
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
         )}
       </section>
@@ -252,7 +268,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
             <div className="recommendations">
               {streamersRecomendados.map((streamer, index) => (
                 <div key={`${streamer.NombreUsuario}-${index}`} className="recommendations__item">
-                  <Link to={`/canal/${streamer.NombreUsuario}`}>
+                  <Link to={`/perfil?user=${encodeURIComponent(streamer.NombreUsuario)}`}>
                     <div 
                       className="recommendations__thumb"
                       style={{
@@ -293,19 +309,21 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
 
                   <div className="recommendations__body">
                     <div className="recommendations__meta">
-                      <img
-                        src={streamer. ImagenPerfil || `https://ui-avatars.com/api/?name=${streamer.NombreUsuario}&background=random&size=40`}
-                        alt={streamer.NombreUsuario}
-                        className="recommendations__author-avatar"
-                        style={{
-                          width: "40px",
-                          height: "40px",
-                          borderRadius: "50%",
-                        }}
-                      />
+                      <Link to={`/perfil?user=${encodeURIComponent(streamer.NombreUsuario)}`}>
+                        <img
+                          src={streamer. ImagenPerfil || `https://ui-avatars.com/api/?name=${streamer.NombreUsuario}&background=random&size=40`}
+                          alt={streamer.NombreUsuario}
+                          className="recommendations__author-avatar"
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            borderRadius: "50%",
+                          }}
+                        />
+                      </Link>
                       <div style={{ flex: 1 }}>
                         <Link 
-                          to={`/canal/${streamer.NombreUsuario}`} 
+                          to={`/perfil?user=${encodeURIComponent(streamer.NombreUsuario)}`}
                           className="recommendations__title"
                           style={{
                             fontWeight: "bold",
