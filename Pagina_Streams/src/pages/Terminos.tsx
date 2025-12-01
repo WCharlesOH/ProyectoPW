@@ -81,7 +81,7 @@ export default function Terminos() {
         <section className="t-block">
           <h2>7. Terminación de Cuenta</h2>
           <p>
-            Streams se reserva el derecho de suspender o terminar su cuenta en cualquier momento si se determina que ha violado
+            En  Tinamo reserva el derecho de suspender o terminar su cuenta en cualquier momento si se determina que ha violado
             estos Términos y Condiciones o si causa perjuicios a otros usuarios o a la plataforma.
           </p>
         </section>
