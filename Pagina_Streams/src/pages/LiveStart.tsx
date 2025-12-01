@@ -69,7 +69,7 @@ const LiveStart: React.FC<LiveStartProps> = ({ monedas, setMonedas }) => {
   useEffect(() => {
     const timer = setInterval(() => setTiempo(prev => prev + 1), 1000);
     emitirActividad("🟢 Transmisión iniciada", "stream");
-    emitirStream(true, Date.now());
+    emitirStream(true);
 
     return () => {
       clearInterval(timer);
