@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import "./StyleRegistro.css";
 import { API } from "../Comandosllamadas/llamadas";
-import type { datacompleta, registro, Usuario } from "../components/types";
+import type { registro } from "../components/types";
 
 export default function Registro() {
     const navigate = useNavigate();

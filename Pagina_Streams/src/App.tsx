@@ -40,7 +40,6 @@ export default function App() {
   const location = useLocation();
   const hideSidebar = location.pathname === '/dashboard';
 
-  const todo = API
 
   const datos: Usuario | null = JSON.parse(localStorage.getItem("user") || "null")
 

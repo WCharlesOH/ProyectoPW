@@ -1,4 +1,3 @@
-import { data } from "react-router-dom";
 
 export const API = {
     RegistoUsuario: async (name: string, password: string, email: string, imagen: string) => {
