@@ -2,33 +2,36 @@
   max-width: 900px;
   margin: 24px auto 60px;
   padding: 0 16px;
-  color: #d80a0a;
+  color: #e6eef8;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 .t-back {
   background: none;
   border: none;
-  color: #ffffff;
+  color: #93c5fd;
   cursor: pointer;
   margin-bottom: 8px;
   padding: 6px 2px;
   font-size: 14px;
 }
-.t-back:hover { text-decoration: underline; }
+.t-back:hover {
+  text-decoration: underline;
+}
 
 .t-title {
   margin: 0 0 14px;
   font-size: 28px;
   font-weight: 700;
+  color: #ffffff;
 }
 
 .t-card {
-  background: #fff;
-  border: 1px solid #e7e7e7;
+  background: transparent;
+  border: 0px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 0 rgba(0,0,0,0.03);
+  box-shadow: 0 2px 0 rgba(192, 22, 22, 0.03);
 }
 
 .t-banner {
@@ -40,7 +43,9 @@
   margin-bottom: 16px;
 }
 
-.t-block { margin: 18px 4px; }
+.t-block {
+  margin: 18px 4px;
+}
 
 .t-block h2 {
   font-size: 20px;
@@ -50,14 +55,16 @@
 .t-block p {
   margin: 0 0 8px;
   line-height: 1.55;
-  color: #333;
+  color: #e6eef8;
 }
 
 .t-block ul {
   margin: 8px 0 0 18px;
   padding: 0;
 }
-.t-block li { margin: 6px 0; }
+.t-block li {
+  margin: 6px 0;
+}
 
 @media (max-width: 1024px) {
   .container {
@@ -70,11 +77,14 @@
     flex-direction: column;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-size: 90%;
   }
 
-  button, input {
+  button,
+  input {
     font-size: 0.95rem;
   }
 }
@@ -85,7 +95,9 @@
     padding: 0 1rem;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-size: 85%;
   }
 
