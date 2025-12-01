@@ -1,88 +1,72 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { API } from "../Comandosllamadas/llamadas";
 
-interface Categoria {
-  id: string;
-  nombre: string;
-  espectadores: string;
-  etiquetas?: string[];
-  imagenUrl: string;
+interface Juego {
+  ID_Juego: number;
+  Nombre: string;
 }
-
-// Estas categorías serán reemplazadas por llamadas al backend en el futuro
-const CATEGORIAS: Categoria[] = [
-  { 
-    id: "1", 
-    nombre: "Just Chatting", 
-    espectadores: "245K", 
-    etiquetas: ["IRL"],
-    imagenUrl: "https://static-cdn.jtvnw.net/ttv-boxart/509658-285x380.jpg"
-  },
-  { 
-    id: "2", 
-    nombre: "League of Legends", 
-    espectadores: "182K", 
-    etiquetas: ["MOBA"],
-    imagenUrl: "https://static-cdn.jtvnw.net/ttv-boxart/21779-285x380.jpg"
-  },
-  { 
-    id: "3", 
-    nombre: "Fortnite", 
-    espectadores: "156K", 
-    etiquetas: ["Battle Royale"],
-    imagenUrl: "https://static-cdn.jtvnw.net/ttv-boxart/33214-285x380.jpg"
-  },
-  { 
-    id: "4", 
-    nombre: "Valorant", 
-    espectadores: "134K", 
-    etiquetas: ["FPS", "Competitivo"],
-    imagenUrl: "https://static-cdn. jtvnw.net/ttv-boxart/516575-285x380.jpg"
-  },
-  { 
-    id: "5", 
-    nombre: "Minecraft", 
-    espectadores: "98K", 
-    etiquetas: ["Sandbox"],
-    imagenUrl: "https://static-cdn.jtvnw.net/ttv-boxart/27471_IGDB-285x380.jpg"
-  },
-  { 
-    id: "6", 
-    nombre: "GTA V", 
-    espectadores: "87K", 
-    etiquetas: ["Acción", "Mundo Abierto"],
-    imagenUrl: "https://static-cdn.jtvnw.net/ttv-boxart/32982_IGDB-285x380.jpg"
-  },
-  { 
-    id: "7", 
-    nombre: "Counter-Strike 2", 
-    espectadores: "75K", 
-    etiquetas: ["FPS"],
-    imagenUrl: "https://static-cdn.jtvnw.net/ttv-boxart/32399_IGDB-285x380.jpg"
-  },
-  { 
-    id: "8", 
-    nombre: "Apex Legends", 
-    espectadores: "62K", 
-    etiquetas: ["Battle Royale", "FPS"],
-    imagenUrl: "https://static-cdn.jtvnw.net/ttv-boxart/511224-285x380.jpg"
-  },
-];
 
 interface ExplorarProps {
   sidebarAbierto?: boolean;
 }
 
 export default function Explorar({ sidebarAbierto = true }: ExplorarProps) {
+  const [juegos, setJuegos] = useState<Juego[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const navigate = useNavigate();
   const paddingLeft = sidebarAbierto ? "0px" : "60px";
-  
-  // TODO: Reemplazar con llamada al backend
-  // useEffect(() => {
-  //   fetch('http://localhost:5000/api/categorias')
-  //     .then(res => res.json())
-  //     .then(data => setCategorias(data))
-  //     .catch(err => console. error('Error al cargar categorías:', err));
-  // }, []);
-  
+
+  useEffect(() => {
+    cargarJuegos();
+  }, []);
+
+  const cargarJuegos = async () => {
+    setCargando(true);
+    const resultado = await API.ObtenerJuegos();
+    
+    if (resultado.success) {
+      setJuegos(resultado.juegos || []);
+    } else {
+      console.error("Error al cargar juegos:", resultado.error);
+    }
+    setCargando(false);
+  };
+
+  const handleCategoriaClick = (nombreJuego: string) => {
+    navigate(`/categoria/${encodeURIComponent(nombreJuego)}`);
+  };
+
+  if (cargando) {
+    return (
+      <div 
+        style={{ 
+          padding: "20px", 
+          paddingLeft, 
+          color: "#fff", 
+          background: "#18181b", 
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <div style={{
+            border: "4px solid #2a2a2e",
+            borderTop: "4px solid #9147ff",
+            borderRadius: "50%",
+            width: "50px",
+            height: "50px",
+            animation: "spin 1s linear infinite",
+            margin: "0 auto 16px"
+          }}></div>
+          <p style={{ color: "#adadb8" }}>Cargando categorías...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div 
       style={{ 
@@ -99,23 +83,34 @@ export default function Explorar({ sidebarAbierto = true }: ExplorarProps) {
           Explorar categorías
         </h1>
         <p style={{ color: "#adadb8", fontSize: "14px" }}>
-          Descubre nuevas categorías y comunidades
+          Descubre nuevas categorías y comunidades ({juegos.length} categorías disponibles)
         </p>
       </section>
 
       <section>
-        <div style={{ 
-          display: "grid", 
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", 
-          gap: "20px" 
-        }}>
-          {CATEGORIAS.map((categoria) => (
-            <Link 
-              key={categoria.id} 
-              to={`/categoria/${categoria. id}`} 
-              style={{ textDecoration: "none" }}
-            >
+        {juegos.length === 0 ? (
+          <div style={{ 
+            textAlign: "center", 
+            padding: "60px 20px",
+            color: "#adadb8"
+          }}>
+            <p style={{ fontSize: "18px", marginBottom: "10px" }}>
+              No hay categorías disponibles
+            </p>
+            <p style={{ fontSize: "14px" }}>
+              Agrega juegos en la base de datos para verlos aquí
+            </p>
+          </div>
+        ) : (
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", 
+            gap: "20px" 
+          }}>
+            {juegos.map((juego) => (
               <div 
+                key={juego. ID_Juego}
+                onClick={() => handleCategoriaClick(juego.Nombre)}
                 style={{ 
                   background: "#0e0e10", 
                   borderRadius: "8px", 
@@ -126,7 +121,7 @@ export default function Explorar({ sidebarAbierto = true }: ExplorarProps) {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "scale(1.05)";
-                  e.currentTarget.style. borderColor = "#9147ff";
+                  e.currentTarget.style.borderColor = "#9147ff";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "scale(1)";
@@ -136,34 +131,24 @@ export default function Explorar({ sidebarAbierto = true }: ExplorarProps) {
                 <div style={{ 
                   width: "100%", 
                   height: "270px", 
-                  overflow: "hidden",
+                  background: "linear-gradient(135deg, #1f1f23 0%, #2a2a2e 100%)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   position: "relative"
                 }}>
-                  <img 
-                    src={categoria.imagenUrl} 
-                    alt={categoria.nombre}
-                    style={{ 
-                      width: "100%", 
-                      height: "100%", 
-                      objectFit: "cover"
-                    }}
-                    onError={(e) => {
-                      // Fallback si la imagen no carga
-                      const target = e.target as HTMLImageElement;
-                      target.style. display = "none";
-                      const parent = target.parentElement;
-                      if (parent) {
-                        parent.style.background = "linear-gradient(135deg, #1f1f23 0%, #2a2a2e 100%)";
-                        parent.innerHTML = `
-                          <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                            <div style="width: 60px; height: 60px; borderRadius: 8px; background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; fontSize: 24px; color: #9147ff;">
-                              🎮
-                            </div>
-                          </div>
-                        `;
-                      }
-                    }}
-                  />
+                  <div style={{
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "12px",
+                    background: "rgba(145, 71, 255, 0.2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "40px"
+                  }}>
+                    🎮
+                  </div>
                 </div>
 
                 <div style={{ padding: "12px" }}>
@@ -176,39 +161,28 @@ export default function Explorar({ sidebarAbierto = true }: ExplorarProps) {
                     overflow: "hidden",
                     textOverflow: "ellipsis"
                   }}>
-                    {categoria.nombre}
+                    {juego. Nombre}
                   </div>
                   <div style={{ 
                     color: "#adadb8", 
                     fontSize: "13px", 
                     marginBottom: "8px" 
                   }}>
-                    {categoria.espectadores} espectadores
+                    Haz clic para ver streams
                   </div>
-                  {categoria.etiquetas && categoria.etiquetas.length > 0 && (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
-                      {categoria. etiquetas.map((etiqueta, index) => (
-                        <span 
-                          key={index} 
-                          style={{ 
-                            fontSize: "11px", 
-                            background: "#2e2e35", 
-                            padding: "2px 8px", 
-                            borderRadius: "12px", 
-                            color: "#adadb8" 
-                          }}
-                        >
-                          {etiqueta}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </div>
-            </Link>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
+
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }
