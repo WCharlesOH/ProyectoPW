@@ -78,7 +78,7 @@ export default function Usuario() {
               <h3 style={{ margin: 0, fontSize: 18 }}>Panel de Control</h3>
             </div>
             <p style={{ opacity: 0.8, fontSize: 14, marginBottom: 16, lineHeight: 1.5 }}>
-              Compra monedas, revisa tu saldo y gestiona tus transacciones.
+              Compra monedas, revisa tu saldo y gestiona tus transacciones en tiempo real.
             </p>
             <Link to="/panel" style={{ background: "#22c55e", color: "white", padding: "10px 16px", borderRadius: 8, textDecoration: "none", fontWeight: 600, display: "inline-block", fontSize: 14 }}>
               Ir al Panel
