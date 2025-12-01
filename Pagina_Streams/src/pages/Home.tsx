@@ -33,15 +33,15 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
         
         const result = await API.MasVisto();
         
-        if (result.success && result.data) {
+        if (result.success && result. data) {
           // Verificar si result.data es un array
-          if (Array. isArray(result.data) && result.data.length > 0) {
+          if (Array.isArray(result.data) && result. data.length > 0) {
             setStreamerDestacado(result.data[0]);
             console.log(`✅ [Home] Streamer destacado: ${result.data[0].NombreUsuario}`);
           } 
-          // Si result.data es un objeto directamente
-          else if (! Array.isArray(result.data) && result.data.NombreUsuario) {
-            setStreamerDestacado(result. data);
+          // Si result. data es un objeto directamente
+          else if (!Array.isArray(result.data) && result.data.NombreUsuario) {
+            setStreamerDestacado(result.data);
             console.log(`✅ [Home] Streamer destacado: ${result.data.NombreUsuario}`);
           } else {
             console.log("⚠️ [Home] No hay streamers en vivo");
@@ -52,7 +52,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
           setStreamerDestacado(null);
         }
       } catch (error) {
-        console. error("❌ [Home] Error cargando streamer destacado:", error);
+        console.error("❌ [Home] Error cargando streamer destacado:", error);
         setStreamerDestacado(null);
       } finally {
         setCargandoDestacado(false);
@@ -71,7 +71,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
         
         const result = await API.MasVistos();
         
-        if (result.success && result.streamers) {
+        if (result.success && result. streamers) {
           setStreamersRecomendados(result.streamers);
           console. log(`✅ [Home] ${result.streamers.length} streamers cargados`);
         } else {
@@ -79,7 +79,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
           setStreamersRecomendados([]);
         }
       } catch (error) {
-        console.error("❌ [Home] Error cargando streamers:", error);
+        console. error("❌ [Home] Error cargando streamers:", error);
         setStreamersRecomendados([]);
       } finally {
         setCargandoRecomendados(false);
@@ -164,12 +164,12 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
                     <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                       <span style={{ fontSize: "20px" }}>⭐</span>
                       <span style={{ fontSize: "16px" }}>
-                        Nivel {streamerDestacado.NivelStreams}
+                        Nivel {streamerDestacado. NivelStreams}
                       </span>
                     </div>
                   </div>
                   <Link 
-                    to={`/perfil? user=${encodeURIComponent(streamerDestacado.NombreUsuario)}`}
+                    to={`/perfil/${streamerDestacado.NombreUsuario}`}
                     style={{
                       display: "inline-block",
                       marginTop: "12px",
@@ -182,7 +182,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
                       transition: "transform 0.2s",
                     }}
                     onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.05)"}
-                    onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
+                    onMouseOut={(e) => e.currentTarget.style. transform = "scale(1)"}
                   >
                     Ver perfil →
                   </Link>
@@ -206,7 +206,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
         {streamerDestacado && (
           <div className="hero-grid__card">
             <Link 
-              to={`/perfil?user=${encodeURIComponent(streamerDestacado. NombreUsuario)}`}
+              to={`/perfil/${streamerDestacado.NombreUsuario}`}
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <div className="hero-grid__card-top">
@@ -268,7 +268,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
             <div className="recommendations">
               {streamersRecomendados.map((streamer, index) => (
                 <div key={`${streamer.NombreUsuario}-${index}`} className="recommendations__item">
-                  <Link to={`/perfil?user=${encodeURIComponent(streamer.NombreUsuario)}`}>
+                  <Link to={`/perfil/${streamer.NombreUsuario}`}>
                     <div 
                       className="recommendations__thumb"
                       style={{
@@ -309,9 +309,9 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
 
                   <div className="recommendations__body">
                     <div className="recommendations__meta">
-                      <Link to={`/perfil?user=${encodeURIComponent(streamer.NombreUsuario)}`}>
+                      <Link to={`/perfil/${streamer.NombreUsuario}`}>
                         <img
-                          src={streamer. ImagenPerfil || `https://ui-avatars.com/api/?name=${streamer.NombreUsuario}&background=random&size=40`}
+                          src={streamer.ImagenPerfil || `https://ui-avatars.com/api/?name=${streamer.NombreUsuario}&background=random&size=40`}
                           alt={streamer.NombreUsuario}
                           className="recommendations__author-avatar"
                           style={{
@@ -323,7 +323,7 @@ export default function InicioLogeado({ sidebarAbierto = true }: InicioLogeadoPr
                       </Link>
                       <div style={{ flex: 1 }}>
                         <Link 
-                          to={`/perfil?user=${encodeURIComponent(streamer.NombreUsuario)}`}
+                          to={`/perfil/${streamer.NombreUsuario}`}
                           className="recommendations__title"
                           style={{
                             fontWeight: "bold",
