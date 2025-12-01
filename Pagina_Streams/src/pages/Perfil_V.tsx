@@ -7,6 +7,11 @@ export default function Perfil_V() {
   const user = localStorage.getItem("user");
   const titi: Usuario | null = user ? JSON.parse(user) : null;
   const nombre = titi?.NombreUsuario;
+  let funcion : number | null = null
+  if(titi){
+    funcion = 1 + Math.floor(titi.NivelStreams / 100)
+  } 
+  
 
   // Estados para los popups
   const [mostrarInfo, setMostrarInfo] = useState(false);
@@ -217,7 +222,7 @@ export default function Perfil_V() {
             </h3>
             <div style={{ textAlign: "left", lineHeight: "1.8" }}>
               <p><strong>Usuario:</strong> {nombre}</p>
-              <p><strong>Nivel:</strong> {titi?.NivelStreams || 1}</p>
+              <p><strong>Nivel:</strong> {funcion || 1}</p>
               <p><strong>Puntos:</strong> {titi?.Puntos || 0}</p>
               <p><strong>Monedas:</strong> {titi?.Monedas || 0}</p>
               <p><strong>Horas transmitidas:</strong> {titi?.HorasTransmision || 0} horas</p>
