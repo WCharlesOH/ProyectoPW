@@ -94,6 +94,9 @@ export const API = {
 
     NuevaSuscripcion: async (idUsuario: number, idStreamer: number) => {
         try {
+            if(idStreamer == idUsuario){
+                return { success: false, error: "Error al crear nueva suscripción" };
+            }
             const response = await fetch("http://localhost:5000/Crear_Suscripcion", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -140,6 +143,9 @@ export const API = {
 
     ChatStreamer: async (idStreamer: number, idviewer: number) => {
         try {
+            if(idStreamer == idviewer){
+                return { success: false, error: "Error al crear nueva suscripción" };
+            }
             const response = await fetch("http://localhost:5000/Crear_ChatStreamer", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -208,8 +214,11 @@ export const API = {
         }
     },
 
-    ViendoDirecto: async (idUsuario: number, ID_Streamer: string, viendo: string, EnVIvo: string) => {
+    ViendoDirecto: async (idUsuario: number, ID_Streamer: number, viendo: boolean, EnVIvo: string) => {
         try {
+            if(ID_Streamer == idUsuario){
+                return { success: false, error: "Error al crear nueva suscripción" };
+            }
             const response = await fetch("http://localhost:5000/VIendoDirecto", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -235,6 +244,9 @@ export const API = {
 
     ObtenerChatStreamer: async (idStreamer: number, idviewer: number) => {
         try {
+            if(idStreamer == idviewer){
+                return { success: false, error: "Error al crear nueva suscripción" };
+            }
             const response = await fetch("http://localhost:5000/ObtenerDatosChat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

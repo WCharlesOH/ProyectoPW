@@ -85,7 +85,7 @@ export default function ChatBox({ monedas, setMonedas, streamerName }: ChatBoxPr
         await API.ViendoDirecto(
           idUsuario,
           streamerData.ID.toString(),
-          "true",
+          true,
           enVivoString
         );
         
